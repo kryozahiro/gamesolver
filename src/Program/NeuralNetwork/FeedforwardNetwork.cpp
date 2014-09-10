@@ -12,7 +12,7 @@
 #include "../../Util/fastonebigheader.h"
 #include "FeedforwardNetwork.h"
 using namespace std;
-namespace prop = boost::property_tree;
+namespace pt = boost::property_tree;
 
 void FeedforwardNetwork::crossover(FeedforwardNetwork& parent1, FeedforwardNetwork& parent2, mt19937_64& randomEngine) {
 	double alpha = 0.1;
@@ -84,8 +84,8 @@ FeedforwardNetwork::FeedforwardNetwork(const ProgramType& programType, const boo
 	this->changeable = boost::container::vector<boost::container::vector<bool>>(nodeSize, boost::container::vector<bool>(nodeSize, false));
 
 	//接続の生成
-	const prop::ptree& adjacencyTree = node.get_child("Adjacency");
-	for (const prop::ptree::value_type& kvp : adjacencyTree) {
+	const pt::ptree& adjacencyTree = node.get_child("Adjacency");
+	for (const pt::ptree::value_type& kvp : adjacencyTree) {
 		if (kvp.first != "Connection") {
 			assert(false);
 		}

@@ -9,9 +9,7 @@
 #define SOLVER_H_
 
 #include <boost/log/sources/logger.hpp>
-#include "../Problem/Problem.h"
 #include "Evaluator.h"
-#include "SolutionHistory.h"
 
 template <class GameCategory>
 class Solver {

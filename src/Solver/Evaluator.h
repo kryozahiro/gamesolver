@@ -10,19 +10,29 @@
 
 #include <boost/log/attributes/mutable_constant.hpp>
 #include "../Game/Game.h"
+#include "SolutionHistory.h"
 
 //評価用ファンクタ
 class Evaluator {
 public:
+	using Evaluation = std::function<void(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory, std::mt19937_64& randomEngine)>;
+	static void problemEvaluation(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory, std::mt19937_64& randomEngine);
+	//TODO: problemhillclimbevaluation?
+	static void allVsAllEvaluation(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory, std::mt19937_64& randomEngine);
+	static void allVsBestEvaluation(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory, std::mt19937_64& randomEngine);
+	static void partitioningEvaluation(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory, std::mt19937_64& randomEngine);
+
 	Evaluator(Game& game);
 	virtual ~Evaluator() = default;
 
 	//評価の実行
 	std::vector<double> operator()(std::vector<Program*>& programs);
 
-	std::pair<int, int> getProgramSize();
-
+	//評価を実行した回数
 	int getEvaluateCount();
+
+	//解関数の性質
+	std::pair<int, int> getProgramSize();
 
 private:
 	Game& game;

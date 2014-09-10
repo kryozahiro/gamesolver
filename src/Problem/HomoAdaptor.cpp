@@ -22,7 +22,7 @@ string HomoAdaptor::toString() const {
 
 double HomoAdaptor::evaluate(Program& program) {
 	vector<Program*> programs(programSize, &program);
-	const vector<double>& scores = game->evaluate(programs);
-	double total = accumulate(scores.begin(), scores.end(), 0.0);
+	const vector<double>& fitness = game->evaluate(programs);
+	double total = accumulate(fitness.begin(), fitness.end(), 0.0);
 	return total / (double)programSize;
 }

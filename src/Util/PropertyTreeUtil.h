@@ -22,8 +22,8 @@ const boost::property_tree::basic_ptree<Key, Data, KeyCompare>& search(
 		const typename boost::property_tree::basic_ptree<Key, Data, KeyCompare>::data_type& content,
 		bool recursive = true) {
 
-	namespace prop = boost::property_tree;
-	using tree_type = prop::basic_ptree<Key, Data, KeyCompare>;
+	namespace pt = boost::property_tree;
+	using tree_type = pt::basic_ptree<Key, Data, KeyCompare>;
 
 	for (const typename tree_type::value_type& kvp : domain) {
 		const tree_type& child = kvp.second;
@@ -32,7 +32,7 @@ const boost::property_tree::basic_ptree<Key, Data, KeyCompare>& search(
 			if (!KeyCompare()(content, childContent) and !KeyCompare()(childContent, content)) {
 				return child;
 			}
-		} catch (prop::ptree_bad_path& e) {
+		} catch (pt::ptree_bad_path& e) {
 			//何もしない
 		}
 
@@ -40,12 +40,12 @@ const boost::property_tree::basic_ptree<Key, Data, KeyCompare>& search(
 		if (recursive) {
 			try {
 				return search(child, path, content, recursive);
-			} catch (prop::ptree_bad_path& e) {
+			} catch (pt::ptree_bad_path& e) {
 				//何もしない
 			}
 		}
 	}
-	throw prop::ptree_bad_path("ptree not found", path);
+	throw pt::ptree_bad_path("ptree not found", path);
 }
 
 //<node name="name-of-node" ref="reference-to-name-of-other-node"/>の形式で表現される参照の解決
@@ -54,15 +54,15 @@ const boost::property_tree::basic_ptree<Key, Data, KeyCompare>& solveReference(
 		const boost::property_tree::basic_ptree<Key, Data, KeyCompare>& domain,
 		const boost::property_tree::basic_ptree<Key, Data, KeyCompare>& tree) {
 
-	namespace prop = boost::property_tree;
-	using tree_type = prop::basic_ptree<Key, Data, KeyCompare>;
+	namespace pt = boost::property_tree;
+	using tree_type = pt::basic_ptree<Key, Data, KeyCompare>;
 
 	const tree_type* now = &tree;
 	while (true) {
 		typename tree_type::data_type ref;
 		try {
 			ref = now->template get<typename tree_type::data_type>("<xmlattr>.ref");
-		} catch (prop::ptree_bad_path& e) {
+		} catch (pt::ptree_bad_path& e) {
 			return *now;
 		}
 		now = &search(domain, "<xmlattr>.name", ref);

@@ -12,7 +12,6 @@
 #include <random>
 #include <boost/property_tree/ptree.hpp>
 #include "../Util/Scale.h"
-#include "../Util/AlgorithmUtil.h"
 #include "Solver.h"
 #include "GeneticOperable.h"
 
@@ -23,7 +22,6 @@ class GeneticAlgorithm : public Solver<Game> {
 public:
 	using Scaling = std::function<void(std::vector<double>& weights)>;
 	using Selection = std::function<int(std::vector<double>& weights, std::mt19937_64& randomEngine)>;
-	using Evaluation = std::function<void(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory)>;
 	using Reinsertion = std::function<void(std::vector<std::shared_ptr<Solution>>& population, std::vector<std::shared_ptr<Solution>>& offspring)>;
 
 	GeneticAlgorithm(const std::vector<std::shared_ptr<Program>>& inits, int seed)
@@ -88,11 +86,13 @@ public:
 		//Evaluationの設定
 		std::string evaluatorName = node.get<std::string>("Evaluation");
 		if (evaluatorName == "ProblemEvaluation") {
-			setEvaluation(problemEvaluation);
+			setEvaluation(Evaluator::problemEvaluation);
 		} else if (evaluatorName == "AllVsAllEvaluation") {
-			setEvaluation(allVsAllEvaluation);
+			setEvaluation(Evaluator::allVsAllEvaluation);
 		} else if (evaluatorName == "AllVsBestEvaluation") {
-			setEvaluation(allVsBestEvaluation);
+			setEvaluation(Evaluator::allVsBestEvaluation);
+		} else if (evaluatorName == "PartitioningEvaluation") {
+			setEvaluation(Evaluator::partitioningEvaluation);
 		} else {
 			assert(false);
 		}
@@ -130,7 +130,7 @@ public:
 	void setMutation(std::string mutationName) {
 		this->mutation = mutationName;
 	}
-	void setEvaluation(Evaluation evaluation) {
+	void setEvaluation(Evaluator::Evaluation evaluation) {
 		this->evaluation = evaluation;
 	}
 	void setReinsertion(Reinsertion reinsertion) {
@@ -178,75 +178,6 @@ public:
 		return 0;
 	}
 
-	//解集合の評価
-	static void problemEvaluation(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory) {
-		assert(evaluator.getProgramSize().first == 1);
-		for (std::shared_ptr<Solution>& gene : solutions) {
-			/*if (gene->getFitness() != DBL_MAX) {
-				continue;
-			}*/
-			std::vector<Program*> programs(1, &*gene->getProgram());
-			std::vector<double> fitness = evaluator(programs);
-			gene->setFitness(fitness[0]);
-		}
-	}
-	//TODO: problemhillclimbevaluation?
-	static void allVsAllEvaluation(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory) {
-		const int evaluationSize = evaluator.getProgramSize().first;
-		std::vector<Program*> programs(evaluationSize);
-		std::vector<double> fitness(solutions.size(), 0);
-
-		//全ての組み合わせを合計
-		std::vector<int> combination(solutions.size());
-		std::iota(combination.begin(), combination.end(), 0);
-		do {
-			for (int i = 0; i < evaluationSize; ++i) {
-				programs[i] = &*solutions[combination[i]]->getProgram();
-			}
-			std::vector<double> comb_fitness = evaluator(programs);
-			for (int i = 0; i < evaluationSize; ++i) {
-				fitness[combination[i]] += comb_fitness[i];
-			}
-		} while (AlgorithmUtil::next_combination(combination.begin(), combination.begin() + evaluationSize, combination.end()));
-
-		//合計を適応度に設定
-		for (unsigned int i = 0; i < fitness.size(); ++i) {
-			solutions[i]->setFitness(fitness[i]);
-		}
-	}
-	static void allVsBestEvaluation(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory) {
-		if (solutions[0]->getGeneration() == 0) {
-			allVsAllEvaluation(evaluator, solutions, solutionHistory);
-			return;
-		}
-
-		const std::vector<std::shared_ptr<Solution>>& latest = solutionHistory.getGeneration(solutions[0]->getGeneration() - 1);
-
-		const int evaluationSize = evaluator.getProgramSize().first;
-		std::vector<Program*> programs(evaluationSize);
-		std::vector<double> fitness(solutions.size(), 0);
-
-		//全ての組み合わせを合計
-		std::vector<int> combination(solutions.size());
-		std::iota(combination.begin(), combination.end(), 0);
-		do {
-			for (int i = 0; i < evaluationSize - 1; ++i) {
-				programs[i] = &*solutions[combination[i]]->getProgram();
-			}
-			programs[evaluationSize - 1] = &*(latest[0]->getProgram());
-
-			std::vector<double> comb_fitness = evaluator(programs);
-			for (int i = 0; i < evaluationSize - 1; ++i) {
-				fitness[combination[i]] += comb_fitness[i];
-			}
-		} while (AlgorithmUtil::next_combination(combination.begin(), combination.begin() + evaluationSize - 1, combination.end()));
-
-		//合計を適応度に設定
-		for (unsigned int i = 0; i < fitness.size(); ++i) {
-			solutions[i]->setFitness(fitness[i]);
-		}
-	}
-
 	//再挿入
 	static void pureReinsertion(std::vector<std::shared_ptr<Solution>>& population, std::vector<std::shared_ptr<Solution>>& offspring) {
 		//子孫が十分ある場合
@@ -282,7 +213,7 @@ protected:
 		});
 
 		//初回の評価
-		evaluation(evaluator, genes, *getHistory());
+		evaluation(evaluator, genes, *getHistory(), randomEngine);
 		logGenes(genes);
 
 		//世代を進める
@@ -377,7 +308,7 @@ private:
 		}
 
 		//評価
-		evaluation(evaluator, offspring, *getHistory());
+		evaluation(evaluator, offspring, *getHistory(), randomEngine);
 
 		//再挿入
 		int prevGeneration = genes[0]->getGeneration();
@@ -402,7 +333,7 @@ private:
 	Selection selection = rouletteSelection;
 	std::string crossover;
 	std::string mutation;
-	Evaluation evaluation;
+	Evaluator::Evaluation evaluation;
 	Reinsertion reinsertion = pureReinsertion;
 };
 

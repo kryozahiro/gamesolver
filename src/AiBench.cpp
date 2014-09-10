@@ -5,12 +5,17 @@
  *      Author: kryozahiro
  */
 
+#include <cmath>
 #include <fstream>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/log/sinks/sync_frontend.hpp>
 #include <boost/log/sinks/text_ostream_backend.hpp>
 #include <boost/log/expressions/predicates.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/accumulators/accumulators.hpp>
+#include <boost/accumulators/statistics.hpp>
 #include "AiBench.h"
 #include "Game/AverageAdaptor.h"
 #include "Game/Mushroom.h"
@@ -26,9 +31,11 @@
 #include "Util/GenericIo.h"
 #include "Util/PropertyTreeUtil.h"
 using namespace std;
-namespace opt = boost::program_options;
-namespace prop = boost::property_tree;
+namespace po = boost::program_options;
+namespace pt = boost::property_tree;
 namespace lg = boost::log;
+namespace ac = boost::accumulators;
+namespace fs = boost::filesystem;
 
 AiBench::AiBench() : randomEngine(time(NULL)), logger(make_shared<lg::sources::logger>()) {
 	lg::add_common_attributes();
@@ -38,16 +45,16 @@ void AiBench::initOptions(boost::program_options::options_description& options,
 		boost::program_options::positional_options_description& positional) {
 	options.add_options()
 		("help,h", "produce help message")
-		("config,c", opt::value<string>()->default_value("config.xml"), "specify config file")
-		("experiment,e", opt::value<string>()->default_value(""), "specify experiment")
-		("game,g", opt::value<string>()->default_value(""), "specify game")
-		("program,p", opt::value<string>()->default_value(""), "specify program representation")
-		("solver,s", opt::value<string>()->default_value(""), "specify solver")
-		("agents,a", opt::value<int>()->default_value(0), "specify the size of agents")
-		("times,t", opt::value<int>()->default_value(0), "specify evaluation times")
-		("validation,v", opt::value<int>()->default_value(0), "specify validate evaluation times")
-		("input,i", opt::value<string>()->default_value(""), "specify input file")
-		("output,o", opt::value<string>()->default_value(""), "specify output methods");
+		("config,c", po::value<string>()->default_value("config.xml"), "specify config file")
+		("experiment,e", po::value<string>()->default_value(""), "specify experiment")
+		("game,g", po::value<string>()->default_value(""), "specify game")
+		("program,p", po::value<string>()->default_value(""), "specify program representation")
+		("solver,s", po::value<string>()->default_value(""), "specify solver")
+		("agents,a", po::value<int>()->default_value(0), "specify the size of agents")
+		("times,t", po::value<int>()->default_value(0), "specify evaluation times")
+		("validation,v", po::value<int>()->default_value(0), "specify validate evaluation times")
+		("input,i", po::value<string>()->default_value(""), "specify input file")
+		("output,o", po::value<string>()->default_value(""), "specify output methods");
 }
 
 int AiBench::mainImpl(boost::program_options::variables_map& args) {
@@ -87,12 +94,12 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 
 	//ファイルからの<Config>ノードの取得
 	string configFile = args["config"].as<string>();
-	prop::ptree configRoot;
-	prop::read_xml(configFile, configRoot);
+	pt::ptree configRoot;
+	pt::read_xml(configFile, configRoot);
 	config = configRoot.get_child("Config");
 
 	//<Experiment>ノードの取得
-	prop::ptree experiment;
+	pt::ptree experiment;
 	if (args["experiment"].as<string>() != "") {
 		experiment = PropertyTreeUtil::search(config, "<xmlattr>.name", args["experiment"].as<string>());
 	} else {
@@ -124,7 +131,7 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 	cerr << "\tvalidation = " << validationTimes << endl;
 
 	//ゲーム
-	prop::ptree gameTree;
+	pt::ptree gameTree;
 	if (args["game"].as<string>() != "") {
 		gameTree = PropertyTreeUtil::search(config, "<xmlattr>.name", args["game"].as<string>());
 	} else {
@@ -133,7 +140,7 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 	game = initGame(gameTree);
 
 	//プログラム
-	prop::ptree programTree;
+	pt::ptree programTree;
 	if (args["program"].as<string>() != "") {
 		programTree = PropertyTreeUtil::search(config, "<xmlattr>.name", args["program"].as<string>());
 	} else {
@@ -142,7 +149,7 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 	programs = initPrograms(programTree, game);
 
 	//ソルバー
-	prop::ptree solverTree;
+	pt::ptree solverTree;
 	if (args["solver"].as<string>() != "") {
 		solverTree = PropertyTreeUtil::search(config, "<xmlattr>.name", args["solver"].as<string>());
 	} else {
@@ -151,7 +158,7 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 	solver = initSolver(solverTree, programTree);
 
 	//出力
-	prop::ptree outputTree;
+	pt::ptree outputTree;
 	if (args["output"].as<string>() != "") {
 		outputTree = PropertyTreeUtil::search(config, "<xmlattr>.name", args["output"].as<string>());
 	} else {
@@ -160,22 +167,22 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 	initOutput(outputTree);
 }
 
-shared_ptr<Game> AiBench::initGame(prop::ptree& gameTree) {
+shared_ptr<Game> AiBench::initGame(pt::ptree& gameTree) {
 	gameTree = PropertyTreeUtil::solveReference(config, gameTree);
 	gameTree.sort();
 	string gameName = gameTree.rbegin()->first;
-	prop::ptree concreteGameTree = gameTree.rbegin()->second;
+	pt::ptree concreteGameTree = gameTree.rbegin()->second;
 
 	shared_ptr<Game> game;
 	if (gameName == "AverageAdaptor") {
 		//平均化
-		prop::ptree implGame = concreteGameTree.get_child("Game");
+		pt::ptree implGame = concreteGameTree.get_child("Game");
 		shared_ptr<AverageAdaptor> ave = make_shared<AverageAdaptor>(initGame(implGame), 2);
 		game = ave;
 
 	} else if (gameName == "HomoAdaptor") {
 		//均質化
-		prop::ptree implGame = concreteGameTree.get_child("Game");
+		pt::ptree implGame = concreteGameTree.get_child("Game");
 		shared_ptr<HomoAdaptor> homo = make_shared<HomoAdaptor>(initGame(implGame), 2);
 		game = homo;
 
@@ -239,7 +246,7 @@ shared_ptr<Game> AiBench::initGame(prop::ptree& gameTree) {
 	return game;
 }
 
-vector<shared_ptr<Program>> AiBench::initPrograms(prop::ptree& programTree, shared_ptr<Game> game) {
+vector<shared_ptr<Program>> AiBench::initPrograms(pt::ptree& programTree, shared_ptr<Game> game) {
 	/*if (inputName != "") {
 		ifstream ifs(inputName);
 		return readPrograms(*game, gameType, programType, ifs);
@@ -248,7 +255,7 @@ vector<shared_ptr<Program>> AiBench::initPrograms(prop::ptree& programTree, shar
 	programTree = PropertyTreeUtil::solveReference(config, programTree);
 	programTree.sort();
 	string programName = programTree.rbegin()->first;
-	prop::ptree concreteProgramTree = programTree.rbegin()->second;
+	pt::ptree concreteProgramTree = programTree.rbegin()->second;
 
 	vector<shared_ptr<Program>> programs;
 	if (programName == "GraycodeMapping") {
@@ -332,11 +339,11 @@ vector<shared_ptr<Program>> AiBench::initPrograms(prop::ptree& programTree, shar
 	return programs;
 }*/
 
-shared_ptr<Solver<Game>> AiBench::initSolver(prop::ptree& solverTree, prop::ptree& programTree) {
+shared_ptr<Solver<Game>> AiBench::initSolver(pt::ptree& solverTree, pt::ptree& programTree) {
 	solverTree = PropertyTreeUtil::solveReference(config, solverTree);
 	solverTree.sort();
 	string solverName = solverTree.rbegin()->first;
-	prop::ptree concreteSolverTree = solverTree.rbegin()->second;
+	pt::ptree concreteSolverTree = solverTree.rbegin()->second;
 
 	shared_ptr<Solver<Game>> solver;
 	if (solverName == "GeneticAlgorithm") {
@@ -374,15 +381,14 @@ shared_ptr<Solver<Game>> AiBench::initSolver(prop::ptree& solverTree, prop::ptre
 }
 
 void AiBench::initOutput(boost::property_tree::ptree& outputTree) {
-	typedef lg::sinks::synchronous_sink<lg::sinks::text_ostream_backend> text_sink;
 	outputTree = PropertyTreeUtil::solveReference(config, outputTree);
 
-	for (const prop::ptree::value_type& kvp : outputTree) {
+	for (const pt::ptree::value_type& kvp : outputTree) {
 		if (kvp.first == "<xmlattr>") {
 			continue;
 		}
 		assert(kvp.first == "Logger");
-		const prop::ptree& logger = kvp.second;
+		const pt::ptree& logger = kvp.second;
 
 		string target = logger.get<string>("Target");
 		string series = logger.get<string>("Series");
@@ -391,45 +397,14 @@ void AiBench::initOutput(boost::property_tree::ptree& outputTree) {
 		if (target == "Relation") {
 			relationFile = filename;
 
-		} else if (target == "Evaluation") {
+		} else if (target == "Evaluation" or target == "Validation" or target == "Solution" or target == "Program") {
 			pair<int, int> range = boost::lexical_cast<pair<int, int>>(series);
+			fs::path path(filename);
 
 			//シンクの作成
 			for (int i = range.first; i < range.second; ++i) {
-				boost::shared_ptr<text_sink> sink = boost::make_shared<text_sink>();
-				sink->locked_backend()->add_stream(boost::make_shared<ofstream>("result\\" + to_string(i) + filename));
-				sink->set_filter(lg::expressions::is_in_range<int>("Evaluation", i, i + 1));
-				lg::core::get()->add_sink(sink);
-			}
-		} else if (target == "Validation") {
-			pair<int, int> range = boost::lexical_cast<pair<int, int>>(series);
-
-			//シンクの作成
-			for (int i = range.first; i < range.second; ++i) {
-				boost::shared_ptr<text_sink> sink = boost::make_shared<text_sink>();
-				sink->locked_backend()->add_stream(boost::make_shared<ofstream>("result\\" + to_string(i) + filename));
-				sink->set_filter(lg::expressions::is_in_range<int>("Validation", i, i + 1));
-				lg::core::get()->add_sink(sink);
-			}
-		} else if (target == "Solution") {
-			pair<int, int> range = boost::lexical_cast<pair<int, int>>(series);
-
-			//シンクの作成
-			for (int i = range.first; i < range.second; ++i) {
-				boost::shared_ptr<text_sink> sink = boost::make_shared<text_sink>();
-				sink->locked_backend()->add_stream(boost::make_shared<ofstream>("result\\" + to_string(i) + filename));
-				sink->set_filter(lg::expressions::is_in_range<int>("Solution", i, i + 1));
-				lg::core::get()->add_sink(sink);
-			}
-		} else if (target == "Program"){
-			pair<int, int> range = boost::lexical_cast<pair<int, int>>(series);
-
-			//シンクの作成
-			for (int i = range.first; i < range.second; ++i) {
-				boost::shared_ptr<text_sink> sink = boost::make_shared<text_sink>();
-				sink->locked_backend()->add_stream(boost::make_shared<ofstream>("result\\" + to_string(i) + filename));
-				sink->set_filter(lg::expressions::is_in_range<int>("Program", i, i + 1));
-				lg::core::get()->add_sink(sink);
+				string numberedFilename = path.parent_path().generic_string() + string("/") + to_string(i) + path.filename().generic_string();
+				lg::add_file_log(lg::keywords::file_name = numberedFilename, lg::keywords::filter = lg::expressions::is_in_range<int>(target, i, i + 1));
 			}
 		} else {
 			assert(false);
@@ -438,32 +413,39 @@ void AiBench::initOutput(boost::property_tree::ptree& outputTree) {
 }
 
 void AiBench::validate(std::vector<std::shared_ptr<Solution>>& solutions) {
-	cerr << "run\tmean\tfitness" << endl;
+	cerr << "run\tfitness" << endl;
 	lg::attributes::mutable_constant<int> validationAttr(0);
 	game->getLogger()->add_attribute("Validation", validationAttr);
 
-	vector<double> mean(game->getProgramSize().first);
+	//各評価位置における評価値の統計情報
+	vector<ac::accumulator_set<double, ac::stats<ac::tag::min, ac::tag::mean, ac::tag::variance>>> stats(game->getProgramSize().first);
+	vector<int> minIndex(game->getProgramSize().first);
+
 	for (int i = 0; i < validationTimes; ++i) {
 		//プログラムの選択
-		vector<Program*> best(game->getProgramSize().first);
-		for (unsigned int k = 0; k < best.size(); ++k) {
-			best[k] = &*(solutions[k]->getProgram());
+		vector<Program*> result(game->getProgramSize().first);
+		for (unsigned int k = 0; k < result.size(); ++k) {
+			result[k] = &*(solutions[k]->getProgram());
 		}
 
 		//評価の実行
 		validationAttr.set(i);
-		vector<double> fitness = game->evaluate(best);
-		cerr << i << "\t" << accumulate(fitness.begin(), fitness.end(), 0.0) / (double)fitness.size() << "\t" << fitness << endl;
+		vector<double> fitness = game->evaluate(result);
+		cerr << i << "\t" << fitness << endl;
 
-		//平均の計算
+		//統計情報の収集
 		for (unsigned int k = 0; k < fitness.size(); ++k) {
-			mean[k] += fitness[k];
+			stats[k](fitness[k]);
+			if (ac::min(stats[k]) == fitness[k]) {
+				minIndex[k] = i;
+			}
 		}
 	}
 
-	//平均の計算
-	for (unsigned int i = 0; i < mean.size(); ++i) {
-		mean[i] /= validationTimes;
+	//統計情報の表示
+	cerr << "(bestIndex best mean sd) of each position:" << endl;
+	for (unsigned int i = 0; i < stats.size(); ++i) {
+		cout << minIndex[i] << "\t" << ac::min(stats[i]) << "\t" << ac::mean(stats[i]) << "\t" << sqrt((double)ac::variance(stats[i])) << "\t";
 	}
-	cout << "(mean)\t" << accumulate(mean.begin(), mean.end(), 0.0) / (double)mean.size() << "\t" << mean << endl;
+	cout << endl;
 }

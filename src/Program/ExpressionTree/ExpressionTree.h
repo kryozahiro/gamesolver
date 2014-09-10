@@ -36,15 +36,15 @@ public:
 	virtual ~ExpressionTree() = default;
 
 	//Programの実装
-	virtual Program* clone() {
+	virtual Program* clone() override {
 		return new ExpressionTree(*this);
 	}
-	virtual std::vector<double> operator()(const std::vector<double>& input);
-	virtual std::string toString() const;
+	virtual std::vector<double> operator()(const std::vector<double>& input) override;
+	virtual std::string toString() const override;
 
 	//GeneticOperableの実装
-	virtual void crossover(const std::string& method, ExpressionTree& other, std::mt19937_64& randomEngine);
-	virtual void mutation(const std::string& method, std::mt19937_64& randomEngine);
+	virtual void crossover(const std::string& method, ExpressionTree& other, std::mt19937_64& randomEngine) override;
+	virtual void mutation(const std::string& method, std::mt19937_64& randomEngine) override;
 
 	//使用するオペレータの設定
 	void addOperator(std::shared_ptr<ExpressionNode> op);

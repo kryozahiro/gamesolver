@@ -11,16 +11,16 @@
 #include "ExpressionTree.h"
 #include "../../Problem/SantaFeTrail.h"
 using namespace std;
-namespace prop = boost::property_tree;
+namespace pt = boost::property_tree;
 
 //#include <iostream>
 
-vector<shared_ptr<ExpressionTree>> ExpressionTree::generate(const ProgramType& programType, const prop::ptree& node, int size, mt19937_64& randomEngine) {
+vector<shared_ptr<ExpressionTree>> ExpressionTree::generate(const ProgramType& programType, const pt::ptree& node, int size, mt19937_64& randomEngine) {
 	int maxDepth = node.get<int>("MaxDepth");
 	ExpressionTree prototype(programType, maxDepth);
 
-	const prop::ptree& operators = node.get_child("Operators");
-	for (const prop::ptree::value_type& kvp : operators) {
+	const pt::ptree& operators = node.get_child("Operators");
+	for (const pt::ptree::value_type& kvp : operators) {
 		if (kvp.first == "Variable") {
 			prototype.addOperator(make_shared<VariableNode>());
 		} else if (kvp.first == "Add") {
