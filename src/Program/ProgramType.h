@@ -14,15 +14,17 @@
 class ProgramType : public ReadWritable {
 public:
 	ProgramType() = default;
-	ProgramType(const ParameterType& inputType, int inputLength, const ParameterType& outputType, int outputLength);
+	ProgramType(const ParameterType& inputType, int inputSize, const ParameterType& outputType, int outputSize);
 
-	virtual void read(std::istream& is);
-	virtual void write(std::ostream& os) const;
+	//ReadWritableの実装
+	virtual void read(std::istream& is) override;
+	virtual void write(std::ostream& os) const override;
 
-	const ParameterType& getInputType() const;	//入力の型
-	int getInputLength() const;					//入力の数
-	const ParameterType& getOutputType() const;	//出力の型
-	int getOutputLength() const;					//出力の数
+	//入出力型の取得
+	const ParameterType& getInputType() const;
+	int getInputSize() const;
+	const ParameterType& getOutputType() const;
+	int getOutputSize() const;
 
 	std::vector<double> clipInput(const std::vector<double>& input) const;
 	bool acceptsInput(const std::vector<double>& input) const;
@@ -32,9 +34,9 @@ public:
 
 private:
 	ParameterType inputType;
-	int inputLength = 0;
+	int inputSize = 0;
 	ParameterType outputType;
-	int outputLength = 0;
+	int outputSize = 0;
 };
 
 #endif /* PROGRAMTYPE_H_ */

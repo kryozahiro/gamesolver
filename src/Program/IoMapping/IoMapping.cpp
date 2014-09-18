@@ -16,17 +16,17 @@ IoMapping::IoMapping(const ProgramType& programType) : programType(programType) 
 	inputVariety = (inputType.getMax() - inputType.getMin() + 1) / inputType.getUnit();
 	outputVariety = (outputType.getMax() - outputType.getMin() + 1) / outputType.getUnit();
 
-	if (inputVariety == 0 or programType.getInputLength() == 0) {
+	if (inputVariety == 0 or programType.getInputSize() == 0) {
 		//無引数関数
 		inputVariety = 1;
 	}
 
 	//全ての入力の組み合わせの数
-	int domain = pow(inputVariety, programType.getInputLength());
+	int domain = pow(inputVariety, programType.getInputSize());
 	assert(0 < domain);
 	assert(domain < 10000);
 
-	mapping = vector<vector<double>>(domain, vector<double>(programType.getOutputLength(), 0));
+	mapping = vector<vector<double>>(domain, vector<double>(programType.getOutputSize(), 0));
 }
 
 vector<double> IoMapping::operator()(const vector<double>& input) {

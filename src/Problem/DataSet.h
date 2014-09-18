@@ -40,7 +40,7 @@ public:
 			const ParameterType& inputType = getProgramType().getInputType();
 			std::uniform_real_distribution<double> dist(inputType.getMin(), inputType.getMax());
 
-			std::vector<double> input(getProgramType().getInputLength());
+			std::vector<double> input(getProgramType().getInputSize());
 			std::generate(input.begin(), input.end(), [&](){
 				return dist(randomEngine);
 			});

@@ -29,7 +29,7 @@ double Regression::evaluate(Program& program) {
 		assert(getProgramType().acceptsOutput(output));
 
 		//二乗誤差を求める
-		for (int k = 0; k < getProgramType().getOutputLength(); ++k) {
+		for (int k = 0; k < getProgramType().getOutputSize(); ++k) {
 			double error = output[k] - dataSet[i].second[k];
 			//diff += error * error;
 			diff += fabs(error);

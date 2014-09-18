@@ -72,10 +72,10 @@ void Evaluator::allVsBestEvaluation(Evaluator& evaluator, std::vector<std::share
 	}
 
 	//余りの評価値には平均を設定
-	int last = solutions.size() % evaluationSize;
+	int last = solutions.size() % (evaluationSize - 1);
 	double mean = sum / (double)(solutions.size() - last);
 	for (int i = 0; i < last; ++i) {
-		(*(solutions.end() - i - 1))->setFitness(mean);
+		(*(solutions.end() - 1 - i))->setFitness(mean);
 	}
 }
 
@@ -104,7 +104,7 @@ void Evaluator::partitioningEvaluation(Evaluator& evaluator, std::vector<std::sh
 	int last = solutions.size() % evaluationSize;
 	double mean = sum / (double)(solutions.size() - last);
 	for (int i = 0; i < last; ++i) {
-		(*(solutions.end() - i - 1))->setFitness(mean);
+		(*(solutions.end() - 1 - i))->setFitness(mean);
 	}
 }
 

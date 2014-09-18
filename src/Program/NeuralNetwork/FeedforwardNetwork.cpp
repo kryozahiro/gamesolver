@@ -57,7 +57,7 @@ double FeedforwardNetwork::sigmoid(double a, double x) {
 
 FeedforwardNetwork::FeedforwardNetwork(const ProgramType& programType, int hiddenSize, function<double(double)> activation)
 		: programType(programType) {
-	int nodeSize = 1 + programType.getInputLength() + hiddenSize + programType.getOutputLength();
+	int nodeSize = 1 + programType.getInputSize() + hiddenSize + programType.getOutputSize();
 	this->adjacency = boost::container::vector<boost::container::vector<bool>>(nodeSize, boost::container::vector<bool>(nodeSize, false));
 	this->weights = vector<vector<double>>(nodeSize, vector<double>(nodeSize, 0));
 	this->activation = activation;
@@ -78,7 +78,7 @@ FeedforwardNetwork::FeedforwardNetwork(const ProgramType& programType, const boo
 
 	//行列の生成
 	int hiddenSize = node.get<int>("Hidden");
-	int nodeSize = 1 + programType.getInputLength() + hiddenSize + programType.getOutputLength();
+	int nodeSize = 1 + programType.getInputSize() + hiddenSize + programType.getOutputSize();
 	this->adjacency = boost::container::vector<boost::container::vector<bool>>(nodeSize, boost::container::vector<bool>(nodeSize, false));
 	this->weights = vector<vector<double>>(nodeSize, vector<double>(nodeSize, 0));
 	this->changeable = boost::container::vector<boost::container::vector<bool>>(nodeSize, boost::container::vector<bool>(nodeSize, false));
@@ -112,7 +112,7 @@ vector<double> FeedforwardNetwork::operator()(const vector<double>& input) {
 	for (unsigned int y = 0; y < weights.size(); ++y) {
 		if (y == 0) {
 			node[y] = 1;
-		} else if (y <= (unsigned int)programType.getInputLength()) {
+		} else if (y <= (unsigned int)programType.getInputSize()) {
 			node[y] = input[y - 1];
 		} else {
 			node[y] = activation(node[y]);
@@ -123,7 +123,7 @@ vector<double> FeedforwardNetwork::operator()(const vector<double>& input) {
 			}
 		}
 	}
-	vector<double> output(node.end() - programType.getOutputLength(), node.end());
+	vector<double> output(node.end() - programType.getOutputSize(), node.end());
 	return programType.clipOutput(output);
 }
 
@@ -173,16 +173,16 @@ int FeedforwardNetwork::getInputBegin() {
 	return 1;
 }
 int FeedforwardNetwork::getInputEnd() {
-	return 1 + programType.getInputLength();
+	return 1 + programType.getInputSize();
 }
 int FeedforwardNetwork::getHiddenBegin() {
-	return 1 + programType.getInputLength();
+	return 1 + programType.getInputSize();
 }
 int FeedforwardNetwork::getHiddenEnd() {
-	return adjacency.size() - programType.getOutputLength();
+	return adjacency.size() - programType.getOutputSize();
 }
 int FeedforwardNetwork::getOutputBegin() {
-	return adjacency.size() - programType.getOutputLength();
+	return adjacency.size() - programType.getOutputSize();
 }
 int FeedforwardNetwork::getOutputEnd() {
 	return adjacency.size();
@@ -221,9 +221,9 @@ void FeedforwardNetwork::setChangeable(int first1, int last1, int first2, int la
 void FeedforwardNetwork::insertNode(int pos, int size, bool addToBegin) {
 	assert(0 <= pos and pos <= (int)adjacency.size());
 	if (pos < getInputEnd() or (!addToBegin and pos == getInputEnd())) {
-		programType = ProgramType(programType.getInputType(), programType.getInputLength() + size, programType.getOutputType(), programType.getOutputLength());
+		programType = ProgramType(programType.getInputType(), programType.getInputSize() + size, programType.getOutputType(), programType.getOutputSize());
 	} else if ((addToBegin and pos == getHiddenEnd()) or getHiddenEnd() < pos) {
-		programType = ProgramType(programType.getInputType(), programType.getInputLength(), programType.getOutputType(), programType.getOutputLength() + size);
+		programType = ProgramType(programType.getInputType(), programType.getInputSize(), programType.getOutputType(), programType.getOutputSize() + size);
 	}
 	for (unsigned int y = 0; y < weights.size(); ++y) {
 		adjacency[y].insert(adjacency[y].begin() + pos, size, false);

@@ -15,8 +15,9 @@ public:
 	ParameterType() = default;
 	ParameterType(double minimum, double maximum, double unit);
 
-	virtual void read(std::istream& is);
-	virtual void write(std::ostream& os) const;
+	//ReadWritableの実装
+	virtual void read(std::istream& is) override;
+	virtual void write(std::ostream& os) const override;
 
 	double getMin() const;
 	double getMax() const;

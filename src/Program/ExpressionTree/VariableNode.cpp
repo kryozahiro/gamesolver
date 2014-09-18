@@ -14,7 +14,7 @@ VariableNode* VariableNode::clone() const {
 }
 
 void VariableNode::randomize(const ProgramType& programType, mt19937_64& randomEngine) {
-	uniform_int_distribution<int> dist(0, programType.getInputLength() - 1);
+	uniform_int_distribution<int> dist(0, programType.getInputSize() - 1);
 	index = dist(randomEngine);
 }
 
