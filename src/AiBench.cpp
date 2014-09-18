@@ -16,12 +16,11 @@
 #include <boost/filesystem.hpp>
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics.hpp>
-#include "AiBench.h"
 #include "Game/AverageAdaptor.h"
 #include "Game/Mushroom.h"
 #include "Game/Exchange.h"
 #include "Game/Evasion.h"
-#include "Game/TwoAgents.h"
+#include "Game/SingleFood.h"
 #include "Problem/HomoAdaptor.h"
 #include "Problem/Regression.h"
 #include "Problem/TravellingSalesman.h"
@@ -30,6 +29,7 @@
 #include "Solver/SimulatedAnnealing.h"
 #include "Util/GenericIo.h"
 #include "Util/PropertyTreeUtil.h"
+#include "AiBench.h"
 using namespace std;
 namespace po = boost::program_options;
 namespace pt = boost::property_tree;
@@ -231,9 +231,9 @@ shared_ptr<Game> AiBench::initGame(pt::ptree& gameTree) {
 		shared_ptr<Evasion> eva = make_shared<Evasion>(concreteGameTree, time(NULL));
 		game = eva;
 
-	} else if (gameName == "TwoAgents") {
-		shared_ptr<TwoAgents> ta = make_shared<TwoAgents>(concreteGameTree, time(NULL));
-		game = ta;
+	} else if (gameName == "SingleFood") {
+		shared_ptr<SingleFood> sf = make_shared<SingleFood>(concreteGameTree, time(NULL));
+		game = sf;
 
 	} else {
 		assert(false);

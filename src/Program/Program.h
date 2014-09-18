@@ -11,9 +11,10 @@
 #include <vector>
 #include <string>
 #include "ProgramType.h"
+#include "../Util/Cloneable.h"
 #include "../Util/ReadWritable.h"
 
-class Program : public ReadWritable {
+class Program : public Cloneable, public ReadWritable {
 public:
 	virtual ~Program() = default;
 
