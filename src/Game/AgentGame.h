@@ -14,6 +14,8 @@ class AgentGame : public Game {
 public:
 	AgentGame(std::pair<int, int> programSize, ProgramType programType, int maxStep);
 	virtual ~AgentGame() = default;
+
+	//Gameの実装
 	virtual std::vector<double> evaluate(std::vector<Program*>& programs) override final;
 	virtual std::string toString() const override = 0;
 

@@ -24,19 +24,23 @@ public:
 	//文字列化
 	virtual std::string toString() const = 0;
 
-	//ログの設定
-	virtual void setLogger(std::shared_ptr<boost::log::sources::logger>& logger);
-	std::shared_ptr<boost::log::sources::logger> getLogger();
-
 	//解関数の性質
 	std::pair<int, int> getProgramSize() const;
 	const ProgramType& getProgramType() const;
+
+	//ログの設定
+	void setLogger(std::shared_ptr<boost::log::sources::logger>& logger);
+	void setLoggerEnabled(bool enabled);
+
+protected:
+	std::shared_ptr<boost::log::sources::logger> getLogger();
 
 private:
 	std::pair<int, int> programSize;
 	ProgramType programType;
 
 	std::shared_ptr<boost::log::sources::logger> logger;
+	bool isLoggerEnabled = false;
 };
 
 #endif /* GAME_H_ */

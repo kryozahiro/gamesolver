@@ -18,6 +18,7 @@
 #include <boost/accumulators/statistics.hpp>
 #include "Game/AverageAdaptor.h"
 #include "Game/Mushroom.h"
+#include "Game/MultiAgentMushroom.h"
 #include "Game/Exchange.h"
 #include "Game/Evasion.h"
 #include "Game/SingleFood.h"
@@ -37,7 +38,7 @@ namespace lg = boost::log;
 namespace ac = boost::accumulators;
 namespace fs = boost::filesystem;
 
-AiBench::AiBench() : randomEngine(time(NULL)), logger(make_shared<lg::sources::logger>()) {
+AiBench::AiBench() : randomEngine(time(NULL)) {
 	lg::add_common_attributes();
 }
 
@@ -67,7 +68,7 @@ int AiBench::mainImpl(boost::program_options::variables_map& args) {
 	vector<shared_ptr<Solution>> solutions;
 	Timer timer;
 	timer.start();
-	solutions = solver->solve(*game, evaluationTimes);
+	solutions = solver->solve(*game, evaluationTimes, evaluationLoggerRange);
 	cerr << (double)timer.elapsed() / 1000.0 << " sec elapsed" << endl;
 	cerr << endl;
 
@@ -213,15 +214,12 @@ shared_ptr<Game> AiBench::initGame(pt::ptree& gameTree) {
 		game = tsp;
 
 	} else if (gameName == "Mushroom") {
-		//shared_ptr<Mushroom> mush = make_shared<Mushroom>(100, 15, 200, mushroomLanguageSize, 6, time(NULL));
-		//game = mush;
+		shared_ptr<Mushroom> mush = make_shared<Mushroom>(concreteGameTree, time(NULL));
+		game = mush;
 
-	} else if (gameName == "HomoMushroom") {
-		//100 mush, 100(10^2)pos/mush, 200(14^2)pos/vitamin-mush
-		//10 agents, 10mush/agent
-		/*shared_ptr<Mushroom> mush = make_shared<Mushroom>(100, 10, 200, mushroomLanguageSize, 6, time(NULL));
-		shared_ptr<HomoGame> homoMush = make_shared<HomoGame>(mush, 10, 10);
-		game = homoMush;*/
+	} else if (gameName == "MultiAgentMushroom") {
+		//shared_ptr<Mushroom> mm = make_shared<MultiAgentMushroom>(100, 15, 200, mushroomLanguageSize, 6, time(NULL));
+		//game = mm;
 
 	} else if (gameName == "Exchange") {
 		shared_ptr<Exchange> ex = make_shared<Exchange>(concreteGameTree, time(NULL));
@@ -238,7 +236,6 @@ shared_ptr<Game> AiBench::initGame(pt::ptree& gameTree) {
 	} else {
 		assert(false);
 	}
-	game->setLogger(logger);
 
 	cerr << "initGame: " << gameName << endl;
 	cerr << "\t" << game->getProgramType() << endl;
@@ -373,7 +370,6 @@ shared_ptr<Solver<Game>> AiBench::initSolver(pt::ptree& solverTree, pt::ptree& p
 	} else {
 		assert(false);
 	}
-	solver->setLogger(logger);
 	history = solver->getHistory();
 
 	cerr << "initSolver: " << solverName << endl;
@@ -399,13 +395,17 @@ void AiBench::initOutput(boost::property_tree::ptree& outputTree) {
 
 		} else if (target == "Evaluation" or target == "Validation" or target == "Solution" or target == "Program") {
 			pair<int, int> range = boost::lexical_cast<pair<int, int>>(series);
-			fs::path path(filename);
+			if (target == "Evaluation") {
+				evaluationLoggerRange = range;
+			}
 
 			//シンクの作成
+			fs::path path(filename);
 			for (int i = range.first; i < range.second; ++i) {
 				string numberedFilename = path.parent_path().generic_string() + string("/") + to_string(i) + path.filename().generic_string();
 				lg::add_file_log(lg::keywords::file_name = numberedFilename, lg::keywords::filter = lg::expressions::is_in_range<int>(target, i, i + 1));
 			}
+
 		} else {
 			assert(false);
 		}
@@ -414,8 +414,12 @@ void AiBench::initOutput(boost::property_tree::ptree& outputTree) {
 
 void AiBench::validate(std::vector<std::shared_ptr<Solution>>& solutions) {
 	cerr << "run\tfitness" << endl;
+
+	//ロガーの設定
+	shared_ptr<lg::sources::logger> validationLogger = make_shared<lg::sources::logger>();
 	lg::attributes::mutable_constant<int> validationAttr(0);
-	game->getLogger()->add_attribute("Validation", validationAttr);
+	validationLogger->add_attribute("Validation", validationAttr);
+	game->setLogger(validationLogger);
 
 	//各評価位置における評価値の統計情報
 	vector<ac::accumulator_set<double, ac::stats<ac::tag::min, ac::tag::mean, ac::tag::variance>>> stats(game->getProgramSize().first);

@@ -108,11 +108,21 @@ void Evaluator::partitioningEvaluation(Evaluator& evaluator, std::vector<std::sh
 	}
 }
 
-Evaluator::Evaluator(Game& game) : game(game), evaluationAttr(evaluateCount) {
-	game.getLogger()->add_attribute("Evaluation", evaluationAttr);
+Evaluator::Evaluator(Game& game, std::pair<int, int> loggerRange) :
+		game(game),
+		evaluationAttr(evaluateCount),
+		logger(make_shared<boost::log::sources::logger>()),
+		loggerRange(loggerRange) {
+	logger->add_attribute("Evaluation", evaluationAttr);
+	game.setLogger(logger);
 }
 
 std::vector<double> Evaluator::operator()(std::vector<Program*>& programs) {
+	if (loggerRange.first <= evaluateCount and evaluateCount < loggerRange.second) {
+		game.setLoggerEnabled(true);
+	} else {
+		game.setLoggerEnabled(false);
+	}
 	const std::vector<double> fitness = game.evaluate(programs);
 	++evaluateCount;
 	evaluationAttr.set(evaluateCount);

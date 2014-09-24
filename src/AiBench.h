@@ -9,7 +9,6 @@
 #define AIBENCH_H_
 
 #include <boost/property_tree/ptree.hpp>
-#include <boost/log/sources/logger.hpp>
 #include "Util/Application.h"
 #include "Program/IoMapping/GrayCodeMapping.h"
 #include "Program/ExpressionTree/ExpressionTree.h"
@@ -39,9 +38,9 @@ private:
 	//その他の実験用オブジェクト
 	std::mt19937_64 randomEngine;
 	std::shared_ptr<SolutionHistory> history;
-	std::shared_ptr<boost::log::sources::logger> logger;
 	std::string relationFile;
 	int validationTimes = 10;
+	std::pair<int, int> evaluationLoggerRange;
 
 	//実験設定の読み込み
 	void initExperiment(boost::program_options::variables_map& args);
