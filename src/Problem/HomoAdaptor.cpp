@@ -20,6 +20,16 @@ string HomoAdaptor::toString() const {
 	return game->toString();
 }
 
+void HomoAdaptor::setLogger(std::shared_ptr<boost::log::sources::logger>& logger) {
+	Game::setLogger(logger);
+	game->setLogger(logger);
+}
+
+void HomoAdaptor::setLoggerEnabled(bool enabled) {
+	Game::setLoggerEnabled(enabled);
+	game->setLoggerEnabled(enabled);
+}
+
 double HomoAdaptor::evaluate(Program& program) {
 	vector<Program*> programs(programSize, &program);
 	const vector<double>& fitness = game->evaluate(programs);

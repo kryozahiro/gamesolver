@@ -29,8 +29,8 @@ public:
 	const ProgramType& getProgramType() const;
 
 	//ログの設定
-	void setLogger(std::shared_ptr<boost::log::sources::logger>& logger);
-	void setLoggerEnabled(bool enabled);
+	virtual void setLogger(std::shared_ptr<boost::log::sources::logger>& logger);
+	virtual void setLoggerEnabled(bool enabled);
 
 protected:
 	std::shared_ptr<boost::log::sources::logger> getLogger();

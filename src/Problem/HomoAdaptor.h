@@ -17,6 +17,8 @@ public:
 
 	//Gameの実装
 	virtual std::string toString() const override;
+	virtual void setLogger(std::shared_ptr<boost::log::sources::logger>& logger) override;
+	virtual void setLoggerEnabled(bool enabled) override;
 
 	//Problemの実装
 	virtual double evaluate(Program& program) override;

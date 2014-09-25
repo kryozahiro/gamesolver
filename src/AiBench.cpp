@@ -420,6 +420,7 @@ void AiBench::validate(std::vector<std::shared_ptr<Solution>>& solutions) {
 	lg::attributes::mutable_constant<int> validationAttr(0);
 	validationLogger->add_attribute("Validation", validationAttr);
 	game->setLogger(validationLogger);
+	game->setLoggerEnabled(true);
 
 	//各評価位置における評価値の統計情報
 	vector<ac::accumulator_set<double, ac::stats<ac::tag::min, ac::tag::mean, ac::tag::variance>>> stats(game->getProgramSize().first);
