@@ -177,14 +177,16 @@ shared_ptr<Game> AiBench::initGame(pt::ptree& gameTree) {
 	shared_ptr<Game> game;
 	if (gameName == "AverageAdaptor") {
 		//平均化
-		pt::ptree implGame = concreteGameTree.get_child("Game");
-		shared_ptr<AverageAdaptor> ave = make_shared<AverageAdaptor>(initGame(implGame), 2);
+		pt::ptree implGameTree = concreteGameTree.get_child("Game");
+		shared_ptr<Game> implGame = initGame(implGameTree);
+		shared_ptr<AverageAdaptor> ave = make_shared<AverageAdaptor>(implGame, 2);
 		game = ave;
 
 	} else if (gameName == "HomoAdaptor") {
 		//均質化
-		pt::ptree implGame = concreteGameTree.get_child("Game");
-		shared_ptr<HomoAdaptor> homo = make_shared<HomoAdaptor>(initGame(implGame), 2);
+		pt::ptree implGameTree = concreteGameTree.get_child("Game");
+		shared_ptr<Game> implGame = initGame(implGameTree);
+		shared_ptr<HomoAdaptor> homo = make_shared<HomoAdaptor>(implGame, implGame->getProgramSize().first);
 		game = homo;
 
 	} else if (gameName == "Regression") {
@@ -218,8 +220,8 @@ shared_ptr<Game> AiBench::initGame(pt::ptree& gameTree) {
 		game = mush;
 
 	} else if (gameName == "MultiAgentMushroom") {
-		//shared_ptr<Mushroom> mm = make_shared<MultiAgentMushroom>(100, 15, 200, mushroomLanguageSize, 6, time(NULL));
-		//game = mm;
+		shared_ptr<MultiAgentMushroom> mm = make_shared<MultiAgentMushroom>(concreteGameTree, time(NULL));
+		game = mm;
 
 	} else if (gameName == "Exchange") {
 		shared_ptr<Exchange> ex = make_shared<Exchange>(concreteGameTree, time(NULL));
@@ -415,27 +417,21 @@ void AiBench::initOutput(boost::property_tree::ptree& outputTree) {
 void AiBench::validate(std::vector<std::shared_ptr<Solution>>& solutions) {
 	cerr << "run\tfitness" << endl;
 
-	//ロガーの設定
-	shared_ptr<lg::sources::logger> validationLogger = make_shared<lg::sources::logger>();
-	lg::attributes::mutable_constant<int> validationAttr(0);
-	validationLogger->add_attribute("Validation", validationAttr);
-	game->setLogger(validationLogger);
-	game->setLoggerEnabled(true);
+	Evaluator evaluator(*game, "Validation", pair<int, int>(0, validationTimes));
 
 	//各評価位置における評価値の統計情報
 	vector<ac::accumulator_set<double, ac::stats<ac::tag::min, ac::tag::mean, ac::tag::variance>>> stats(game->getProgramSize().first);
-	vector<int> minIndex(game->getProgramSize().first);
+	vector<int> minIndex(evaluator.getProgramSize().first);
 
 	for (int i = 0; i < validationTimes; ++i) {
 		//プログラムの選択
-		vector<Program*> result(game->getProgramSize().first);
+		vector<Program*> result(evaluator.getProgramSize().first);
 		for (unsigned int k = 0; k < result.size(); ++k) {
 			result[k] = &*(solutions[k]->getProgram());
 		}
 
 		//評価の実行
-		validationAttr.set(i);
-		vector<double> fitness = game->evaluate(result);
+		vector<double> fitness = evaluator(result);
 		cerr << i << "\t" << fitness << endl;
 
 		//統計情報の収集

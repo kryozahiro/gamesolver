@@ -108,12 +108,12 @@ void Evaluator::partitioningEvaluation(Evaluator& evaluator, std::vector<std::sh
 	}
 }
 
-Evaluator::Evaluator(Game& game, std::pair<int, int> loggerRange) :
+Evaluator::Evaluator(Game& game, std::string loggerName, std::pair<int, int> loggerRange) :
 		game(game),
-		evaluationAttr(evaluateCount),
 		logger(make_shared<boost::log::sources::logger>()),
+		evaluationAttr(evaluateCount),
 		loggerRange(loggerRange) {
-	logger->add_attribute("Evaluation", evaluationAttr);
+	logger->add_attribute(loggerName, evaluationAttr);
 	game.setLogger(logger);
 }
 

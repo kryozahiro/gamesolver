@@ -297,11 +297,15 @@ private:
 			std::shared_ptr<ConcreteGeneticOperableProgram> geno2 = std::dynamic_pointer_cast<ConcreteGeneticOperableProgram>(child2->getProgram());
 
 			//交叉
-			geno1->crossover(crossover, *geno2, randomEngine);
+			if (crossover != "None") {
+				geno1->crossover(crossover, *geno2, randomEngine);
+			}
 
 			//変異
-			geno1->mutation(mutation, randomEngine);
-			geno2->mutation(mutation, randomEngine);
+			if (mutation != "None") {
+				geno1->mutation(mutation, randomEngine);
+				geno2->mutation(mutation, randomEngine);
+			}
 
 			offspring.push_back(child1);
 			offspring.push_back(child2);

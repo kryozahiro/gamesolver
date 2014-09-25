@@ -18,7 +18,7 @@ public:
 
 	//与えられた評価回数に到達するまで最適化する
 	std::vector<std::shared_ptr<Solution>> solve(GameCategory& game, int evaluateNum, std::pair<int, int> loggerRange) {
-		evaluator = std::make_shared<Evaluator>(game, loggerRange);
+		evaluator = std::make_shared<Evaluator>(game, "Evaluation", loggerRange);
 		history->start();
 		return solveImpl(*evaluator, evaluateNum);
 	}
