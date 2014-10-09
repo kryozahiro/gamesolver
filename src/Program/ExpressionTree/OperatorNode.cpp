@@ -28,24 +28,10 @@ const OperatorNode OperatorNode::MOD = OperatorNode::fromBinaryOperator("%", [](
 const OperatorNode OperatorNode::POW = OperatorNode::fromBinaryOperator("^", [](double lhs, double rhs) {
 	return pow(lhs, rhs);
 });
-const OperatorNode OperatorNode::CONCAT = OperatorNode::fromVectoredBinaryOperator("concat", [](const vector<double>& lhs, const vector<double>& rhs) {
-	vector<double> concat(lhs);
-	concat.insert(concat.end(), rhs.begin(), rhs.end());
-	return concat;
-});
 
 OperatorNode OperatorNode::fromBinaryOperator(std::string name, std::function<double(double, double)> binaryOperator) {
-	return OperatorNode::fromVectoredBinaryOperator(name, [=](const vector<double>& lhs, const vector<double>& rhs) {
-		assert(lhs.size() == rhs.size());
-		vector<double> sum(lhs.size());
-		transform(lhs.begin(), lhs.end(), rhs.begin(), sum.begin(), binaryOperator);
-		return sum;
-	});
-}
-
-OperatorNode OperatorNode::fromVectoredBinaryOperator(string name, function<vector<double>(const vector<double>&, const vector<double>&)> vectoredBinaryOperator) {
 	return OperatorNode(name, 2, [=](const vector<double>& input, vector<shared_ptr<ExpressionNode>>& children) {
-		return vectoredBinaryOperator(children[0]->operator()(input), children[1]->operator()(input));
+		return binaryOperator(children[0]->operator()(input), children[1]->operator()(input));
 	});
 }
 
@@ -62,7 +48,7 @@ OperatorNode* OperatorNode::clone() const {
 void OperatorNode::randomize(const ProgramType& programType, mt19937_64& randomEngine) {
 }
 
-vector<double> OperatorNode::operator()(const vector<double>& input) {
+double OperatorNode::operator()(const vector<double>& input) {
 	assert((unsigned int)getArity() == children.size());
 	return op(input, children);
 }

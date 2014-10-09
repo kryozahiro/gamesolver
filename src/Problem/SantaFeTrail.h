@@ -16,6 +16,7 @@ public:
 	static const OperatorNode IF_FOOD_AHEAD, PROGN2, PROGN3, MOVE, LEFT, RIGHT;
 
 	static std::shared_ptr<SantaFeTrail> getRegular();
+	static std::vector<double>& getAction();
 
 	//アクションの表現に使用する字句
 	enum class Token {

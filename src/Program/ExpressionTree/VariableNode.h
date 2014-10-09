@@ -12,14 +12,14 @@
 
 class VariableNode : public ExpressionNode {
 public:
-	~VariableNode() noexcept {};
+	virtual ~VariableNode() = default;
 
-	VariableNode* clone() const;
-	void randomize(const ProgramType& programType, std::mt19937_64& randomEngine);
-
-	std::vector<double> operator()(const std::vector<double>& input);
-	int getArity() const;
-	std::string getName() const;
+	//ExpressionNodeの実装
+	VariableNode* clone() const override;
+	void randomize(const ProgramType& programType, std::mt19937_64& randomEngine) override;
+	double operator()(const std::vector<double>& input) override;
+	int getArity() const override;
+	std::string getName() const override;
 
 private:
 	int index = 0;

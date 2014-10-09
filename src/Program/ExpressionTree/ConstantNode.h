@@ -13,14 +13,14 @@
 class ConstantNode : public ExpressionNode {
 public:
 	ConstantNode(std::pair<double, double> minmax);
-	~ConstantNode() noexcept {};
+	virtual ~ConstantNode() = default;
 
-	ConstantNode* clone() const;
-	void randomize(const ProgramType& programType, std::mt19937_64& randomEngine);
-
-	std::vector<double> operator()(const std::vector<double>& input);
-	int getArity() const;
-	std::string getName() const;
+	//ExpressionNodeの実装
+	ConstantNode* clone() const override;
+	void randomize(const ProgramType& programType, std::mt19937_64& randomEngine) override;
+	double operator()(const std::vector<double>& input) override;
+	int getArity() const override;
+	std::string getName() const override;
 
 private:
 	std::pair<double, double> minmax;

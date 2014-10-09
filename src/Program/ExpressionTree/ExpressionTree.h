@@ -26,8 +26,8 @@ public:
 	static std::vector<std::shared_ptr<ExpressionTree>> rampedHalfAndHalf(const ExpressionTree& prototype, int size, int maxDepth, std::mt19937_64& randomEngine);
 
 	//GeneticOperableの実装
-	static void crossover(ExpressionTree& parent1, ExpressionTree& parent2, std::mt19937_64& randomEngine);
-	static void mutation(ExpressionTree& solution, std::mt19937_64& randomEngine);
+	static void normalCrossover(ExpressionTree& parent1, ExpressionTree& parent2, int rootIndex, std::mt19937_64& randomEngine);
+	static void normalMutation(ExpressionTree& solution, int rootIndex, std::mt19937_64& randomEngine);
 
 	//コンストラクタ
 	//maxDepth: 葉までの最長パスの長さ
@@ -64,7 +64,7 @@ private:
 	int maxDepth = 10;
 
 	//式木
-	std::shared_ptr<ExpressionNode> root;
+	std::vector<std::shared_ptr<ExpressionNode>> roots;
 
 	//使用するオペレータのリスト
 	std::vector<std::shared_ptr<ExpressionNode>> nonterminals;

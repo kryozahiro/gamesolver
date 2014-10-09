@@ -23,8 +23,8 @@ void ConstantNode::randomize(const ProgramType& programType, mt19937_64& randomE
 	constant = dist(randomEngine);
 }
 
-vector<double> ConstantNode::operator()(const vector<double>& input) {
-	return vector<double>(1, constant);
+double ConstantNode::operator()(const vector<double>& input) {
+	return constant;
 }
 
 int ConstantNode::getArity() const {

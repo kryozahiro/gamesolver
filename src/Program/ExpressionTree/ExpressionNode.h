@@ -28,7 +28,7 @@ public:
 	virtual void randomize(const ProgramType& programType, std::mt19937_64& randomEngine) = 0;
 
 	//個別の計算を行う
-	virtual std::vector<double> operator()(const std::vector<double>& input) = 0;
+	virtual double operator()(const std::vector<double>& input) = 0;
 	virtual int getArity() const = 0;
 	virtual std::string getName() const = 0;
 

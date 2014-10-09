@@ -18,8 +18,8 @@ void VariableNode::randomize(const ProgramType& programType, mt19937_64& randomE
 	index = dist(randomEngine);
 }
 
-vector<double> VariableNode::operator()(const vector<double>& input) {
-	return vector<double>(1, input[index]);
+double VariableNode::operator()(const vector<double>& input) {
+	return input[index];
 }
 
 int VariableNode::getArity() const {

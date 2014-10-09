@@ -12,28 +12,35 @@
 using namespace std;
 
 const OperatorNode SantaFeTrail::IF_FOOD_AHEAD = OperatorNode("IF_FOOD_AHEAD", 2, [](vector<double> input, vector<shared_ptr<ExpressionNode>>& children) {
-	input.push_back(static_cast<double>(Token::TOKEN_IF_FOOD_AHEAD));
-	return children[1]->operator()(children[0]->operator()(input));
+	SantaFeTrail::getAction().push_back(static_cast<double>(Token::TOKEN_IF_FOOD_AHEAD));
+	children[0]->operator()(input);
+	children[1]->operator()(input);
+	return 0;
 });
 const OperatorNode SantaFeTrail::PROGN2 = OperatorNode("PROGN2", 2, [](vector<double> input, vector<shared_ptr<ExpressionNode>>& children) {
-	input.push_back(static_cast<double>(Token::TOKEN_PROGN2));
-	return children[1]->operator()(children[0]->operator()(input));
+	SantaFeTrail::getAction().push_back(static_cast<double>(Token::TOKEN_PROGN2));
+	children[0]->operator()(input);
+	children[1]->operator()(input);
+	return 0;
 });
 const OperatorNode SantaFeTrail::PROGN3 = OperatorNode("PROGN3", 3, [](vector<double> input, vector<shared_ptr<ExpressionNode>>& children) {
-	input.push_back(static_cast<double>(Token::TOKEN_PROGN3));
-	return children[2]->operator()(children[1]->operator()(children[0]->operator()(input)));
+	SantaFeTrail::getAction().push_back(static_cast<double>(Token::TOKEN_PROGN3));
+	children[0]->operator()(input);
+	children[1]->operator()(input);
+	children[2]->operator()(input);
+	return 0;
 });
 const OperatorNode SantaFeTrail::MOVE = OperatorNode("MOVE", 0, [](vector<double> input, vector<shared_ptr<ExpressionNode>>& children) {
-	input.push_back(static_cast<double>(Token::TOKEN_MOVE));
-	return input;
+	SantaFeTrail::getAction().push_back(static_cast<double>(Token::TOKEN_MOVE));
+	return 0;
 });
 const OperatorNode SantaFeTrail::LEFT = OperatorNode("LEFT", 0, [](vector<double> input, vector<shared_ptr<ExpressionNode>>& children) {
-	input.push_back(static_cast<double>(Token::TOKEN_LEFT));
-	return input;
+	SantaFeTrail::getAction().push_back(static_cast<double>(Token::TOKEN_LEFT));
+	return 0;
 });
 const OperatorNode SantaFeTrail::RIGHT = OperatorNode("RIGHT", 0, [](vector<double> input, vector<shared_ptr<ExpressionNode>>& children) {
-	input.push_back(static_cast<double>(Token::TOKEN_RIGHT));
-	return input;
+	SantaFeTrail::getAction().push_back(static_cast<double>(Token::TOKEN_RIGHT));
+	return 0;
 });
 
 shared_ptr<SantaFeTrail> SantaFeTrail::getRegular() {
@@ -77,8 +84,13 @@ shared_ptr<SantaFeTrail> SantaFeTrail::getRegular() {
 	return sft;
 }
 
+vector<double>& SantaFeTrail::getAction() {
+	static vector<double> action;
+	return action;
+}
+
 SantaFeTrail::SantaFeTrail(int width, int height, int maxStep) :
-		Problem(ProgramType(ParameterType(0, 0, 1), 0, ParameterType(0, 5, 1), 100)),
+		Problem(ProgramType(ParameterType(0, 0, 1), 0, ParameterType(0, 0, 1), 1)),
 		maxStep(maxStep), width(width), height(height) {
 }
 
@@ -88,7 +100,9 @@ double SantaFeTrail::evaluate(Program& program) {
 	step = 0;
 	simField = field;
 
-	vector<double> action = program(vector<double>());
+	getAction() = vector<double>();
+	program(vector<double>());
+	vector<double> action = getAction();
 	while (step < maxStep) {
 		double prevStep = step;
 		evaluateAction(action);

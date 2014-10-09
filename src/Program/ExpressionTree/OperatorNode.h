@@ -13,22 +13,19 @@
 
 class OperatorNode : public ExpressionNode {
 public:
-	static const OperatorNode ADD, SUB, MUL, DIV, MOD;
-	static const OperatorNode POW;
-	static const OperatorNode CONCAT;
+	static const OperatorNode ADD, SUB, MUL, DIV, MOD, POW;
 	static OperatorNode fromBinaryOperator(std::string name, std::function<double(double, double)> binaryOperator);
-	static OperatorNode fromVectoredBinaryOperator(std::string name, std::function<std::vector<double>(const std::vector<double>&, const std::vector<double>&)> vectoredBinaryOperator);
 
-	using Op = std::function<std::vector<double>(const std::vector<double>&, std::vector<std::shared_ptr<ExpressionNode>>&)>;
+	using Op = std::function<double(const std::vector<double>&, std::vector<std::shared_ptr<ExpressionNode>>&)>;
 	OperatorNode(std::string name, int arity, Op op);
-	~OperatorNode() noexcept {};
+	virtual ~OperatorNode() = default;
 
-	OperatorNode* clone() const;
-	void randomize(const ProgramType& programType, std::mt19937_64& randomEngine);
-
-	std::vector<double> operator()(const std::vector<double>& input);
-	int getArity() const;
-	std::string getName() const;
+	//ExpressionNodeの実装
+	OperatorNode* clone() const override;
+	void randomize(const ProgramType& programType, std::mt19937_64& randomEngine) override;
+	double operator()(const std::vector<double>& input) override;
+	int getArity() const override;
+	std::string getName() const override;
 
 private:
 	std::string name;
