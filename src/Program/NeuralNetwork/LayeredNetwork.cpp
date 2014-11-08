@@ -7,7 +7,7 @@
 
 #include <cassert>
 #include <algorithm>
-#include "../../Util/Scale.h"
+#include "CppUtil/Scale.h"
 #include "LayeredNetwork.h"
 using namespace std;
 
@@ -58,7 +58,7 @@ vector<double> LayeredNetwork::operator()(const vector<double>& input) {
 	}
 
 	const ParameterType& outputType = programType.getOutputType();
-	transform(buf.begin(), buf.end(), buf.begin(), Scale::linearScaler(pair<double, double>(0, 1), pair<double, double>(outputType.getMin(), outputType.getMax())));
+	transform(buf.begin(), buf.end(), buf.begin(), cpputil::linearScaler(pair<double, double>(0, 1), pair<double, double>(outputType.getMin(), outputType.getMax())));
 	return programType.clipOutput(buf);
 }
 

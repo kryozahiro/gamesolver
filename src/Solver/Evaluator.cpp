@@ -6,7 +6,7 @@
  */
 
 #include "Evaluator.h"
-#include "../Util/AlgorithmUtil.h"
+#include "CppUtil/AlgorithmUtil.h"
 using namespace std;
 
 void Evaluator::problemEvaluation(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory, std::mt19937_64& randomEngine) {
@@ -37,7 +37,7 @@ void Evaluator::allVsAllEvaluation(Evaluator& evaluator, std::vector<std::shared
 		for (int i = 0; i < evaluationSize; ++i) {
 			fitness[combination[i]] += combFitness[i];
 		}
-	} while (AlgorithmUtil::next_combination(combination.begin(), combination.begin() + evaluationSize, combination.end()));
+	} while (cpputil::next_combination(combination.begin(), combination.begin() + evaluationSize, combination.end()));
 
 	//合計を適応度に設定
 	for (unsigned int i = 0; i < fitness.size(); ++i) {

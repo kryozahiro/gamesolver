@@ -9,14 +9,14 @@
 #define AIBENCH_H_
 
 #include <boost/property_tree/ptree.hpp>
-#include "Util/Application.h"
+#include "CppUtil/Application.h"
 #include "Program/IoMapping/GrayCodeMapping.h"
 #include "Program/ExpressionTree/ExpressionTree.h"
 #include "Program/NeuralNetwork/LayeredNetwork.h"
 #include "Program/NeuralNetwork/FeedforwardNetwork.h"
 #include "Solver/Solver.h"
 
-class AiBench : public Application<AiBench> {
+class AiBench : public cpputil::Application<AiBench> {
 protected:
 	AiBench();
 	virtual ~AiBench() = default;

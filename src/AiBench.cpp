@@ -19,17 +19,19 @@
 #include "Game/AverageAdaptor.h"
 #include "Game/Mushroom.h"
 #include "Game/MultiAgentMushroom.h"
+#include "Game/SyntacticMushroom.h"
 #include "Game/Exchange.h"
 #include "Game/Evasion.h"
 #include "Game/SingleFood.h"
+#include "Game/TimeSeries.h"
 #include "Problem/HomoAdaptor.h"
 #include "Problem/Regression.h"
 #include "Problem/TravellingSalesman.h"
 #include "Problem/SantaFeTrail.h"
 #include "Solver/GeneticAlgorithm.h"
 #include "Solver/SimulatedAnnealing.h"
-#include "Util/GenericIo.h"
-#include "Util/PropertyTreeUtil.h"
+#include "CppUtil/GenericIo.h"
+#include "CppUtil/PropertyTreeUtil.h"
 #include "AiBench.h"
 using namespace std;
 namespace po = boost::program_options;
@@ -66,7 +68,7 @@ int AiBench::mainImpl(boost::program_options::variables_map& args) {
 	//探索の実行
 	cerr << "Solve: ";
 	vector<shared_ptr<Solution>> solutions;
-	Timer timer;
+	cpputil::Timer timer;
 	timer.start();
 	solutions = solver->solve(*game, evaluationTimes, evaluationLoggerRange);
 	cerr << (double)timer.elapsed() / 1000.0 << " sec elapsed" << endl;
@@ -102,7 +104,7 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 	//<Experiment>ノードの取得
 	pt::ptree experiment;
 	if (args["experiment"].as<string>() != "") {
-		experiment = PropertyTreeUtil::search(config, "<xmlattr>.name", args["experiment"].as<string>());
+		experiment = cpputil::search(config, "<xmlattr>.name", args["experiment"].as<string>());
 	} else {
 		experiment = config.get_child("Experiment");
 	}
@@ -134,7 +136,7 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 	//ゲーム
 	pt::ptree gameTree;
 	if (args["game"].as<string>() != "") {
-		gameTree = PropertyTreeUtil::search(config, "<xmlattr>.name", args["game"].as<string>());
+		gameTree = cpputil::search(config, "<xmlattr>.name", args["game"].as<string>());
 	} else {
 		gameTree = experiment.get_child("Game");
 	}
@@ -143,7 +145,7 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 	//プログラム
 	pt::ptree programTree;
 	if (args["program"].as<string>() != "") {
-		programTree = PropertyTreeUtil::search(config, "<xmlattr>.name", args["program"].as<string>());
+		programTree = cpputil::search(config, "<xmlattr>.name", args["program"].as<string>());
 	} else {
 		programTree = experiment.get_child("Program");
 	}
@@ -152,7 +154,7 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 	//ソルバー
 	pt::ptree solverTree;
 	if (args["solver"].as<string>() != "") {
-		solverTree = PropertyTreeUtil::search(config, "<xmlattr>.name", args["solver"].as<string>());
+		solverTree = cpputil::search(config, "<xmlattr>.name", args["solver"].as<string>());
 	} else {
 		solverTree = experiment.get_child("Solver");
 	}
@@ -161,7 +163,7 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 	//出力
 	pt::ptree outputTree;
 	if (args["output"].as<string>() != "") {
-		outputTree = PropertyTreeUtil::search(config, "<xmlattr>.name", args["output"].as<string>());
+		outputTree = cpputil::search(config, "<xmlattr>.name", args["output"].as<string>());
 	} else {
 		outputTree = experiment.get_child("Output");
 	}
@@ -169,7 +171,7 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 }
 
 shared_ptr<Game> AiBench::initGame(pt::ptree& gameTree) {
-	gameTree = PropertyTreeUtil::solveReference(config, gameTree);
+	gameTree = cpputil::solveReference(config, gameTree);
 	gameTree.sort();
 	string gameName = gameTree.rbegin()->first;
 	pt::ptree concreteGameTree = gameTree.rbegin()->second;
@@ -223,6 +225,10 @@ shared_ptr<Game> AiBench::initGame(pt::ptree& gameTree) {
 		shared_ptr<MultiAgentMushroom> mm = make_shared<MultiAgentMushroom>(concreteGameTree, time(NULL));
 		game = mm;
 
+	} else if (gameName == "SyntacticMushroom") {
+		shared_ptr<SyntacticMushroom> sm = make_shared<SyntacticMushroom>(concreteGameTree, time(NULL));
+		game = sm;
+
 	} else if (gameName == "Exchange") {
 		shared_ptr<Exchange> ex = make_shared<Exchange>(concreteGameTree, time(NULL));
 		game = ex;
@@ -234,6 +240,10 @@ shared_ptr<Game> AiBench::initGame(pt::ptree& gameTree) {
 	} else if (gameName == "SingleFood") {
 		shared_ptr<SingleFood> sf = make_shared<SingleFood>(concreteGameTree, time(NULL));
 		game = sf;
+
+	} else if (gameName == "TimeSeries") {
+		shared_ptr<TimeSeries> ts = make_shared<TimeSeries>(concreteGameTree, time(NULL));
+		game = ts;
 
 	} else {
 		assert(false);
@@ -251,7 +261,7 @@ vector<shared_ptr<Program>> AiBench::initPrograms(pt::ptree& programTree, shared
 		return readPrograms(*game, gameType, programType, ifs);
 	}*/
 
-	programTree = PropertyTreeUtil::solveReference(config, programTree);
+	programTree = cpputil::solveReference(config, programTree);
 	programTree.sort();
 	string programName = programTree.rbegin()->first;
 	pt::ptree concreteProgramTree = programTree.rbegin()->second;
@@ -339,7 +349,7 @@ vector<shared_ptr<Program>> AiBench::initPrograms(pt::ptree& programTree, shared
 }*/
 
 shared_ptr<Solver<Game>> AiBench::initSolver(pt::ptree& solverTree, pt::ptree& programTree) {
-	solverTree = PropertyTreeUtil::solveReference(config, solverTree);
+	solverTree = cpputil::solveReference(config, solverTree);
 	solverTree.sort();
 	string solverName = solverTree.rbegin()->first;
 	pt::ptree concreteSolverTree = solverTree.rbegin()->second;
@@ -379,7 +389,7 @@ shared_ptr<Solver<Game>> AiBench::initSolver(pt::ptree& solverTree, pt::ptree& p
 }
 
 void AiBench::initOutput(boost::property_tree::ptree& outputTree) {
-	outputTree = PropertyTreeUtil::solveReference(config, outputTree);
+	outputTree = cpputil::solveReference(config, outputTree);
 
 	for (const pt::ptree::value_type& kvp : outputTree) {
 		if (kvp.first == "<xmlattr>") {

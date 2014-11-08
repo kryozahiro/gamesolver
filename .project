@@ -3,6 +3,7 @@
 	<name>AiBench</name>
 	<comment></comment>
 	<projects>
+		<project>CppUtil</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -12,7 +12,7 @@
 #include <boost/log/sources/logger.hpp>
 #include <boost/log/attributes/mutable_constant.hpp>
 #include "Solution.h"
-#include "../Util/Timer.h"
+#include "CppUtil/Timer.h"
 
 class SolutionHistory {
 public:
@@ -27,7 +27,7 @@ public:
 private:
 	static bool lessThanGeneration(const std::shared_ptr<Solution>& lhs, const std::shared_ptr<Solution>& rhs);
 	static bool lessThanFitness(const std::shared_ptr<Solution>& lhs, const std::shared_ptr<Solution>& rhs);
-	Timer timer;
+	cpputil::Timer timer;
 
 	//解の記録
 	typedef std::vector<std::shared_ptr<Solution>> Generation;

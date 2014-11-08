@@ -28,11 +28,13 @@ public:
 	std::pair<int, int> getProgramSize() const;
 	const ProgramType& getProgramType() const;
 
-	//ログの設定
+	//ロガーの設定
 	virtual void setLogger(std::shared_ptr<boost::log::sources::logger>& logger);
 	virtual void setLoggerEnabled(bool enabled);
 
 protected:
+	//ロガーの取得
+	bool isLoggerEnabled() const;
 	std::shared_ptr<boost::log::sources::logger> getLogger();
 
 private:
@@ -40,7 +42,7 @@ private:
 	ProgramType programType;
 
 	std::shared_ptr<boost::log::sources::logger> logger;
-	bool isLoggerEnabled = false;
+	bool loggerEnabled = false;
 };
 
 #endif /* GAME_H_ */

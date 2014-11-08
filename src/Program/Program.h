@@ -11,10 +11,10 @@
 #include <vector>
 #include <string>
 #include "ProgramType.h"
-#include "../Util/Cloneable.h"
-#include "../Util/ReadWritable.h"
+#include "CppUtil/Cloneable.h"
+#include "CppUtil/ReadWritable.h"
 
-class Program : public Cloneable, public ReadWritable {
+class Program : public cpputil::Cloneable, public cpputil::ReadWritable {
 public:
 	virtual ~Program() = default;
 

@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <random>
 #include <boost/property_tree/ptree.hpp>
-#include "../Util/Scale.h"
+#include "CppUtil/Scale.h"
 #include "Solver.h"
 #include "GeneticOperable.h"
 
@@ -148,7 +148,7 @@ public:
 		if (max == mean) {
 			return;
 		}
-		std::function<double(double)> scaler = Scale::linearScaler(mean, max, scale);
+		std::function<double(double)> scaler = cpputil::linearScaler(mean, max, scale);
 	}
 	static void sigmaScaling(std::vector<double>& weights) {
 		double scale = 2;
@@ -160,7 +160,7 @@ public:
 		sd = sqrt(sd);
 
 		//変換
-		std::function<double(double)> scaler = Scale::simgaScaler(mean, sd, scale);
+		std::function<double(double)> scaler = cpputil::simgaScaler(mean, sd, scale);
 	}
 
 	//ルーレット選択

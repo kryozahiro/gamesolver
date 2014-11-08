@@ -11,10 +11,11 @@
 #include <vector>
 #include "ParameterType.h"
 
-class ProgramType : public ReadWritable {
+class ProgramType : public cpputil::ReadWritable {
 public:
 	ProgramType() = default;
 	ProgramType(const ParameterType& inputType, int inputSize, const ParameterType& outputType, int outputSize);
+	virtual ~ProgramType() = default;
 
 	//ReadWritableの実装
 	virtual void read(std::istream& is) override;

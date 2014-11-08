@@ -8,12 +8,13 @@
 #ifndef PARAMETERTYPE_H_
 #define PARAMETERTYPE_H_
 
-#include "../Util/ReadWritable.h"
+#include "CppUtil/ReadWritable.h"
 
-class ParameterType : public ReadWritable {
+class ParameterType : public cpputil::ReadWritable {
 public:
 	ParameterType() = default;
 	ParameterType(double minimum, double maximum, double unit);
+	virtual ~ParameterType() = default;
 
 	//ReadWritableの実装
 	virtual void read(std::istream& is) override;

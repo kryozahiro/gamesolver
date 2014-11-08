@@ -25,13 +25,22 @@ void Game::setLogger(std::shared_ptr<boost::log::sources::logger>& logger) {
 }
 
 void Game::setLoggerEnabled(bool enabled) {
-	isLoggerEnabled = enabled;
+	if (!logger and enabled) {
+		assert(false);
+		return;
+	}
+	loggerEnabled = enabled;
+}
+
+bool Game::isLoggerEnabled() const {
+	return loggerEnabled;
 }
 
 std::shared_ptr<boost::log::sources::logger> Game::getLogger() {
-	if (isLoggerEnabled) {
+	if (loggerEnabled) {
 		return logger;
 	} else {
+		assert(false);
 		return nullptr;
 	}
 }
