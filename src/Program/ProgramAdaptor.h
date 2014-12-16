@@ -22,7 +22,7 @@ public:
 	//ProgramAdaptor(const ProgramType& externalType, Adaptor inputAdaptor, std::shared_ptr<Program> program, Adaptor outputAdaptor);
 	virtual ~ProgramAdaptor() = default;
 
-	virtual Program* clone();
+	virtual Program* clone() override;
 	virtual std::vector<double> operator()(const std::vector<double>& input);
 	virtual std::string toString() const;
 

@@ -16,6 +16,7 @@ public:
 	virtual ~AverageAdaptor() = default;
 
 	//Gameの実装
+	CPPUTIL_CLONEABLE;
 	virtual std::vector<double> evaluate(std::vector<Program*>& programs) override;
 	virtual std::string toString() const override;
 

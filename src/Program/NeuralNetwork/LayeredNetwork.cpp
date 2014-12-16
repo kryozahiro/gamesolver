@@ -44,11 +44,6 @@ LayeredNetwork::LayeredNetwork(const LayeredNetwork& net) : programType(net.prog
 	}
 }
 
-Program* LayeredNetwork::clone() {
-	LayeredNetwork* newNet = new LayeredNetwork(*this);
-	return newNet;
-}
-
 vector<double> LayeredNetwork::operator()(const vector<double>& input) {
 	assert(programType.acceptsInput(input));
 

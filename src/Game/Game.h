@@ -10,10 +10,11 @@
 
 #include <memory>
 #include <boost/log/sources/logger.hpp>
+#include "CppUtil/VirtualConstructable.h"
 #include "../Program/Program.h"
 #include "../Program/ProgramType.h"
 
-class Game {
+class Game : public cpputil::Cloneable<Game> {
 public:
 	Game(std::pair<int, int> programSize, ProgramType programType);
 	virtual ~Game() = default;
@@ -23,6 +24,10 @@ public:
 
 	//文字列化
 	virtual std::string toString() const = 0;
+
+	//時間の設定
+	int getTime() const;
+	void setTime(int time);
 
 	//解関数の性質
 	std::pair<int, int> getProgramSize() const;
@@ -38,6 +43,8 @@ protected:
 	std::shared_ptr<boost::log::sources::logger> getLogger();
 
 private:
+	int time = 0;
+
 	std::pair<int, int> programSize;
 	ProgramType programType;
 

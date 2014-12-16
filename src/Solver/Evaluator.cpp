@@ -133,6 +133,10 @@ int Evaluator::getEvaluateCount() {
 	return evaluateCount;
 }
 
+void Evaluator::advanceTime(int amount) {
+	game.setTime(game.getTime() + amount);
+}
+
 std::pair<int, int> Evaluator::getProgramSize() {
 	return game.getProgramSize();
 }

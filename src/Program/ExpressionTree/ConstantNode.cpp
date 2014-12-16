@@ -14,10 +14,6 @@ ConstantNode::ConstantNode(pair<double, double> minmax) {
 	this->constant = minmax.first;
 }
 
-ConstantNode* ConstantNode::clone() const {
-	return new ConstantNode(*this);
-}
-
 void ConstantNode::randomize(const ProgramType& programType, mt19937_64& randomEngine) {
 	uniform_real_distribution<double> dist(minmax.first, minmax.second);
 	constant = dist(randomEngine);

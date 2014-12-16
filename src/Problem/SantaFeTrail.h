@@ -30,6 +30,7 @@ public:
 
 	SantaFeTrail(int width, int height, int maxStep);
 	virtual ~SantaFeTrail() = default;
+	CPPUTIL_CLONEABLE;
 
 	virtual double evaluate(Program& program) override;
 	virtual std::string toString() const override;

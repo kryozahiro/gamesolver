@@ -21,7 +21,7 @@ public:
 	LayeredNetwork(const ProgramType& programType, std::vector<int> nodes, std::function<double(double)> transfer);
 	LayeredNetwork(const LayeredNetwork& net);
 	virtual ~LayeredNetwork() = default;
-	virtual Program* clone();
+	CPPUTIL_CLONEABLE;
 	virtual std::vector<double> operator()(const std::vector<double>& input);
 
 	//入出力

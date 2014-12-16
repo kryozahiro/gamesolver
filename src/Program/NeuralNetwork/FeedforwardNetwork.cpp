@@ -100,10 +100,6 @@ FeedforwardNetwork::FeedforwardNetwork(const ProgramType& programType, const boo
 	randomizeWeights(randomEngine);
 }
 
-Program* FeedforwardNetwork::clone() {
-	return new FeedforwardNetwork(*this);
-}
-
 vector<double> FeedforwardNetwork::operator()(const vector<double>& input) {
 	assert(programType.acceptsInput(input));
 	vector<double> node(weights.size());

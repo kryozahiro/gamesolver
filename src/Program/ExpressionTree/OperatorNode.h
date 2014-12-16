@@ -21,7 +21,7 @@ public:
 	virtual ~OperatorNode() = default;
 
 	//ExpressionNodeの実装
-	OperatorNode* clone() const override;
+	CPPUTIL_CLONEABLE;
 	void randomize(const ProgramType& programType, std::mt19937_64& randomEngine) override;
 	double operator()(const std::vector<double>& input) override;
 	int getArity() const override;

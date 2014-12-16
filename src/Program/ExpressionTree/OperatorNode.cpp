@@ -41,10 +41,6 @@ OperatorNode::OperatorNode(string name, int arity, Op op) {
 	this->op = op;
 }
 
-OperatorNode* OperatorNode::clone() const {
-	return new OperatorNode(*this);
-}
-
 void OperatorNode::randomize(const ProgramType& programType, mt19937_64& randomEngine) {
 }
 

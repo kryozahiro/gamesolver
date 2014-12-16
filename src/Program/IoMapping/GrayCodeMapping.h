@@ -23,9 +23,7 @@ public:
 	//コンストラクタの継承
 	GrayCodeMapping(const ProgramType& programType) : IoMapping(programType) {}
 	virtual ~GrayCodeMapping() = default;
-	virtual Program* clone() {
-		return new GrayCodeMapping(*this);
-	}
+	CPPUTIL_CLONEABLE;
 
 private:
 	static int encode(int raw);

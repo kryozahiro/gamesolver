@@ -36,9 +36,7 @@ public:
 	virtual ~ExpressionTree() = default;
 
 	//Programの実装
-	virtual Program* clone() override {
-		return new ExpressionTree(*this);
-	}
+	CPPUTIL_CLONEABLE;
 	virtual std::vector<double> operator()(const std::vector<double>& input) override;
 	virtual std::string toString() const override;
 

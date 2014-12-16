@@ -74,10 +74,6 @@ NeuralLayer::NeuralLayer(istream& is) {
 	transfer = [&](double x) -> double { return NeuralLayer::sigmoid(1.0, x); };
 }
 
-Program* NeuralLayer::clone() {
-	return new NeuralLayer(*this);
-}
-
 vector<double> NeuralLayer::operator()(const vector<double>& input) {
 	assert(1 + input.size() == (unsigned int)prevSize);
 

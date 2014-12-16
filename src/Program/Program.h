@@ -14,12 +14,12 @@
 #include "CppUtil/Cloneable.h"
 #include "CppUtil/ReadWritable.h"
 
-class Program : public cpputil::Cloneable, public cpputil::ReadWritable {
+class Program : public cpputil::Cloneable<Program>, public cpputil::ReadWritable {
 public:
 	virtual ~Program() = default;
 
 	//複製
-	virtual Program* clone() = 0;
+	virtual Program* clone() override = 0;
 
 	//実行
 	virtual std::vector<double> operator()(const std::vector<double>& input) = 0;

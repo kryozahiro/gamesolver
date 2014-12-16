@@ -24,7 +24,7 @@ public:
 	NeuralLayer(int in, int out, std::function<double(double)> transfer);
 	explicit NeuralLayer(std::istream& is);
 	virtual ~NeuralLayer() = default;
-	virtual Program* clone();
+	CPPUTIL_CLONEABLE;
 	virtual std::vector<double> operator()(const std::vector<double>& input);
 
 	//入出力

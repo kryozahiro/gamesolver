@@ -16,9 +16,7 @@ class IoMapping : public Program {
 public:
 	IoMapping(const ProgramType& programType);
 	virtual ~IoMapping() = default;
-	virtual Program* clone() {
-		return new IoMapping(*this);
-	}
+	CPPUTIL_CLONEABLE;
 	virtual std::vector<double> operator()(const std::vector<double>& input);
 	virtual std::string toString() const;
 

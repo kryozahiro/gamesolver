@@ -16,6 +16,7 @@ public:
 	virtual ~HomoAdaptor() = default;
 
 	//Gameの実装
+	CPPUTIL_CLONEABLE;
 	virtual std::string toString() const override;
 	virtual void setLogger(std::shared_ptr<boost::log::sources::logger>& logger) override;
 	virtual void setLoggerEnabled(bool enabled) override;

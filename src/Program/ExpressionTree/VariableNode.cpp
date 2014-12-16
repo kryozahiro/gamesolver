@@ -9,10 +9,6 @@
 #include "VariableNode.h"
 using namespace std;
 
-VariableNode* VariableNode::clone() const {
-	return new VariableNode(*this);
-}
-
 void VariableNode::randomize(const ProgramType& programType, mt19937_64& randomEngine) {
 	uniform_int_distribution<int> dist(0, programType.getInputSize() - 1);
 	index = dist(randomEngine);

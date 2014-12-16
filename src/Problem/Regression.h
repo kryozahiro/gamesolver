@@ -20,6 +20,7 @@ public:
 	virtual ~Regression() = default;
 
 	//Gameの実装
+	CPPUTIL_CLONEABLE;
 	virtual std::string toString() const override;
 
 	//Problemの実装

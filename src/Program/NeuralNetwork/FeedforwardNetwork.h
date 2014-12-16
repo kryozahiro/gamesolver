@@ -30,7 +30,7 @@ public:
 	virtual ~FeedforwardNetwork() = default;
 
 	//Programの実装
-	virtual Program* clone();
+	CPPUTIL_CLONEABLE;
 	virtual std::vector<double> operator()(const std::vector<double>& input);
 	virtual std::string toString() const;
 	virtual void read(std::istream& is);

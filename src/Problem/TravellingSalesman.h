@@ -14,6 +14,7 @@ class TravellingSalesman : public Problem {
 public:
 	TravellingSalesman(int size, int seed);
 	virtual ~TravellingSalesman() = default;
+	CPPUTIL_CLONEABLE;
 
 	//解は順序表現で表す
 	virtual double evaluate(Program& program) override;

@@ -12,9 +12,10 @@
 #include <random>
 #include <vector>
 #include <string>
+#include "CppUtil/Cloneable.h"
 #include "../ProgramType.h"
 
-class ExpressionNode {
+class ExpressionNode : public cpputil::Cloneable<ExpressionNode> {
 public:
 	//木全体を配列にする
 	static std::vector<std::shared_ptr<ExpressionNode>> flatten(std::shared_ptr<ExpressionNode> root);
@@ -24,7 +25,6 @@ public:
 	ExpressionNode& operator=(const ExpressionNode& node);
 	virtual ~ExpressionNode() = default;
 
-	virtual ExpressionNode* clone() const = 0;
 	virtual void randomize(const ProgramType& programType, std::mt19937_64& randomEngine) = 0;
 
 	//個別の計算を行う
