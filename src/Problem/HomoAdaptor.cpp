@@ -20,6 +20,11 @@ string HomoAdaptor::toString() const {
 	return game->toString();
 }
 
+void HomoAdaptor::setTime(int time) {
+	Game::setTime(time);
+	game->setTime(time);
+}
+
 void HomoAdaptor::setLogger(std::shared_ptr<boost::log::sources::logger>& logger) {
 	Game::setLogger(logger);
 	game->setLogger(logger);

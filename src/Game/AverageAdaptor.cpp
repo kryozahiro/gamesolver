@@ -27,3 +27,18 @@ std::vector<double> AverageAdaptor::evaluate(std::vector<Program*>& programs) {
 std::string AverageAdaptor::toString() const {
 	return game->toString();
 }
+
+void AverageAdaptor::setTime(int time) {
+	Game::setTime(time);
+	game->setTime(time);
+}
+
+void AverageAdaptor::setLogger(std::shared_ptr<boost::log::sources::logger>& logger) {
+	Game::setLogger(logger);
+	game->setLogger(logger);
+}
+
+void AverageAdaptor::setLoggerEnabled(bool enabled) {
+	Game::setLoggerEnabled(enabled);
+	game->setLoggerEnabled(enabled);
+}

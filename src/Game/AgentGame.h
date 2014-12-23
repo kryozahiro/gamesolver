@@ -38,6 +38,10 @@ protected:
 	//現在のステップ数の取得
 	int getStep() const;
 
+	//最大ステップ数の取得
+	int getMaxStep() const;
+	void setMaxStep(int maxStep);
+
 private:
 	//最大ステップ数
 	int maxStep = 0;

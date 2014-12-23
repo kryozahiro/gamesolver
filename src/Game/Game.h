@@ -26,8 +26,8 @@ public:
 	virtual std::string toString() const = 0;
 
 	//時間の設定
-	int getTime() const;
-	void setTime(int time);
+	virtual int getTime() const;
+	virtual void setTime(int time);
 
 	//解関数の性質
 	std::pair<int, int> getProgramSize() const;

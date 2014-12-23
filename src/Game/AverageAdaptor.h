@@ -19,6 +19,9 @@ public:
 	CPPUTIL_CLONEABLE;
 	virtual std::vector<double> evaluate(std::vector<Program*>& programs) override;
 	virtual std::string toString() const override;
+	virtual void setTime(int time) override;
+	virtual void setLogger(std::shared_ptr<boost::log::sources::logger>& logger) override;
+	virtual void setLoggerEnabled(bool enabled) override;
 
 private:
 	std::shared_ptr<Game> game;

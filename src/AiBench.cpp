@@ -442,6 +442,7 @@ void AiBench::validate(std::vector<std::shared_ptr<Solution>>& solutions) {
 
 		//評価の実行
 		vector<double> fitness = evaluator(result);
+		evaluator.advanceTime(1);
 		cerr << i << "\t" << fitness << endl;
 
 		//統計情報の収集
