@@ -16,10 +16,13 @@ class Solution {
 public:
 	Solution(std::shared_ptr<Program> program);
 	Solution(const Solution& solution);
+	virtual ~Solution() = default;
 
+	//プログラムの取得
 	std::shared_ptr<Program> getProgram();
-
 	std::vector<double> operator()(const std::vector<double>& input);
+
+	//文字列化
 	std::string toString() const;
 	std::string showRelation() const;
 
@@ -33,7 +36,7 @@ public:
 
 	//次の世代を作る
 	std::shared_ptr<Solution> createChild(bool resetFitness = true);
-	void addChild(Solution& child);
+	void addChild(std::shared_ptr<Solution>& child);
 	//SolutionLoggerへの間隔ロギングの実装
 	//addParent
 	//sakujo&renketu
@@ -50,7 +53,7 @@ private:
 	int generation = -1;
 
 	//次の世代
-	std::vector<Solution*> children;
+	std::vector<std::shared_ptr<Solution>> children;
 
 	//経過時間(msec)
 	int time = -1;

@@ -22,7 +22,7 @@ public:
 	static void allVsBestEvaluation(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory, std::mt19937_64& randomEngine);
 	static void partitioningEvaluation(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory, std::mt19937_64& randomEngine);
 
-	Evaluator(Game& game, std::string loggerName, std::pair<int, int> loggerRange);
+	Evaluator(std::shared_ptr<Game> game, std::string loggerName, std::pair<int, int> loggerRange);
 	virtual ~Evaluator() = default;
 
 	//評価の実行
@@ -38,7 +38,7 @@ public:
 	std::pair<int, int> getProgramSize();
 
 private:
-	Game& game;
+	std::shared_ptr<Game> game;
 	int evaluateCount = 0;
 
 	std::shared_ptr<boost::log::sources::logger> logger;

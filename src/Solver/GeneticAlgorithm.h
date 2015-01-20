@@ -273,7 +273,7 @@ private:
 		for (int i = 0; i < elitismSize; ++i) {
 			std::shared_ptr<Solution> parent = genes[i];
 			std::shared_ptr<Solution> child = parent->createChild();
-			parent->addChild(*child);
+			parent->addChild(child);
 			offspring.push_back(child);
 		}
 		while (offspring.size() < (unsigned int)reproductionSize) {
@@ -290,8 +290,8 @@ private:
 			//子の作成
 			std::shared_ptr<Solution> child1 = parent1->createChild();
 			std::shared_ptr<Solution> child2 = parent2->createChild();
-			parent1->addChild(*child2);
-			parent2->addChild(*child1);
+			parent1->addChild(child2);
+			parent2->addChild(child1);
 
 			std::shared_ptr<ConcreteGeneticOperableProgram> geno1 = std::dynamic_pointer_cast<ConcreteGeneticOperableProgram>(child1->getProgram());
 			std::shared_ptr<ConcreteGeneticOperableProgram> geno2 = std::dynamic_pointer_cast<ConcreteGeneticOperableProgram>(child2->getProgram());

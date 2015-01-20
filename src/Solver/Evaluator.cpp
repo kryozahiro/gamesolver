@@ -11,13 +11,13 @@ using namespace std;
 
 void Evaluator::problemEvaluation(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory, std::mt19937_64& randomEngine) {
 	assert(evaluator.getProgramSize().first == 1);
-	for (std::shared_ptr<Solution>& gene : solutions) {
+	for (auto itr = solutions.begin(); itr < solutions.end(); ++itr) {
 		/*if (gene->getFitness() != DBL_MAX) {
 			continue;
 		}*/
-		std::vector<Program*> programs(1, &*gene->getProgram());
+		std::vector<Program*> programs(1, &*(*itr)->getProgram());
 		std::vector<double> fitness = evaluator(programs);
-		gene->setFitness(fitness[0]);
+		(*itr)->setFitness(fitness[0]);
 	}
 }
 
@@ -108,22 +108,22 @@ void Evaluator::partitioningEvaluation(Evaluator& evaluator, std::vector<std::sh
 	}
 }
 
-Evaluator::Evaluator(Game& game, std::string loggerName, std::pair<int, int> loggerRange) :
+Evaluator::Evaluator(std::shared_ptr<Game> game, std::string loggerName, std::pair<int, int> loggerRange) :
 		game(game),
 		logger(make_shared<boost::log::sources::logger>()),
 		evaluationAttr(evaluateCount),
 		loggerRange(loggerRange) {
 	logger->add_attribute(loggerName, evaluationAttr);
-	game.setLogger(logger);
+	game->setLogger(logger);
 }
 
 std::vector<double> Evaluator::operator()(std::vector<Program*>& programs) {
 	if (loggerRange.first <= evaluateCount and evaluateCount < loggerRange.second) {
-		game.setLoggerEnabled(true);
+		game->setLoggerEnabled(true);
 	} else {
-		game.setLoggerEnabled(false);
+		game->setLoggerEnabled(false);
 	}
-	const std::vector<double> fitness = game.evaluate(programs);
+	const std::vector<double> fitness = game->evaluate(programs);
 	++evaluateCount;
 	evaluationAttr.set(evaluateCount);
 	return fitness;
@@ -134,9 +134,9 @@ int Evaluator::getEvaluateCount() {
 }
 
 void Evaluator::advanceTime(int amount) {
-	game.setTime(game.getTime() + amount);
+	game->setTime(game->getTime() + amount);
 }
 
 std::pair<int, int> Evaluator::getProgramSize() {
-	return game.getProgramSize();
+	return game->getProgramSize();
 }

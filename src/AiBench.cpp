@@ -280,6 +280,11 @@ vector<shared_ptr<Program>> AiBench::initPrograms(pt::ptree& programTree, shared
 			programs.push_back(p);
 		}
 
+	} else if (programName == "InstructionSequence") {
+		for (int i = 0; i < size; ++i) {
+			programs.push_back(make_shared<InstructionSequence>(game->getProgramType(), concreteProgramTree, randomEngine));
+		}
+
 	} else if (programName == "FeedforwardNetwork") {
 		for (int i = 0; i < size; ++i) {
 			programs.push_back(make_shared<FeedforwardNetwork>(game->getProgramType(), concreteProgramTree, randomEngine));
@@ -427,7 +432,7 @@ void AiBench::initOutput(boost::property_tree::ptree& outputTree) {
 void AiBench::validate(std::vector<std::shared_ptr<Solution>>& solutions) {
 	cerr << "run\tfitness" << endl;
 
-	Evaluator evaluator(*game, "Validation", pair<int, int>(0, validationTimes));
+	Evaluator evaluator(game, "Validation", pair<int, int>(0, validationTimes));
 
 	//各評価位置における評価値の統計情報
 	vector<ac::accumulator_set<double, ac::stats<ac::tag::min, ac::tag::mean, ac::tag::variance>>> stats(game->getProgramSize().first);

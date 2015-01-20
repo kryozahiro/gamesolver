@@ -12,6 +12,7 @@
 #include "CppUtil/Application.h"
 #include "Program/IoMapping/GrayCodeMapping.h"
 #include "Program/ExpressionTree/ExpressionTree.h"
+#include "Program/InstructionSequence/InstructionSequence.h"
 #include "Program/NeuralNetwork/LayeredNetwork.h"
 #include "Program/NeuralNetwork/FeedforwardNetwork.h"
 #include "Solver/Solver.h"
@@ -66,6 +67,8 @@ private:
 			//solver = ConcreteSolver<GrayCodeMapping>(solverTree, programs, history);
 		} else if (programName == "ExpressionTree") {
 			solver = std::make_shared<ConcreteSolver<ExpressionTree>>(solverTree, programs);
+		} else if (programName == "InstructionSequence") {
+			solver = std::make_shared<ConcreteSolver<InstructionSequence>>(solverTree, programs);
 		} else if (programName == "FeedforwardNetwork") {
 			solver = std::make_shared<ConcreteSolver<FeedforwardNetwork>>(solverTree, programs);
 		} else if (programName == "LayeredNetwork") {

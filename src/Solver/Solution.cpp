@@ -38,8 +38,8 @@ string Solution::toString() const {
 	if (children.size() == 0) {
 		ret += "none";
 	}
-	for (Solution* child : children) {
-		ret += boost::lexical_cast<string>(reinterpret_cast<long long>(child)) + ", ";
+	for (const shared_ptr<Solution>& child : children) {
+		ret += boost::lexical_cast<string>(reinterpret_cast<long long>(child.get())) + ", ";
 	}
 	ret += "\n";
 	ret += program->toString();
@@ -52,7 +52,7 @@ string Solution::showRelation() const {
 	}
 
 	string ret;
-	for (Solution* child : children) {
+	for (const shared_ptr<Solution>& child : children) {
 		ret += boost::lexical_cast<string>(generation) + " " + boost::lexical_cast<string>(fitness) + "\n";
 		ret += boost::lexical_cast<string>(child->generation) + " " + boost::lexical_cast<string>(child->fitness) + "\n";
 		ret += "\n";
@@ -84,12 +84,12 @@ std::shared_ptr<Solution> Solution::createChild(bool resetFitness) {
 	child->setGeneration(this->getGeneration() + 1);
 	child->children.clear();
 	child->setTime(0);
-	this->addChild(*child);
+	this->addChild(child);
 	return child;
 }
 
-void Solution::addChild(Solution& child) {
-	children.push_back(&child);
+void Solution::addChild(std::shared_ptr<Solution>& child) {
+	children.push_back(child);
 }
 
 void Solution::setTime(int time) {

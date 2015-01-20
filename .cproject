@@ -18,7 +18,7 @@
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.mingw.exe.debug.2103920811" name="デバッグ・プラットフォーム" superClass="cdt.managedbuild.target.gnu.platform.mingw.exe.debug"/>
 							<builder buildPath="${workspace_loc:/AiBench}/Debug" id="cdt.managedbuild.tool.gnu.builder.mingw.base.1687230156" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT 内部ビルダー" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.exe.debug.512243941" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.exe.debug">
-								<option id="gnu.both.asm.option.include.paths.2055769672" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+								<option id="gnu.both.asm.option.include.paths.2055769672" name="インクルード・パス (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\mingw64\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0&quot;"/>
@@ -33,7 +33,7 @@
 								<option id="gnu.cpp.compiler.option.other.other.896433821" name="その他のフラグ" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-std=c++11 -march=native -pipe -c -fmessage-length=0" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.debugging.gprof.938430734" name="gprof 情報の生成 (-pg)" superClass="gnu.cpp.compiler.option.debugging.gprof" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<option id="gnu.cpp.compiler.option.optimization.flags.521580810" name="その他の最適化フラグ" superClass="gnu.cpp.compiler.option.optimization.flags" useByScannerDiscovery="false" value="" valueType="string"/>
-								<option id="gnu.cpp.compiler.option.include.paths.1717738341" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.cpp.compiler.option.include.paths.1717738341" name="インクルード・パス (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\mingw64\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0&quot;"/>
@@ -43,7 +43,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.debug.780518519" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.debug">
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.mingw.exe.debug.option.optimization.level.12411982" name="最適化レベル" superClass="gnu.c.compiler.mingw.exe.debug.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option id="gnu.c.compiler.mingw.exe.debug.option.debugging.level.1551874357" name="デバッグ・レベル" superClass="gnu.c.compiler.mingw.exe.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.c.compiler.option.include.paths.993255374" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.c.compiler.option.include.paths.993255374" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\mingw64\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0&quot;"/>
@@ -62,10 +62,11 @@
 									<listOptionValue builtIn="false" value="boost_system-mgw48-mt-1_55"/>
 								</option>
 								<option id="gnu.cpp.link.option.debugging.gprof.949207245" name="gprof 情報の生成 (-pg)" superClass="gnu.cpp.link.option.debugging.gprof" value="true" valueType="boolean"/>
-								<option id="gnu.cpp.link.option.paths.263986869" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+								<option id="gnu.cpp.link.option.paths.263986869" name="ライブラリー検索パス (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0\stage\lib&quot;"/>
 								</option>
+								<option id="gnu.cpp.link.option.flags.1842161619" name="リンカー・フラグ" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1980108359" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -120,7 +121,7 @@
 								<option id="gnu.cpp.compiler.option.other.other.1004036081" name="その他のフラグ" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-std=c++11 -march=native -pipe -c -fmessage-length=0" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.dialect.std.958945946" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.optimization.flags.1224154884" name="その他の最適化フラグ" superClass="gnu.cpp.compiler.option.optimization.flags" useByScannerDiscovery="false" value="-ffast-math" valueType="string"/>
-								<option id="gnu.cpp.compiler.option.include.paths.485480553" name="インクルード・パス (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.cpp.compiler.option.include.paths.485480553" name="インクルード・パス (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\mingw64\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0&quot;"/>
@@ -130,7 +131,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release.1755084603" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release">
 								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.mingw.exe.release.option.optimization.level.348523696" name="最適化レベル" superClass="gnu.c.compiler.mingw.exe.release.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option id="gnu.c.compiler.mingw.exe.release.option.debugging.level.1194954285" name="デバッグ・レベル" superClass="gnu.c.compiler.mingw.exe.release.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.none" valueType="enumerated"/>
-								<option id="gnu.c.compiler.option.include.paths.1764717969" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+								<option id="gnu.c.compiler.option.include.paths.1764717969" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\mingw64\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0&quot;"/>
@@ -152,6 +153,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0\stage\lib&quot;"/>
 								</option>
+								<option id="gnu.cpp.link.option.flags.258296428" name="リンカー・フラグ" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1601866430" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
