@@ -31,8 +31,8 @@ public:
 	//評価を実行した回数
 	int getEvaluateCount();
 
-	//Gameの時間を進める
-	void advanceTime(int amount);
+	//次の問題設定に移る
+	void nextSetting();
 
 	//解関数の性質
 	std::pair<int, int> getProgramSize();

@@ -16,13 +16,12 @@ HomoAdaptor::HomoAdaptor(shared_ptr<Game> game, int programSize) :
 	assert(size.first <= programSize and programSize <= size.second);
 }
 
-string HomoAdaptor::toString() const {
-	return game->toString();
+void HomoAdaptor::nextSetting() {
+	game->nextSetting();
 }
 
-void HomoAdaptor::setTime(int time) {
-	Game::setTime(time);
-	game->setTime(time);
+string HomoAdaptor::toString() const {
+	return game->toString();
 }
 
 void HomoAdaptor::setLogger(std::shared_ptr<boost::log::sources::logger>& logger) {

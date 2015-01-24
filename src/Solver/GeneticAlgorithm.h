@@ -324,7 +324,7 @@ private:
 				gene = gene->createChild(false);
 			}
 		}
-		evaluator.advanceTime(1);
+		evaluator.nextSetting();
 	}
 
 	//初期解

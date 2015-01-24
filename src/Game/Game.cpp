@@ -12,14 +12,6 @@ Game::Game(std::pair<int, int> programSize, ProgramType programType) :
 		programSize(programSize), programType(programType) {
 }
 
-int Game::getTime() const {
-	return time;
-}
-
-void Game::setTime(int time) {
-	this->time = time;
-}
-
 pair<int, int> Game::getProgramSize() const {
 	return programSize;
 }

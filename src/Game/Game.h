@@ -22,12 +22,11 @@ public:
 	//解関数を評価する
 	virtual std::vector<double> evaluate(std::vector<Program*>& programs) = 0;
 
+	//次の問題設定に移る
+	virtual void nextSetting() {};
+
 	//文字列化
 	virtual std::string toString() const = 0;
-
-	//時間の設定
-	virtual int getTime() const;
-	virtual void setTime(int time);
 
 	//解関数の性質
 	std::pair<int, int> getProgramSize() const;
@@ -43,8 +42,6 @@ protected:
 	std::shared_ptr<boost::log::sources::logger> getLogger();
 
 private:
-	int time = 0;
-
 	std::pair<int, int> programSize;
 	ProgramType programType;
 
