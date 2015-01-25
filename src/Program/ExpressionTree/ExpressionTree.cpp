@@ -146,11 +146,11 @@ void ExpressionTree::normalMutation(ExpressionTree& solution, int rootIndex, std
 	}
 }
 
-ExpressionTree::ExpressionTree(const ProgramType& programType, int maxDepth) : programType(programType) {
+ExpressionTree::ExpressionTree(const ProgramType& programType, int maxDepth) : Program(programType) {
 	this->maxDepth = maxDepth;
 }
 
-ExpressionTree::ExpressionTree(const ExpressionTree& tree) : programType(tree.programType), maxDepth(tree.maxDepth) {
+ExpressionTree::ExpressionTree(const ExpressionTree& tree) : Program(tree.getProgramType()), maxDepth(tree.maxDepth) {
 	for (shared_ptr<ExpressionNode> root : tree.roots) {
 		roots.push_back(shared_ptr<ExpressionNode>(root->clone()));
 	}
@@ -159,8 +159,8 @@ ExpressionTree::ExpressionTree(const ExpressionTree& tree) : programType(tree.pr
 }
 
 vector<double> ExpressionTree::operator()(const vector<double>& input) {
-	assert((unsigned int)programType.getOutputSize() == roots.size());
-	assert(programType.acceptsInput(input));
+	assert((unsigned int)getProgramType().getOutputType().getSize() == roots.size());
+	assert(getProgramType().getInputType().accepts(input));
 
 	//式の実行
 	vector<double> output(roots.size(), 0);
@@ -169,7 +169,7 @@ vector<double> ExpressionTree::operator()(const vector<double>& input) {
 	}
 
 	//出力のクリッピング
-	output = programType.clipOutput(output);
+	getProgramType().getOutputType().clip(output);
 	return output;
 }
 
@@ -203,14 +203,14 @@ void ExpressionTree::addOperator(shared_ptr<ExpressionNode> op) {
 }
 
 void ExpressionTree::grow(mt19937_64& randomEngine) {
-	roots = vector<shared_ptr<ExpressionNode>>(programType.getOutputSize(), nullptr);
+	roots = vector<shared_ptr<ExpressionNode>>(getProgramType().getOutputType().getSize(), nullptr);
 	for (shared_ptr<ExpressionNode>& root : roots) {
 		root = makeSubTree(maxDepth, randomEngine, &ExpressionTree::makeNodeByGrow);
 	}
 }
 
 void ExpressionTree::full(mt19937_64& randomEngine) {
-	roots = vector<shared_ptr<ExpressionNode>>(programType.getOutputSize(), nullptr);
+	roots = vector<shared_ptr<ExpressionNode>>(getProgramType().getOutputType().getSize(), nullptr);
 	for (shared_ptr<ExpressionNode>& root : roots) {
 		root = makeSubTree(maxDepth, randomEngine, &ExpressionTree::makeNodeByFull);
 	}
@@ -218,7 +218,7 @@ void ExpressionTree::full(mt19937_64& randomEngine) {
 
 shared_ptr<ExpressionNode> ExpressionTree::makeSubTree(int maxDepth, mt19937_64& randomEngine, MethodMakeNode method) {
 	shared_ptr<ExpressionNode> rootNode = (this->*method)(0, maxDepth, randomEngine);
-	rootNode->randomize(programType, randomEngine);
+	rootNode->randomize(getProgramType(), randomEngine);
 
 	vector<shared_ptr<ExpressionNode>> now;
 	now.push_back(rootNode);
@@ -228,7 +228,7 @@ shared_ptr<ExpressionNode> ExpressionTree::makeSubTree(int maxDepth, mt19937_64&
 		for (shared_ptr<ExpressionNode> node : now) {
 			for (int i = 0; i < node->getArity(); ++i) {
 				std::shared_ptr<ExpressionNode> child = (this->*method)(thisDepth, maxDepth, randomEngine);
-				child->randomize(programType, randomEngine);
+				child->randomize(getProgramType(), randomEngine);
 				node->addChild(child);
 				next.push_back(child);
 			}

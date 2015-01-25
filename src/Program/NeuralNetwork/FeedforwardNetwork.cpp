@@ -54,8 +54,8 @@ double FeedforwardNetwork::sigmoid(double a, double x) {
 }
 
 FeedforwardNetwork::FeedforwardNetwork(const ProgramType& programType, int hiddenSize, function<double(double)> activation)
-		: programType(programType) {
-	int nodeSize = 1 + programType.getInputSize() + hiddenSize + programType.getOutputSize();
+		: Program(programType) {
+	int nodeSize = 1 + programType.getInputType().getSize() + hiddenSize + programType.getOutputType().getSize();
 	this->adjacency = boost::container::vector<boost::container::vector<bool>>(nodeSize, boost::container::vector<bool>(nodeSize, false));
 	this->weights = vector<vector<double>>(nodeSize, vector<double>(nodeSize, 0));
 	this->activation = activation;
@@ -63,7 +63,7 @@ FeedforwardNetwork::FeedforwardNetwork(const ProgramType& programType, int hidde
 }
 
 FeedforwardNetwork::FeedforwardNetwork(const ProgramType& programType, const boost::property_tree::ptree& node, std::mt19937_64& randomEngine)
-		: programType(programType) {
+		: Program(programType) {
 	//活性化関数の初期化
 	string activationName = node.get<string>("Activation");
 	if (activationName == "Unit") {
@@ -76,7 +76,7 @@ FeedforwardNetwork::FeedforwardNetwork(const ProgramType& programType, const boo
 
 	//行列の生成
 	int hiddenSize = node.get<int>("Hidden");
-	int nodeSize = 1 + programType.getInputSize() + hiddenSize + programType.getOutputSize();
+	int nodeSize = 1 + programType.getInputType().getSize() + hiddenSize + programType.getOutputType().getSize();
 	this->adjacency = boost::container::vector<boost::container::vector<bool>>(nodeSize, boost::container::vector<bool>(nodeSize, false));
 	this->weights = vector<vector<double>>(nodeSize, vector<double>(nodeSize, 0));
 	this->changeable = boost::container::vector<boost::container::vector<bool>>(nodeSize, boost::container::vector<bool>(nodeSize, false));
@@ -101,12 +101,12 @@ FeedforwardNetwork::FeedforwardNetwork(const ProgramType& programType, const boo
 }
 
 vector<double> FeedforwardNetwork::operator()(const vector<double>& input) {
-	assert(programType.acceptsInput(input));
+	assert(getProgramType().getInputType().accepts(input));
 	vector<double> node(weights.size());
 	for (unsigned int y = 0; y < weights.size(); ++y) {
 		if (y == 0) {
 			node[y] = 1;
-		} else if (y <= (unsigned int)programType.getInputSize()) {
+		} else if (y <= (unsigned int)getProgramType().getInputType().getSize()) {
 			node[y] = input[y - 1];
 		} else {
 			node[y] = activation(node[y]);
@@ -117,8 +117,9 @@ vector<double> FeedforwardNetwork::operator()(const vector<double>& input) {
 			}
 		}
 	}
-	vector<double> output(node.end() - programType.getOutputSize(), node.end());
-	return programType.clipOutput(output);
+	vector<double> output(node.end() - getProgramType().getOutputType().getSize(), node.end());
+	getProgramType().getOutputType().clip(output);
+	return output;
 }
 
 string FeedforwardNetwork::toString() const {
@@ -126,7 +127,7 @@ string FeedforwardNetwork::toString() const {
 }
 
 void FeedforwardNetwork::read(istream& is) {
-	tuple<
+	/*tuple<
 		ProgramType,
 		boost::container::vector<boost::container::vector<bool>>,
 		vector<vector<double>>,
@@ -138,7 +139,7 @@ void FeedforwardNetwork::read(istream& is) {
 	weights = get<2>(t);
 	changeable = get<3>(t);
 	assert(adjacency.size() == weights.size());
-	assert(changeable.size() == weights.size());
+	assert(changeable.size() == weights.size());*/
 	//TODO: activation
 }
 
@@ -148,7 +149,7 @@ void FeedforwardNetwork::write(ostream& os) const {
 		boost::container::vector<boost::container::vector<bool>>,
 		vector<vector<double>>,
 		boost::container::vector<boost::container::vector<bool>>
-	> t(programType, adjacency, weights, changeable);
+	> t(getProgramType(), adjacency, weights, changeable);
 	os << t;
 }
 
@@ -167,16 +168,16 @@ int FeedforwardNetwork::getInputBegin() {
 	return 1;
 }
 int FeedforwardNetwork::getInputEnd() {
-	return 1 + programType.getInputSize();
+	return 1 + getProgramType().getInputType().getSize();
 }
 int FeedforwardNetwork::getHiddenBegin() {
-	return 1 + programType.getInputSize();
+	return 1 + getProgramType().getInputType().getSize();
 }
 int FeedforwardNetwork::getHiddenEnd() {
-	return adjacency.size() - programType.getOutputSize();
+	return adjacency.size() - getProgramType().getOutputType().getSize();
 }
 int FeedforwardNetwork::getOutputBegin() {
-	return adjacency.size() - programType.getOutputSize();
+	return adjacency.size() - getProgramType().getOutputType().getSize();
 }
 int FeedforwardNetwork::getOutputEnd() {
 	return adjacency.size();
@@ -214,10 +215,10 @@ void FeedforwardNetwork::setChangeable(int first1, int last1, int first2, int la
 
 void FeedforwardNetwork::insertNode(int pos, int size, bool addToBegin) {
 	assert(0 <= pos and pos <= (int)adjacency.size());
-	if (pos < getInputEnd() or (!addToBegin and pos == getInputEnd())) {
-		programType = ProgramType(programType.getInputType(), programType.getInputSize() + size, programType.getOutputType(), programType.getOutputSize());
+	/*if (pos < getInputEnd() or (!addToBegin and pos == getInputEnd())) {
+		programType = ProgramType(getProgramType().getInputType(), getProgramType().getInputSize() + size, getProgramType().getOutputType(), getProgramType().getOutputSize());
 	} else if ((addToBegin and pos == getHiddenEnd()) or getHiddenEnd() < pos) {
-		programType = ProgramType(programType.getInputType(), programType.getInputSize(), programType.getOutputType(), programType.getOutputSize() + size);
+		programType = ProgramType(getProgramType().getInputType(), getProgramType().getInputSize(), getProgramType().getOutputType(), getProgramType().getOutputSize() + size);
 	}
 	for (unsigned int y = 0; y < weights.size(); ++y) {
 		adjacency[y].insert(adjacency[y].begin() + pos, size, false);
@@ -226,7 +227,7 @@ void FeedforwardNetwork::insertNode(int pos, int size, bool addToBegin) {
 	}
 	adjacency.insert(adjacency.begin() + pos, size, boost::container::vector<bool>(adjacency.size() + size, false));
 	weights.insert(weights.begin() + pos, size, vector<double>(weights.size() + size, 0));
-	changeable.insert(changeable.begin() + pos, size, boost::container::vector<bool>(changeable.size() + size, false));
+	changeable.insert(changeable.begin() + pos, size, boost::container::vector<bool>(changeable.size() + size, false));*/
 }
 
 int FeedforwardNetwork::readConnectionNotation(const std::string& position) {

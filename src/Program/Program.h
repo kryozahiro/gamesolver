@@ -16,6 +16,7 @@
 
 class Program : public cpputil::Cloneable<Program>, public cpputil::ReadWritable {
 public:
+	Program(const ProgramType& programType);
 	virtual ~Program() = default;
 
 	//複製
@@ -27,13 +28,15 @@ public:
 	//整形文字列出力
 	virtual std::string toString() const = 0;
 
-	//ストリーム入出力
-	virtual void read(std::istream& is) override {
-		throw "unimplemented";
-	}
-	virtual void write(std::ostream& os) const override {
-		os << "class Program" << std::endl;
-	}
+	//ReadWritableの実装
+	virtual void read(std::istream& is) override;
+	virtual void write(std::ostream& os) const override;
+
+protected:
+	const ProgramType& getProgramType() const;
+
+private:
+	const ProgramType programType;
 };
 
 #endif /* PROGRAM_H_ */

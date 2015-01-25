@@ -14,18 +14,18 @@ using namespace cpputil;
 namespace pt = boost::property_tree;
 
 InstructionSequence::InstructionSequence(const ProgramType& programType, int maxSize, int memorySize) :
-		programType(programType), maxSize(maxSize), memorySize(memorySize) {
-	assert(programType.getInputSize() < memorySize);
-	assert(programType.getOutputSize() < memorySize);
+		Program(programType), maxSize(maxSize), memorySize(memorySize) {
+	assert(programType.getInputType().getSize() < memorySize);
+	assert(programType.getOutputType().getSize() < memorySize);
 }
 
 InstructionSequence::InstructionSequence(const ProgramType& programType, const boost::property_tree::ptree& node, std::mt19937_64& randomEngine) :
-		programType(programType) {
+		Program(programType) {
 	instructions.resize(node.get<int>("InitialSize"));
 	maxSize = node.get<int>("MaxSize");
 	memorySize = node.get<int>("MemorySize");
-	assert(programType.getInputSize() < memorySize);
-	assert(programType.getOutputSize() < memorySize);
+	assert(programType.getInputType().getSize() < memorySize);
+	assert(programType.getOutputType().getSize() < memorySize);
 
 	const pt::ptree& operators = node.get_child("Operators");
 	for (const pt::ptree::value_type& kvp : operators) {
@@ -64,7 +64,7 @@ InstructionSequence::InstructionSequence(const ProgramType& programType, const b
 }
 
 vector<double> InstructionSequence::operator()(const vector<double>& input) {
-	assert(programType.acceptsInput(input));
+	assert(getProgramType().getInputType().accepts(input));
 
 	//実行環境の初期化
 	Instruction::Register reg;
@@ -77,8 +77,8 @@ vector<double> InstructionSequence::operator()(const vector<double>& input) {
 	}
 
 	//出力のクリッピング
-	vector<double> output(memory.begin(), memory.begin() + programType.getOutputSize());
-	output = programType.clipOutput(output);
+	vector<double> output(memory.begin(), memory.begin() + getProgramType().getOutputType().getSize());
+	getProgramType().getOutputType().clip(output);
 	return output;
 }
 

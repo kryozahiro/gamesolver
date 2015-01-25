@@ -68,8 +68,6 @@ public:
 	void insertNode(int pos, int size, bool addToBegin);
 
 private:
-	ProgramType programType;
-
 	//隣接行列
 	boost::container::vector<boost::container::vector<bool>> adjacency;
 

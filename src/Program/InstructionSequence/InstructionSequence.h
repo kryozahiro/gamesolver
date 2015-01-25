@@ -37,7 +37,6 @@ public:
 
 private:
 	//問題の仕様
-	ProgramType programType;
 	int maxSize = 100;
 	int memorySize;
 

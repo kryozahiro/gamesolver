@@ -10,30 +10,30 @@
 #include "IoMapping.h"
 using namespace std;
 
-IoMapping::IoMapping(const ProgramType& programType) : programType(programType) {
-	const ParameterType& inputType = programType.getInputType();
-	const ParameterType& outputType = programType.getOutputType();
+IoMapping::IoMapping(const ProgramType& programType) : Program(programType) {
+	const DataType& inputType = programType.getInputType();
+	const DataType& outputType = programType.getOutputType();
 	inputVariety = (inputType.getMax() - inputType.getMin() + 1) / inputType.getUnit();
 	outputVariety = (outputType.getMax() - outputType.getMin() + 1) / outputType.getUnit();
 
-	if (inputVariety == 0 or programType.getInputSize() == 0) {
+	if (inputVariety == 0 or inputType.getSize() == 0) {
 		//無引数関数
 		inputVariety = 1;
 	}
 
 	//全ての入力の組み合わせの数
-	int domain = pow(inputVariety, programType.getInputSize());
+	int domain = pow(inputVariety, inputType.getSize());
 	assert(0 < domain);
 	assert(domain < 10000);
 
-	mapping = vector<vector<double>>(domain, vector<double>(programType.getOutputSize(), 0));
+	mapping = vector<vector<double>>(domain, vector<double>(outputType.getSize(), 0));
 }
 
 vector<double> IoMapping::operator()(const vector<double>& input) {
 	int pos = 0;
 	for (double inputElement : input) {
 		pos *= inputVariety;
-		pos += inputElement - programType.getInputType().getMin();
+		pos += inputElement - getProgramType().getInputType().getMin();
 	}
 	return mapping[pos];
 }

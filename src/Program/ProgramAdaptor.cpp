@@ -8,8 +8,7 @@
 #include "ProgramAdaptor.h"
 using namespace std;
 
-ProgramAdaptor::ProgramAdaptor(const ProgramType& programType, shared_ptr<Program> program) {
-	this->programType = programType;
+ProgramAdaptor::ProgramAdaptor(const ProgramType& programType, shared_ptr<Program> program) : Program(programType) {
 	this->program = program;
 }
 

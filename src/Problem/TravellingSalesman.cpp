@@ -11,7 +11,7 @@
 using namespace std;
 
 TravellingSalesman::TravellingSalesman(int size, int seed) :
-		Problem(ProgramType(ParameterType(0, 0, 1), 0, ParameterType(0, size - 1, 1), size)) {
+		Problem(ProgramType(DataType(0, 0, 1, 0), DataType(0, size - 1, 1, size))) {
 	//都市のランダム生成
 	mt19937_64 engine(seed);
 	uniform_real_distribution<> dist(-1.0, 1.0);
@@ -22,7 +22,7 @@ TravellingSalesman::TravellingSalesman(int size, int seed) :
 
 double TravellingSalesman::evaluate(Program& program) {
 	vector<double> path = program(vector<double>());
-	assert(getProgramType().acceptsOutput(path));
+	assert(getProgramType().getOutputType().accepts(path));
 	vector<pair<double, double>> cityList = cities;
 
 	pair<double, double> prev = cityList[path[0]];

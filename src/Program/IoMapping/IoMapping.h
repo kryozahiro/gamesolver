@@ -23,7 +23,7 @@ public:
 	//ランダム値で初期化する
 	template <class URNG>
 	void randomize(URNG& randomEngine) {
-		const ParameterType outputType = programType.getOutputType();
+		const DataType outputType = programType.getOutputType();
 		std::uniform_real_distribution<double> dist(outputType.getMin(), outputType.getMax());
 
 		for (std::vector<double>& output : mapping) {
@@ -34,7 +34,6 @@ public:
 	}
 
 protected:
-	const ProgramType programType;
 	int inputVariety;
 	int outputVariety;
 

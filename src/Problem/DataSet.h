@@ -37,16 +37,16 @@ public:
 	template <class URNG>
 	void addData(URNG randomEngine, int sample, std::function<std::vector<double>(const std::vector<double>)> func) {
 		for (int i = 0; i < sample; ++i) {
-			const ParameterType& inputType = getProgramType().getInputType();
+			const DataType& inputType = getProgramType().getInputType();
 			std::uniform_real_distribution<double> dist(inputType.getMin(), inputType.getMax());
 
-			std::vector<double> input(getProgramType().getInputSize());
+			std::vector<double> input(inputType.getSize());
 			std::generate(input.begin(), input.end(), [&](){
 				return dist(randomEngine);
 			});
 
 			std::vector<double> output = func(input);
-			output = getProgramType().clipOutput(output);
+			getProgramType().getOutputType().clip(output);
 			addData(input, output);
 		}
 	}

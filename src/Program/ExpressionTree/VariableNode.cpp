@@ -10,7 +10,7 @@
 using namespace std;
 
 void VariableNode::randomize(const ProgramType& programType, mt19937_64& randomEngine) {
-	uniform_int_distribution<int> dist(0, programType.getInputSize() - 1);
+	uniform_int_distribution<int> dist(0, programType.getInputType().getSize() - 1);
 	index = dist(randomEngine);
 }
 

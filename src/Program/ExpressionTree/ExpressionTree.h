@@ -58,7 +58,6 @@ private:
 	std::shared_ptr<ExpressionNode> makeNodeByFull(int thisDepth, int maxDepth, std::mt19937_64& randomEngine);
 
 	//問題の仕様
-	ProgramType programType;
 	int maxDepth = 10;
 
 	//式木

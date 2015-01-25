@@ -24,10 +24,10 @@ vector<double> AgentGame::evaluate(vector<Program*>& programs) {
 	while (step < maxStep) {
 		for (unsigned int i = 0; i < programs.size(); ++i) {
 			vector<double> input = percept(i);
-			assert(getProgramType().acceptsInput(input));
+			assert(getProgramType().getInputType().accepts(input));
 
 			vector<double> output = programs[i]->operator()(input);
-			assert(getProgramType().acceptsOutput(output));
+			assert(getProgramType().getOutputType().accepts(output));
 
 			affect(i, output);
 		}

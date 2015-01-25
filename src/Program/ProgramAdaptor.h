@@ -31,7 +31,6 @@ public:
 
 
 private:
-	ProgramType programType;
 	std::shared_ptr<Program> program;
 
 	Adaptor inputAdaptor;

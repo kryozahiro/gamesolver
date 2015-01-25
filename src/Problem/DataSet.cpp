@@ -12,7 +12,7 @@ using namespace std;
 shared_ptr<DataSet> DataSet::getNguyen(int i, mt19937_64& randomEngine) {
 	shared_ptr<DataSet> dataSet;
 	if (0 < i and i <= 4) {
-		ProgramType programType(ParameterType(-1, 1, 0.001), 1, ParameterType(-10, 10, 0.001), 1);
+		ProgramType programType(DataType(-1, 1, 0.001, 1), DataType(-10, 10, 0.001, 1));
 		dataSet = make_shared<DataSet>(programType);
 		dataSet->addData(randomEngine, 20, [&](const vector<double>& input){
 			double x = input[0];

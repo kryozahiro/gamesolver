@@ -8,13 +8,13 @@
 #ifndef PROGRAMTYPE_H_
 #define PROGRAMTYPE_H_
 
-#include <vector>
-#include "ParameterType.h"
+#include "DataType.h"
 
+//プログラムの入出力型
 class ProgramType : public cpputil::ReadWritable {
 public:
 	ProgramType() = default;
-	ProgramType(const ParameterType& inputType, int inputSize, const ParameterType& outputType, int outputSize);
+	ProgramType(const DataType& inputType, const DataType& outputType);
 	virtual ~ProgramType() = default;
 
 	//ReadWritableの実装
@@ -22,22 +22,12 @@ public:
 	virtual void write(std::ostream& os) const override;
 
 	//入出力型の取得
-	const ParameterType& getInputType() const;
-	int getInputSize() const;
-	const ParameterType& getOutputType() const;
-	int getOutputSize() const;
-
-	std::vector<double> clipInput(const std::vector<double>& input) const;
-	bool acceptsInput(const std::vector<double>& input) const;
-
-	std::vector<double> clipOutput(const std::vector<double>& output) const;
-	bool acceptsOutput(const std::vector<double>& output) const;
+	const DataType& getInputType() const;
+	const DataType& getOutputType() const;
 
 private:
-	ParameterType inputType;
-	int inputSize = 0;
-	ParameterType outputType;
-	int outputSize = 0;
+	DataType inputType;
+	DataType outputType;
 };
 
 #endif /* PROGRAMTYPE_H_ */

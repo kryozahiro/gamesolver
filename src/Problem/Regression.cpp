@@ -26,10 +26,10 @@ double Regression::evaluate(Program& program) {
 	double diff = 0;
 	for (int i = 0; i < dataSet.getSize(); ++i) {
 		vector<double> output = program(dataSet[i].first);
-		assert(getProgramType().acceptsOutput(output));
+		assert(getProgramType().getOutputType().accepts(output));
 
 		//二乗誤差を求める
-		for (int k = 0; k < getProgramType().getOutputSize(); ++k) {
+		for (int k = 0; k < getProgramType().getOutputType().getSize(); ++k) {
 			double error = output[k] - dataSet[i].second[k];
 			//diff += error * error;
 			diff += fabs(error);

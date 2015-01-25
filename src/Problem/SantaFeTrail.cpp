@@ -90,7 +90,7 @@ vector<double>& SantaFeTrail::getAction() {
 }
 
 SantaFeTrail::SantaFeTrail(int width, int height, int maxStep) :
-		Problem(ProgramType(ParameterType(0, 0, 1), 0, ParameterType(0, 0, 1), 1)),
+		Problem(ProgramType(DataType(0, 0, 1, 0), DataType(0, 0, 1, 1))),
 		maxStep(maxStep), width(width), height(height) {
 }
 

@@ -31,8 +31,10 @@ void GrayCodeMapping::onePointCrossover(GrayCodeMapping& parent1, GrayCodeMappin
 	int parent2Bits = encode(parent2.mapping[startOutput][startElement]);
 	int parent1New = decode((parent1Bits & mask) | (parent2Bits & ~mask));
 	int parent2New = decode((parent2Bits & mask) | (parent1Bits & ~mask));
-	parent1.mapping[startOutput][startElement] = parent1.programType.getOutputType().clip(parent1New);
-	parent2.mapping[startOutput][startElement] = parent2.programType.getOutputType().clip(parent2New);
+	parent1.mapping[startOutput][startElement] = parent1New;
+	parent1.getProgramType().getOutputType().clip(parent1.mapping[startOutput]);
+	parent2.mapping[startOutput][startElement] = parent2New;
+	parent2.getProgramType().getOutputType().clip(parent2.mapping[startOutput]);
 
 	//std::cout << std::bitset<sizeof(int)*8>(parent1.mapping[startOutput][startElement]) << " ";
 	//std::cout << std::bitset<sizeof(int)*8>(parent2.mapping[startOutput][startElement]) << std::endl;
@@ -58,7 +60,7 @@ void GrayCodeMapping::normalMutation(GrayCodeMapping& solution, std::mt19937_64&
 					continue;
 				}
 				int cand = decode(encode(outputElement) ^ flip);
-				if (cand < solution.programType.getOutputType().getMin() or solution.programType.getOutputType().getMax() < cand) {
+				if (cand < solution.getProgramType().getOutputType().getMin() or solution.getProgramType().getOutputType().getMax() < cand) {
 					continue;
 				}
 				outputElement = cand;
