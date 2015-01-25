@@ -39,7 +39,7 @@ public:
 	};
 
 	void set(Opcode op, int arg1, int arg2, int ret);
-	void operator()(Register& reg, std::vector<double>& memory);
+	void operator()(Register& reg, std::vector<uint8_t>& memory);
 	std::string toString() const;
 
 private:

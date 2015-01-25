@@ -57,14 +57,14 @@ void DataType::clip(std::vector<double>& data) const {
 }
 
 void DataType::scaleFrom(std::vector<double>& data, std::pair<double, double> range) const {
-	double ratio = (range.second - range.first) / (maximum - minimum);
+	double ratio = (maximum - minimum) / (range.second - range.first);
 	for (double& d : data) {
 		d = (d - range.first) * ratio + minimum;
 	}
 }
 
 void DataType::scaleTo(std::vector<double>& data, std::pair<double, double> range) const {
-	double ratio = (maximum - minimum) / (range.second - range.first);
+	double ratio = (range.second - range.first) / (maximum - minimum);
 	for (double& d : data) {
 		d = (d - minimum) * ratio + range.first;
 	}

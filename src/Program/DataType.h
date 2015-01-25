@@ -11,7 +11,7 @@
 #include <vector>
 #include "CppUtil/ReadWritable.h"
 
-//プログラムの入出力の要素型
+//プログラムの入出力の型
 class DataType : public cpputil::ReadWritable {
 public:
 	DataType() = default;
@@ -22,7 +22,7 @@ public:
 	virtual void read(std::istream& is) override;
 	virtual void write(std::ostream& os) const override;
 
-	//要素型の取得
+	//型情報の取得
 	double getMin() const;
 	double getMax() const;
 	double getUnit() const;

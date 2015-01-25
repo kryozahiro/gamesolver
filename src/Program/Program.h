@@ -19,9 +19,6 @@ public:
 	Program(const ProgramType& programType);
 	virtual ~Program() = default;
 
-	//複製
-	virtual Program* clone() override = 0;
-
 	//実行
 	virtual std::vector<double> operator()(const std::vector<double>& input) = 0;
 

@@ -68,7 +68,7 @@ vector<double> InstructionSequence::operator()(const vector<double>& input) {
 
 	//実行環境の初期化
 	Instruction::Register reg;
-	vector<double> memory(memorySize, 0);
+	vector<uint8_t> memory(memorySize, 0);
 	copy(input.begin(), input.end(), memory.begin());
 
 	//命令列の実行
@@ -78,7 +78,8 @@ vector<double> InstructionSequence::operator()(const vector<double>& input) {
 
 	//出力のクリッピング
 	vector<double> output(memory.begin(), memory.begin() + getProgramType().getOutputType().getSize());
-	getProgramType().getOutputType().clip(output);
+	getProgramType().getOutputType().scaleFrom(output, {0, 255});
+	//getProgramType().getOutputType().clip(output);
 	return output;
 }
 

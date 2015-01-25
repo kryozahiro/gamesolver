@@ -17,7 +17,7 @@ void Instruction::set(Opcode op, int arg1, int arg2, int ret) {
 	this->ret = ret;
 }
 
-void Instruction::operator()(Register& reg, vector<double>& memory) {
+void Instruction::operator()(Register& reg, vector<uint8_t>& memory) {
 	++reg.pc;
 	if (!reg.condition) {
 		if (op != Opcode::IF_GT and op != Opcode::IF_GT_IMM and op != Opcode::IF_LE and op != Opcode::IF_LE_IMM) {
