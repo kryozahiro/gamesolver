@@ -33,20 +33,23 @@ public:
 		LOG,
 		OP_END
 	};
+	static std::string toString(Opcode opcode);
+
 	struct Register {
 		unsigned int pc = 0;
 		bool condition = false;
 	};
 
-	void set(Opcode op, int arg1, int arg2, int ret);
-	void operator()(Register& reg, std::vector<uint8_t>& memory);
+	void set(Opcode op, int ret, int mem1, int mem2, double constant);
+	void operator()(Register& reg, std::vector<double>& memory);
 	std::string toString() const;
 
 private:
 	Opcode op;
-	int arg1;
-	int arg2;
 	int ret;
+	int mem1;
+	int mem2;
+	double constant;
 };
 
 static_assert(std::is_pod<Instruction>(), "class Instruction should be POD");

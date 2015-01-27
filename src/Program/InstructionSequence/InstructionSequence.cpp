@@ -8,6 +8,7 @@
 #include <cassert>
 #include <algorithm>
 #include <boost/property_tree/ptree.hpp>
+#include "CppUtil/GenericIo.h"
 #include "InstructionSequence.h"
 using namespace std;
 using namespace cpputil;
@@ -26,6 +27,8 @@ InstructionSequence::InstructionSequence(const ProgramType& programType, const b
 	memorySize = node.get<int>("MemorySize");
 	assert(programType.getInputType().getSize() < memorySize);
 	assert(programType.getOutputType().getSize() < memorySize);
+
+	constantRange = node.get<pair<double, double>>("Constant");
 
 	const pt::ptree& operators = node.get_child("Operators");
 	for (const pt::ptree::value_type& kvp : operators) {
@@ -68,7 +71,7 @@ vector<double> InstructionSequence::operator()(const vector<double>& input) {
 
 	//実行環境の初期化
 	Instruction::Register reg;
-	vector<uint8_t> memory(memorySize, 0);
+	vector<double> memory(memorySize, 0);
 	copy(input.begin(), input.end(), memory.begin());
 
 	//命令列の実行
@@ -78,8 +81,7 @@ vector<double> InstructionSequence::operator()(const vector<double>& input) {
 
 	//出力のクリッピング
 	vector<double> output(memory.begin(), memory.begin() + getProgramType().getOutputType().getSize());
-	getProgramType().getOutputType().scaleFrom(output, {0, 255});
-	//getProgramType().getOutputType().clip(output);
+	getProgramType().getOutputType().clip(output);
 	return output;
 }
 
@@ -139,12 +141,14 @@ void InstructionSequence::randomize(std::mt19937_64& randomEngine) {
 Instruction InstructionSequence::makeRandomInstruction(std::mt19937_64& randomEngine) {
 	uniform_int_distribution<int> opDist(0, instructionSet.size() - 1);
 	uniform_int_distribution<int> memDist(0, memorySize - 1);
+	uniform_real_distribution<double> constantDist(constantRange.first, constantRange.second);
 	Instruction inst;
 	inst.set(
 		instructionSet[opDist(randomEngine)],
 		memDist(randomEngine),
 		memDist(randomEngine),
-		memDist(randomEngine)
+		memDist(randomEngine),
+		constantDist(randomEngine)
 	);
 	return inst;
 }

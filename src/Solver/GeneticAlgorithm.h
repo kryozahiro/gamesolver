@@ -11,7 +11,8 @@
 #include <algorithm>
 #include <random>
 #include <boost/property_tree/ptree.hpp>
-#include "CppUtil/Scale.h"
+#include "CppUtil/AlgorithmUtil.h"
+#include "CppUtil/MathUtil.h"
 #include "Solver.h"
 #include "GeneticOperable.h"
 
@@ -71,6 +72,11 @@ public:
 		std::string selection = node.get<std::string>("Selection");
 		if (selection == "RouletteSelection") {
 			setSelection(rouletteSelection);
+		} else if (selection == "TournamentSelection") {
+			double tournamentRate = node.get<double>("TournamentRate");
+			setSelection([=](std::vector<double>& weights, std::mt19937_64 randomEngine) {
+				return tournamentSelection(weights, tournamentRate, randomEngine);
+			});
 		} else {
 			assert(false);
 		}
@@ -139,7 +145,7 @@ public:
 
 	//スケーリング
 	static void linearScaling(std::vector<double>& weights) {
-		double scale = 2;
+		double scaling = 2;
 
 		const double max = weights.front();
 		double mean = std::accumulate(weights.begin(), weights.end(), 0.0) / weights.size();
@@ -148,10 +154,12 @@ public:
 		if (max == mean) {
 			return;
 		}
-		std::function<double(double)> scaler = cpputil::linearScaler(mean, max, scale);
+		for (double& weight : weights) {
+			weight = cpputil::scale(weight, mean, max, scaling);
+		}
 	}
 	static void sigmaScaling(std::vector<double>& weights) {
-		double scale = 2;
+		double scaling = 2;
 
 		double mean = std::accumulate(weights.begin(), weights.end(), 0.0) / weights.size();
 		double sd = std::accumulate(weights.begin(), weights.end(), 0.0, [&](double sum, double lhs) {
@@ -160,7 +168,9 @@ public:
 		sd = sqrt(sd);
 
 		//変換
-		std::function<double(double)> scaler = cpputil::simgaScaler(mean, sd, scale);
+		for (double& weight : weights) {
+			weight = weight - mean + scaling * sd;
+		}
 	}
 
 	//ルーレット選択
@@ -176,6 +186,13 @@ public:
 		}
 		assert(false);
 		return 0;
+	}
+	//トーナメント選択
+	static int tournamentSelection(std::vector<double> weights, double tournamentRate, std::mt19937_64& randomEngine) {
+		int tournamentSize = weights.size() * tournamentRate;
+		cpputil::partial_shuffle(weights.begin(), weights.begin() + tournamentSize, weights.end(), randomEngine);
+		auto maxItr = max_element(weights.begin(), weights.begin() + tournamentSize);
+		return maxItr - weights.begin();
 	}
 
 	//再挿入

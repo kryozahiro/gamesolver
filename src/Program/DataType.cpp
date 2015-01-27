@@ -6,9 +6,11 @@
  */
 
 #include <tuple>
+#include "CppUtil/MathUtil.h"
 #include "CppUtil/GenericIo.h"
 #include "DataType.h"
 using namespace std;
+using namespace cpputil;
 
 DataType::DataType(double minimum, double maximum, double unit, int size)
 	: minimum(minimum), maximum(maximum), unit(unit), size(size) {
@@ -57,15 +59,13 @@ void DataType::clip(std::vector<double>& data) const {
 }
 
 void DataType::scaleFrom(std::vector<double>& data, std::pair<double, double> range) const {
-	double ratio = (maximum - minimum) / (range.second - range.first);
 	for (double& d : data) {
-		d = (d - range.first) * ratio + minimum;
+		d = scale(d, range, {minimum, maximum});
 	}
 }
 
 void DataType::scaleTo(std::vector<double>& data, std::pair<double, double> range) const {
-	double ratio = (range.second - range.first) / (maximum - minimum);
 	for (double& d : data) {
-		d = (d - minimum) * ratio + range.first;
+		d = scale(d, {minimum, maximum}, range);
 	}
 }

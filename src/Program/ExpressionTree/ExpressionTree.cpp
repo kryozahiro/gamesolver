@@ -7,7 +7,9 @@
 
 #include <cassert>
 #include <algorithm>
+#include <boost/lexical_cast.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include "CppUtil/GenericIo.h"
 #include "ExpressionTree.h"
 #include "../../Problem/SantaFeTrail.h"
 using namespace std;
@@ -19,7 +21,11 @@ vector<shared_ptr<ExpressionTree>> ExpressionTree::generate(const ProgramType& p
 
 	const pt::ptree& operators = node.get_child("Operators");
 	for (const pt::ptree::value_type& kvp : operators) {
-		if (kvp.first == "Variable") {
+		if (kvp.first == "Constant") {
+			string rangeStr = kvp.second.data();
+			pair<double, double> range = boost::lexical_cast<pair<double, double>>(rangeStr);
+			prototype.addOperator(make_shared<ConstantNode>(range));
+		} else if (kvp.first == "Variable") {
 			prototype.addOperator(make_shared<VariableNode>());
 		} else if (kvp.first == "Add") {
 			prototype.addOperator(make_shared<OperatorNode>(OperatorNode::ADD));

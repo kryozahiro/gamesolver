@@ -39,6 +39,7 @@ private:
 	//問題の仕様
 	int maxSize = 100;
 	int memorySize;
+	std::pair<double, double> constantRange;
 
 	//命令列
 	std::vector<Instruction> instructions;
