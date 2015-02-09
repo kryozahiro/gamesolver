@@ -20,8 +20,6 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.exe.debug.512243941" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.exe.debug">
 								<option id="gnu.both.asm.option.include.paths.2055769672" name="インクルード・パス (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\mingw64\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1010642204" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -35,8 +33,6 @@
 								<option id="gnu.cpp.compiler.option.optimization.flags.521580810" name="その他の最適化フラグ" superClass="gnu.cpp.compiler.option.optimization.flags" useByScannerDiscovery="false" value="" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1717738341" name="インクルード・パス (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\mingw64\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.773443" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -45,26 +41,23 @@
 								<option id="gnu.c.compiler.mingw.exe.debug.option.debugging.level.1551874357" name="デバッグ・レベル" superClass="gnu.c.compiler.mingw.exe.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.993255374" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\mingw64\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.84692824" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug.2037650841" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug.656105323" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug">
 								<option id="gnu.cpp.link.option.libs.1479582638" name="ライブラリー (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="CppUtil"/>
-									<listOptionValue builtIn="false" value="boost_program_options-mgw48-mt-1_55"/>
-									<listOptionValue builtIn="false" value="boost_log_setup-mgw48-mt-1_55"/>
-									<listOptionValue builtIn="false" value="boost_log-mgw48-mt-1_55"/>
-									<listOptionValue builtIn="false" value="boost_thread-mgw48-mt-1_55"/>
-									<listOptionValue builtIn="false" value="boost_filesystem-mgw48-mt-1_55"/>
-									<listOptionValue builtIn="false" value="boost_system-mgw48-mt-1_55"/>
+									<listOptionValue builtIn="false" value="CppUtil"/>
+									<listOptionValue builtIn="false" value="boost_program_options-mgw49-mt-1_57"/>
+									<listOptionValue builtIn="false" value="boost_log_setup-mgw49-mt-1_57"/>
+									<listOptionValue builtIn="false" value="boost_log-mgw49-mt-1_57"/>
+									<listOptionValue builtIn="false" value="boost_thread-mgw49-mt-1_57"/>
+									<listOptionValue builtIn="false" value="boost_filesystem-mgw49-mt-1_57"/>
+									<listOptionValue builtIn="false" value="boost_system-mgw49-mt-1_57"/>
 								</option>
 								<option id="gnu.cpp.link.option.debugging.gprof.949207245" name="gprof 情報の生成 (-pg)" superClass="gnu.cpp.link.option.debugging.gprof" value="true" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.paths.263986869" name="ライブラリー検索パス (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil/Release}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0\stage\lib&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.1842161619" name="リンカー・フラグ" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1980108359" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -108,8 +101,6 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.exe.release.541730062" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.exe.release">
 								<option id="gnu.both.asm.option.include.paths.1054817712" name="インクルード・パス (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\mingw64\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.43963524" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -120,11 +111,9 @@
 								<option id="gnu.cpp.compiler.option.preprocessor.def.655871382" name="定義済みのシンボル (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false"/>
 								<option id="gnu.cpp.compiler.option.other.other.1004036081" name="その他のフラグ" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-std=c++11 -march=native -pipe -c -fmessage-length=0" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.dialect.std.958945946" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.optimization.flags.1224154884" name="その他の最適化フラグ" superClass="gnu.cpp.compiler.option.optimization.flags" useByScannerDiscovery="false" value="-ffast-math" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.optimization.flags.1224154884" name="その他の最適化フラグ" superClass="gnu.cpp.compiler.option.optimization.flags" useByScannerDiscovery="false" value="-ffast-math -fopenmp" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.include.paths.485480553" name="インクルード・パス (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\mingw64\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1250028427" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -133,27 +122,24 @@
 								<option id="gnu.c.compiler.mingw.exe.release.option.debugging.level.1194954285" name="デバッグ・レベル" superClass="gnu.c.compiler.mingw.exe.release.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1764717969" name="インクルード・パス (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\mingw64\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1131476216" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release.374316920" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.release.2146444313" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.release">
 								<option id="gnu.cpp.link.option.libs.442653833" name="ライブラリー (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="CppUtil"/>
-									<listOptionValue builtIn="false" value="boost_program_options-mgw48-mt-1_55"/>
-									<listOptionValue builtIn="false" value="boost_log_setup-mgw48-mt-1_55"/>
-									<listOptionValue builtIn="false" value="boost_log-mgw48-mt-1_55"/>
-									<listOptionValue builtIn="false" value="boost_thread-mgw48-mt-1_55"/>
-									<listOptionValue builtIn="false" value="boost_filesystem-mgw48-mt-1_55"/>
-									<listOptionValue builtIn="false" value="boost_system-mgw48-mt-1_55"/>
+									<listOptionValue builtIn="false" value="CppUtil"/>
+									<listOptionValue builtIn="false" value="boost_program_options-mgw49-mt-1_57"/>
+									<listOptionValue builtIn="false" value="boost_log_setup-mgw49-mt-1_57"/>
+									<listOptionValue builtIn="false" value="boost_log-mgw49-mt-1_57"/>
+									<listOptionValue builtIn="false" value="boost_thread-mgw49-mt-1_57"/>
+									<listOptionValue builtIn="false" value="boost_filesystem-mgw49-mt-1_57"/>
+									<listOptionValue builtIn="false" value="boost_system-mgw49-mt-1_57"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.31925022" name="ライブラリー検索パス (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil/Release}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;C:\lib\boost_1_55_0\stage\lib&quot;"/>
 								</option>
-								<option id="gnu.cpp.link.option.flags.258296428" name="リンカー・フラグ" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.258296428" name="リンカー・フラグ" superClass="gnu.cpp.link.option.flags" value="-fopenmp" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1601866430" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

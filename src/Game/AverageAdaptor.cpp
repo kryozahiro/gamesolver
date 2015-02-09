@@ -8,9 +8,22 @@
 #include <algorithm>
 #include "AverageAdaptor.h"
 using namespace std;
+using namespace cpputil;
 
 AverageAdaptor::AverageAdaptor(std::shared_ptr<Game> game, int sampleSize) :
 		Game(game->getProgramSize(), game->getProgramType()), game(game), sampleSize(sampleSize) {
+	auto log = game->getLogger();
+	Game::setLogger(log);
+}
+
+void AverageAdaptor::setLogger(std::shared_ptr<LoggerType>& logger) {
+	Game::setLogger(logger);
+	game->setLogger(logger);
+}
+
+void AverageAdaptor::setLoggerEnabled(bool enabled) {
+	Game::setLoggerEnabled(enabled);
+	game->setLoggerEnabled(enabled);
 }
 
 std::vector<double> AverageAdaptor::evaluate(std::vector<Program*>& programs) {
@@ -30,14 +43,4 @@ void AverageAdaptor::nextSetting() {
 
 std::string AverageAdaptor::toString() const {
 	return game->toString();
-}
-
-void AverageAdaptor::setLogger(std::shared_ptr<boost::log::sources::logger>& logger) {
-	Game::setLogger(logger);
-	game->setLogger(logger);
-}
-
-void AverageAdaptor::setLoggerEnabled(bool enabled) {
-	Game::setLoggerEnabled(enabled);
-	game->setLoggerEnabled(enabled);
 }

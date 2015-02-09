@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <fstream>
+#include <omp.h>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/log/sinks/sync_frontend.hpp>
 #include <boost/log/sinks/text_ostream_backend.hpp>
@@ -16,6 +17,9 @@
 #include <boost/filesystem.hpp>
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics.hpp>
+#include "CppUtil/GenericIo.h"
+#include "CppUtil/OpenMp.h"
+#include "CppUtil/PropertyTreeUtil.h"
 #include "Game/AverageAdaptor.h"
 #include "Game/Mushroom.h"
 #include "Game/MultiAgentMushroom.h"
@@ -30,10 +34,9 @@
 #include "Problem/SantaFeTrail.h"
 #include "Solver/GeneticAlgorithm.h"
 #include "Solver/SimulatedAnnealing.h"
-#include "CppUtil/GenericIo.h"
-#include "CppUtil/PropertyTreeUtil.h"
 #include "AiBench.h"
 using namespace std;
+using namespace cpputil;
 namespace po = boost::program_options;
 namespace pt = boost::property_tree;
 namespace lg = boost::log;
@@ -48,6 +51,7 @@ void AiBench::initOptions(boost::program_options::options_description& options,
 		boost::program_options::positional_options_description& positional) {
 	options.add_options()
 		("help,h", "produce help message")
+		("multithread,m", po::value<int>()->default_value(0), "specify thread number")
 		("config,c", po::value<string>()->default_value("config.xml"), "specify config file")
 		("experiment,e", po::value<string>()->default_value(""), "specify experiment")
 		("game,g", po::value<string>()->default_value(""), "specify game")
@@ -100,6 +104,14 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 	pt::ptree configRoot;
 	pt::read_xml(configFile, configRoot);
 	config = configRoot.get_child("Config");
+
+	//<Multithread>ノードの取得
+	if (args["multithread"].as<int>() != 0) {
+		initOpenMp(args["multithread"].as<int>());
+	} else {
+		initOpenMp(config.get<int>("Multithread"));
+	}
+	cerr << "\tthreads = " << omp_get_max_threads() << endl;
 
 	//<Experiment>ノードの取得
 	pt::ptree experiment;
@@ -422,7 +434,6 @@ void AiBench::initOutput(boost::property_tree::ptree& outputTree) {
 				string numberedFilename = path.parent_path().generic_string() + string("/") + to_string(i) + path.filename().generic_string();
 				lg::add_file_log(lg::keywords::file_name = numberedFilename, lg::keywords::filter = lg::expressions::is_in_range<int>(target, i, i + 1));
 			}
-
 		} else {
 			assert(false);
 		}

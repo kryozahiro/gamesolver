@@ -19,28 +19,3 @@ pair<int, int> Game::getProgramSize() const {
 const ProgramType& Game::getProgramType() const {
 	return programType;
 }
-
-void Game::setLogger(std::shared_ptr<boost::log::sources::logger>& logger) {
-	this->logger = logger;
-}
-
-void Game::setLoggerEnabled(bool enabled) {
-	if (!logger and enabled) {
-		assert(false);
-		return;
-	}
-	loggerEnabled = enabled;
-}
-
-bool Game::isLoggerEnabled() const {
-	return loggerEnabled;
-}
-
-std::shared_ptr<boost::log::sources::logger> Game::getLogger() {
-	if (loggerEnabled) {
-		return logger;
-	} else {
-		assert(false);
-		return nullptr;
-	}
-}

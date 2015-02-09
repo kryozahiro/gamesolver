@@ -5,19 +5,36 @@
  *      Author: kryozahiro
  */
 
+#include <omp.h>
 #include "Evaluator.h"
 #include "CppUtil/AlgorithmUtil.h"
 using namespace std;
+using namespace cpputil;
 
 void Evaluator::problemEvaluation(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory, std::mt19937_64& randomEngine) {
 	assert(evaluator.getProgramSize().first == 1);
-	for (auto itr = solutions.begin(); itr < solutions.end(); ++itr) {
+
+	#pragma omp parallel
+	{
+
+	#pragma omp critical
+	{
+		evaluator.parallelGames[omp_get_thread_num()] = shared_ptr<Game>(evaluator.game->clone());
+		shared_ptr<boost::log::sources::logger> parallelLog(new boost::log::sources::logger);
+		parallelLog->add_attribute(evaluator.loggerName, evaluator.parallelAttrs[omp_get_thread_num()]);
+		evaluator.parallelGames[omp_get_thread_num()]->setLogger(parallelLog);
+	}
+
+	#pragma omp for schedule(dynamic) ordered
+	for (unsigned int i = 0; i < solutions.size(); ++i) {
 		/*if (gene->getFitness() != DBL_MAX) {
 			continue;
 		}*/
-		std::vector<Program*> programs(1, &*(*itr)->getProgram());
+		std::vector<Program*> programs(1, &*solutions[i]->getProgram());
 		std::vector<double> fitness = evaluator(programs);
-		(*itr)->setFitness(fitness[0]);
+		solutions[i]->setFitness(fitness[0]);
+	}
+
 	}
 }
 
@@ -110,27 +127,37 @@ void Evaluator::partitioningEvaluation(Evaluator& evaluator, std::vector<std::sh
 
 Evaluator::Evaluator(std::shared_ptr<Game> game, std::string loggerName, std::pair<int, int> loggerRange) :
 		game(game),
-		logger(make_shared<boost::log::sources::logger>()),
-		evaluationAttr(evaluateCount),
-		loggerRange(loggerRange) {
-	logger->add_attribute(loggerName, evaluationAttr);
-	game->setLogger(logger);
+		loggerName(loggerName),
+		loggerRange(loggerRange),
+		evaluationAttr(evaluationCount),
+		parallelGames(omp_get_num_procs()),
+		parallelAttrs(omp_get_num_procs(), boost::log::attributes::mutable_constant<int>(evaluationCount)) {
+	shared_ptr<boost::log::sources::logger> log(new boost::log::sources::logger);
+	log->add_attribute(loggerName, evaluationAttr);
+	game->setLogger(log);
 }
 
 std::vector<double> Evaluator::operator()(std::vector<Program*>& programs) {
-	if (loggerRange.first <= evaluateCount and evaluateCount < loggerRange.second) {
-		game->setLoggerEnabled(true);
+	Game& myGame = omp_in_parallel() ? *parallelGames[omp_get_thread_num()] : *this->game;
+	boost::log::attributes::mutable_constant<int>& myAttr = omp_in_parallel() ? parallelAttrs[omp_get_thread_num()] : this->evaluationAttr;
+
+	#pragma omp critical
+	{
+	if (loggerRange.first <= evaluationCount and evaluationCount < loggerRange.second) {
+		myGame.setLoggerEnabled(true);
 	} else {
-		game->setLoggerEnabled(false);
+		myGame.setLoggerEnabled(false);
 	}
-	const std::vector<double> fitness = game->evaluate(programs);
-	++evaluateCount;
-	evaluationAttr.set(evaluateCount);
+	myAttr.set(evaluationCount);
+	++evaluationCount;
+	}
+
+	std::vector<double> fitness = myGame.evaluate(programs);
 	return fitness;
 }
 
-int Evaluator::getEvaluateCount() {
-	return evaluateCount;
+int Evaluator::getEvaluationCount() const {
+	return evaluationCount;
 }
 
 void Evaluator::nextSetting() {

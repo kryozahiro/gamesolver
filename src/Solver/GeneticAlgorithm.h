@@ -234,7 +234,7 @@ protected:
 		logGenes(genes);
 
 		//世代を進める
-		while (evaluator.getEvaluateCount() < evaluateNum) {
+		while (evaluator.getEvaluationCount() < evaluateNum) {
 			advanceGeneration(evaluator, genes);
 			logGenes(genes);
 		}

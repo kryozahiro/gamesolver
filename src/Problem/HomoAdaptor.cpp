@@ -9,11 +9,28 @@
 #include <algorithm>
 #include "HomoAdaptor.h"
 using namespace std;
+using namespace cpputil;
 
 HomoAdaptor::HomoAdaptor(shared_ptr<Game> game, int programSize) :
 		Problem(game->getProgramType()), game(game), programSize(programSize) {
 	pair<int, int> size = game->getProgramSize();
 	assert(size.first <= programSize and programSize <= size.second);
+	auto logger = game->getLogger();
+	Game::setLogger(logger);
+}
+
+HomoAdaptor::HomoAdaptor(const HomoAdaptor& homoAdaptor) :
+		Problem(homoAdaptor), game(homoAdaptor.game->clone()), programSize(homoAdaptor.programSize) {
+}
+
+void HomoAdaptor::setLogger(std::shared_ptr<LoggerType>& logger) {
+	Game::setLogger(logger);
+	game->setLogger(logger);
+}
+
+void HomoAdaptor::setLoggerEnabled(bool enabled) {
+	Game::setLoggerEnabled(enabled);
+	game->setLoggerEnabled(enabled);
 }
 
 void HomoAdaptor::nextSetting() {
@@ -22,16 +39,6 @@ void HomoAdaptor::nextSetting() {
 
 string HomoAdaptor::toString() const {
 	return game->toString();
-}
-
-void HomoAdaptor::setLogger(std::shared_ptr<boost::log::sources::logger>& logger) {
-	Game::setLogger(logger);
-	game->setLogger(logger);
-}
-
-void HomoAdaptor::setLoggerEnabled(bool enabled) {
-	Game::setLoggerEnabled(enabled);
-	game->setLoggerEnabled(enabled);
 }
 
 double HomoAdaptor::evaluate(Program& program) {

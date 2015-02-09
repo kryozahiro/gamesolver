@@ -15,13 +15,15 @@ public:
 	AverageAdaptor(std::shared_ptr<Game> game, int sampleSize);
 	virtual ~AverageAdaptor() = default;
 
+	//Loggingの実装
+	virtual void setLogger(std::shared_ptr<LoggerType>& logger) override;
+	virtual void setLoggerEnabled(bool enabled) override;
+
 	//Gameの実装
 	CPPUTIL_CLONEABLE;
 	virtual std::vector<double> evaluate(std::vector<Program*>& programs) override;
 	virtual void nextSetting() override;
 	virtual std::string toString() const override;
-	virtual void setLogger(std::shared_ptr<boost::log::sources::logger>& logger) override;
-	virtual void setLoggerEnabled(bool enabled) override;
 
 private:
 	std::shared_ptr<Game> game;

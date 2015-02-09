@@ -23,13 +23,12 @@ public:
 	static void partitioningEvaluation(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory, std::mt19937_64& randomEngine);
 
 	Evaluator(std::shared_ptr<Game> game, std::string loggerName, std::pair<int, int> loggerRange);
-	virtual ~Evaluator() = default;
 
 	//評価の実行
 	std::vector<double> operator()(std::vector<Program*>& programs);
 
 	//評価を実行した回数
-	int getEvaluateCount();
+	int getEvaluationCount() const;
 
 	//次の問題設定に移る
 	void nextSetting();
@@ -39,11 +38,16 @@ public:
 
 private:
 	std::shared_ptr<Game> game;
-	int evaluateCount = 0;
-
-	std::shared_ptr<boost::log::sources::logger> logger;
-	boost::log::attributes::mutable_constant<int> evaluationAttr;
+	std::string loggerName;
 	std::pair<int, int> loggerRange;
+
+	//評価回数
+	int evaluationCount = 0;
+	boost::log::attributes::mutable_constant<int> evaluationAttr;
+
+	//並列化
+	std::vector<std::shared_ptr<Game>> parallelGames;
+	std::vector<boost::log::attributes::mutable_constant<int>> parallelAttrs;
 };
 
 #endif /* EVALUATOR_H_ */

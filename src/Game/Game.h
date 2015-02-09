@@ -9,12 +9,12 @@
 #define GAME_H_
 
 #include <memory>
-#include <boost/log/sources/logger.hpp>
 #include "CppUtil/VirtualConstructable.h"
+#include "CppUtil/Logging.h"
 #include "../Program/Program.h"
 #include "../Program/ProgramType.h"
 
-class Game : public cpputil::Cloneable<Game> {
+class Game : public cpputil::Cloneable<Game>, public cpputil::Logging {
 public:
 	Game(std::pair<int, int> programSize, ProgramType programType);
 	virtual ~Game() = default;
@@ -32,21 +32,9 @@ public:
 	std::pair<int, int> getProgramSize() const;
 	const ProgramType& getProgramType() const;
 
-	//ロガーの設定
-	virtual void setLogger(std::shared_ptr<boost::log::sources::logger>& logger);
-	virtual void setLoggerEnabled(bool enabled);
-
-protected:
-	//ロガーの取得
-	bool isLoggerEnabled() const;
-	std::shared_ptr<boost::log::sources::logger> getLogger();
-
 private:
 	std::pair<int, int> programSize;
 	ProgramType programType;
-
-	std::shared_ptr<boost::log::sources::logger> logger;
-	bool loggerEnabled = false;
 };
 
 #endif /* GAME_H_ */
