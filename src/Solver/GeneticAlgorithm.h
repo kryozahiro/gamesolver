@@ -222,7 +222,7 @@ public:
 	//TODO: fitness-based reinsertion
 
 protected:
-	virtual std::vector<std::shared_ptr<Solution>> solveImpl(Evaluator& evaluator, int evaluateNum) override {
+	virtual std::vector<std::shared_ptr<Solution>> solveImpl(Evaluator& evaluator, TerminationCriteria& termination) override {
 		//遺伝子の初期化
 		std::vector<std::shared_ptr<Solution>> genes(inits.size());
 		std::transform(inits.begin(), inits.end(), genes.begin(), [](std::shared_ptr<Solution> init) {
@@ -231,12 +231,12 @@ protected:
 
 		//初回の評価
 		evaluation(evaluator, genes, *getHistory(), randomEngine);
-		logGenes(genes);
+		getHistory()->addPopulation(genes);
 
 		//世代を進める
-		while (evaluator.getEvaluationCount() < evaluateNum) {
+		while (!termination.meets(evaluator.getEvaluationCount(), *getHistory())) {
 			advanceGeneration(evaluator, genes);
-			logGenes(genes);
+			getHistory()->addPopulation(genes);
 		}
 
 		//解を良い順に並べて返す
@@ -247,13 +247,6 @@ protected:
 	}
 
 private:
-	//解の集合をログに追加する
-	void logGenes(std::vector<std::shared_ptr<Solution>>& genes) {
-		for (std::shared_ptr<Solution>& gene : genes) {
-			getHistory()->addSolution(gene);
-		}
-	}
-
 	//世代を進める
 	//評価した回数を返す
 	void advanceGeneration(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& genes) {

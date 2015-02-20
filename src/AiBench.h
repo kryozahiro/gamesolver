@@ -29,8 +29,8 @@ protected:
 private:
 	//実験設定
 	boost::property_tree::ptree config;
-	int evaluationTimes = 500;
 	int size = 10;
+	std::shared_ptr<TerminationCriteria> termination;
 	std::shared_ptr<Game> game;
 	std::vector<std::shared_ptr<Program>> programs;
 	std::shared_ptr<Solver<Game>> solver;

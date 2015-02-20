@@ -17,7 +17,9 @@
 
 class DataSet {
 public:
-	static std::shared_ptr<DataSet> getNguyen(int i, std::mt19937_64& randomEngine);
+	static std::vector<double> sphere(const std::vector<double>& input);
+	static std::vector<double> schwefel(const std::vector<double>& input);
+	static std::vector<double> nguyen(int dimension, const std::vector<double>& input);
 
 	DataSet();
 	DataSet(const ProgramType& programType);

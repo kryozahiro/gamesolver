@@ -18,14 +18,13 @@ void Evaluator::problemEvaluation(Evaluator& evaluator, std::vector<std::shared_
 	{
 
 	#pragma omp critical
-	{
-		evaluator.parallelGames[omp_get_thread_num()] = shared_ptr<Game>(evaluator.game->clone());
-		shared_ptr<boost::log::sources::logger> parallelLog(new boost::log::sources::logger);
-		parallelLog->add_attribute(evaluator.loggerName, evaluator.parallelAttrs[omp_get_thread_num()]);
-		evaluator.parallelGames[omp_get_thread_num()]->setLogger(parallelLog);
-	}
+	evaluator.parallelGames[omp_get_thread_num()] = shared_ptr<Game>(evaluator.game->clone());
 
-	#pragma omp for schedule(dynamic) ordered
+	shared_ptr<boost::log::sources::logger> parallelLog(new boost::log::sources::logger);
+	parallelLog->add_attribute(evaluator.loggerName, evaluator.parallelAttrs[omp_get_thread_num()]);
+	evaluator.parallelGames[omp_get_thread_num()]->setLogger(parallelLog);
+
+	#pragma omp for schedule(dynamic)
 	for (unsigned int i = 0; i < solutions.size(); ++i) {
 		/*if (gene->getFitness() != DBL_MAX) {
 			continue;
@@ -68,7 +67,7 @@ void Evaluator::allVsBestEvaluation(Evaluator& evaluator, std::vector<std::share
 		return;
 	}
 	const int evaluationSize = evaluator.getProgramSize().first;
-	const std::vector<std::shared_ptr<Solution>>& latest = solutionHistory.getGeneration(solutions[0]->getGeneration() - 1);
+	const std::vector<std::shared_ptr<Solution>>& latest = solutionHistory.getPopulation(solutions[0]->getGeneration() - 1);
 
 	//前世代の最良解を含むグループを作って評価
 	double sum = 0;

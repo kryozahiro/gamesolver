@@ -8,24 +8,31 @@
 #include "CppUtil/GenericIo.h"
 #include "DataSet.h"
 using namespace std;
+using namespace cpputil;
 
-shared_ptr<DataSet> DataSet::getNguyen(int i, mt19937_64& randomEngine) {
-	shared_ptr<DataSet> dataSet;
-	if (0 < i and i <= 4) {
-		ProgramType programType(DataType(-1, 1, 0.001, 1), DataType(-10, 10, 0.001, 1));
-		dataSet = make_shared<DataSet>(programType);
-		dataSet->addData(randomEngine, 20, [&](const vector<double>& input){
-			double x = input[0];
-			double y = 0;
-			for (int k = 1; k < 3 + i; ++k) {
-				y += pow(x, (double)k);
-			}
-			return vector<double>(1, y);
-		});
-	} else {
-		assert(false);
+std::vector<double> DataSet::sphere(const std::vector<double>& input) {
+	vector<double> output(1, 0);
+	for (unsigned int i = 1; i < input.size(); ++i) {
+		output[0] += input[i] * input[i];
 	}
-	return dataSet;
+	return output;
+}
+
+std::vector<double> DataSet::schwefel(const std::vector<double>& input) {
+	vector<double> output(1, 418.9829 * input.size());
+	for (unsigned int i = 1; i < input.size(); ++i) {
+		output[0] -= input[i] * sin(sqrt(abs(input[i])));
+	}
+	return output;
+}
+
+std::vector<double> DataSet::nguyen(int dimension, const std::vector<double>& input) {
+	assert(dimension > 0);
+	vector<double> output(1, 0);
+	for (int i = 1; i < dimension; ++i) {
+		output[0] += pow(input[0], (double)i);
+	}
+	return output;
 }
 
 DataSet::DataSet() {
@@ -35,8 +42,21 @@ DataSet::DataSet(const ProgramType& programType) : programType(programType) {
 }
 
 DataSet::DataSet(const boost::property_tree::ptree& dataTree, mt19937_64& randomEngine) {
-	string name = dataTree.data();
-	*this = *getNguyen(name.back() - '0', randomEngine);
+	string name = dataTree.get<string>("Name");
+	int dimension = dataTree.get<int>("Dimension");
+	int size = dataTree.get<int>("Size");
+	if (name.find("Sphere") != string::npos) {
+		programType = ProgramType(DataType(-5.12, 5.12, 0.001, dimension), DataType(DBL_MIN, DBL_MAX, 0.001, 1));
+		addData(randomEngine, size, sphere);
+	} else if(name.find("Schwefel") != string::npos) {
+		programType = ProgramType(DataType(-500, 500, 0.001, dimension), DataType(DBL_MIN, DBL_MAX, 0.001, 1));
+		addData(randomEngine, size, schwefel);
+	} else if (name.find("Nguyen") != string::npos) {
+		programType = ProgramType(DataType(-1, 1, 0.001, 1), DataType(-10, 10, 0.001, 1));
+		addData(randomEngine, size, [=](const vector<double>& input) {
+			return nguyen(dimension, input);
+		});
+	}
 }
 
 const ProgramType& DataSet::getProgramType() const {

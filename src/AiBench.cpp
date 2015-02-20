@@ -54,14 +54,14 @@ void AiBench::initOptions(boost::program_options::options_description& options,
 		("multithread,m", po::value<int>()->default_value(0), "specify thread number")
 		("config,c", po::value<string>()->default_value("config.xml"), "specify config file")
 		("experiment,e", po::value<string>()->default_value(""), "specify experiment")
+		("agents,a", po::value<int>()->default_value(0), "specify the size of agents")
+		("termination,t", po::value<string>()->default_value(""), "specify termination criteria")
 		("game,g", po::value<string>()->default_value(""), "specify game")
 		("program,p", po::value<string>()->default_value(""), "specify program representation")
 		("solver,s", po::value<string>()->default_value(""), "specify solver")
-		("agents,a", po::value<int>()->default_value(0), "specify the size of agents")
-		("times,t", po::value<int>()->default_value(0), "specify evaluation times")
 		("validation,v", po::value<int>()->default_value(0), "specify validate evaluation times")
-		("input,i", po::value<string>()->default_value(""), "specify input file")
-		("output,o", po::value<string>()->default_value(""), "specify output methods");
+		("output,o", po::value<string>()->default_value(""), "specify output methods")
+		("input,i", po::value<string>()->default_value(""), "specify input file");
 }
 
 int AiBench::mainImpl(boost::program_options::variables_map& args) {
@@ -72,10 +72,8 @@ int AiBench::mainImpl(boost::program_options::variables_map& args) {
 	//探索の実行
 	cerr << "Solve: ";
 	vector<shared_ptr<Solution>> solutions;
-	cpputil::Timer timer;
-	timer.start();
-	solutions = solver->solve(*game, evaluationTimes, evaluationLoggerRange);
-	cerr << (double)timer.elapsed() / 1000.0 << " sec elapsed" << endl;
+	solutions = solver->solve(*game, *termination, evaluationLoggerRange);
+	cerr << history->getElapsedTime() << " sec elapsed" << endl;
 	cerr << endl;
 
 	//結果の出力
@@ -129,21 +127,15 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 	}
 	cerr << "\tsize = " << size << endl;
 
-	//評価回数
-	if (args["times"].as<int>() != 0) {
-		evaluationTimes = args["times"].as<int>();
+	//終了条件
+	pt::ptree terminationTree;
+	if (args["termination"].as<string>() != "") {
+		terminationTree == cpputil::search(config, "<xmlattr>.name", args["termination"].as<string>());
 	} else {
-		evaluationTimes = experiment.get<int>("Evaluation");
+		terminationTree = experiment.get_child("Termination");
 	}
-	cerr << "\tevaluation = " << evaluationTimes << endl;
-
-	//検証
-	if (args["validation"].as<int>() != 0) {
-		validationTimes = args["validation"].as<int>();
-	} else {
-		validationTimes = experiment.get<int>("Validation");
-	}
-	cerr << "\tvalidation = " << validationTimes << endl;
+	termination = make_shared<TerminationCriteria>(terminationTree);
+	cerr << "\ttermination = " << "(impl)" << endl;
 
 	//ゲーム
 	pt::ptree gameTree;
@@ -171,6 +163,14 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 		solverTree = experiment.get_child("Solver");
 	}
 	solver = initSolver(solverTree, programTree);
+
+	//検証
+	if (args["validation"].as<int>() != 0) {
+		validationTimes = args["validation"].as<int>();
+	} else {
+		validationTimes = experiment.get<int>("Validation");
+	}
+	cerr << "\tvalidation = " << validationTimes << endl;
 
 	//出力
 	pt::ptree outputTree;

@@ -16,22 +16,29 @@
 
 class SolutionHistory {
 public:
-	void start();
-	void addSolution(std::shared_ptr<Solution> solution);
+	typedef std::vector<std::shared_ptr<Solution>> Population;
 
-	const std::vector<std::shared_ptr<Solution>>& getGeneration(int generation);
+	//タイマー
+	void start();
+	double getElapsedTime() const;
+
+	//解を記録する
+	void addSolution(std::shared_ptr<Solution>& solution);
+	void addPopulation(Population& population);
+
+	//記録の取得
+	int getLastGeneration() const;
+	const Population& getPopulation(int generation) const;
+
+	//文字列表現
 	std::string toString() const;
 	std::string showRelation() const;
 	std::string showSummary() const;
 
 private:
-	static bool lessThanGeneration(const std::shared_ptr<Solution>& lhs, const std::shared_ptr<Solution>& rhs);
-	static bool lessThanFitness(const std::shared_ptr<Solution>& lhs, const std::shared_ptr<Solution>& rhs);
-	cpputil::Timer timer;
-
 	//解の記録
-	typedef std::vector<std::shared_ptr<Solution>> Generation;
-	std::map<int, Generation> records;
+	cpputil::Timer timer;
+	std::map<int, Population> records;
 
 	//ロギング
 	boost::log::sources::logger solutionLogger;

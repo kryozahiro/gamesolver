@@ -9,6 +9,7 @@
 #define SOLVER_H_
 
 #include "Evaluator.h"
+#include "TerminationCriteria.h"
 
 template <class GameCategory>
 class Solver {
@@ -17,11 +18,11 @@ public:
 	virtual ~Solver() = default;
 
 	//与えられた評価回数に到達するまで最適化する
-	std::vector<std::shared_ptr<Solution>> solve(GameCategory& game, int evaluateNum, std::pair<int, int> loggerRange) {
+	std::vector<std::shared_ptr<Solution>> solve(GameCategory& game, TerminationCriteria& termination, std::pair<int, int> loggerRange) {
 		std::shared_ptr<Game> sharedGame(&game, [](Game*){});
 		evaluator = std::make_shared<Evaluator>(sharedGame, "Evaluation", loggerRange);
 		history->start();
-		return solveImpl(*evaluator, evaluateNum);
+		return solveImpl(*evaluator, termination);
 	}
 
 	//解の履歴を取得する
@@ -30,7 +31,7 @@ public:
 	}
 
 protected:
-	virtual std::vector<std::shared_ptr<Solution>> solveImpl(Evaluator& evaluator, int evaluateNum) = 0;
+	virtual std::vector<std::shared_ptr<Solution>> solveImpl(Evaluator& evaluator, TerminationCriteria& termination) = 0;
 
 private:
 	//評価器
