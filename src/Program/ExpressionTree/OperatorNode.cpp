@@ -35,10 +35,7 @@ OperatorNode OperatorNode::fromBinaryOperator(std::string name, std::function<do
 	});
 }
 
-OperatorNode::OperatorNode(string name, int arity, Op op) {
-	this->name = name;
-	this->arity = arity;
-	this->op = op;
+OperatorNode::OperatorNode(string name, int arity, Op op) : name(name), arity(arity), op(op) {
 }
 
 void OperatorNode::randomize(const ProgramType& programType, mt19937_64& randomEngine) {

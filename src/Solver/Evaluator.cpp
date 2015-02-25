@@ -160,9 +160,9 @@ int Evaluator::getEvaluationCount() const {
 }
 
 void Evaluator::nextSetting() {
-	game->nextSetting();
+	game->advanceSetting(1);
 }
 
-std::pair<int, int> Evaluator::getProgramSize() {
+std::pair<int, int> Evaluator::getProgramSize() const {
 	return game->getProgramSize();
 }

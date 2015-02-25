@@ -33,8 +33,8 @@ void HomoAdaptor::setLoggerEnabled(bool enabled) {
 	game->setLoggerEnabled(enabled);
 }
 
-void HomoAdaptor::nextSetting() {
-	game->nextSetting();
+void HomoAdaptor::advanceSetting(int amount) {
+	game->advanceSetting(amount);
 }
 
 string HomoAdaptor::toString() const {

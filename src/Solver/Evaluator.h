@@ -34,7 +34,7 @@ public:
 	void nextSetting();
 
 	//解関数の性質
-	std::pair<int, int> getProgramSize();
+	std::pair<int, int> getProgramSize() const;
 
 private:
 	std::shared_ptr<Game> game;

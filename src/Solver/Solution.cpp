@@ -12,12 +12,12 @@ using namespace std;
 Solution::Solution(std::shared_ptr<Program> program) : program(program) {
 }
 
-Solution::Solution(const Solution& solution) {
-	program = shared_ptr<Program>(solution.program->clone());
-	fitness = solution.fitness;
-	generation = solution.generation;
-	children = solution.children;
-	time = solution.time;
+Solution::Solution(const Solution& solution) :
+		program(solution.program->clone()),
+		fitness(solution.fitness),
+		generation(solution.generation),
+		children(solution.children),
+		time(solution.time) {
 }
 
 std::shared_ptr<Program> Solution::getProgram() {

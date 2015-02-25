@@ -11,25 +11,35 @@ using namespace std;
 using namespace cpputil;
 
 AverageAdaptor::AverageAdaptor(std::shared_ptr<Game> game, int sampleSize) :
-		Game(game->getProgramSize(), game->getProgramType()), game(game), sampleSize(sampleSize) {
+		Game(game->getProgramSize(), game->getProgramType()), sampleSize(sampleSize) {
 	auto log = game->getLogger();
 	Game::setLogger(log);
+
+	for (int i = 0; i < sampleSize; ++i) {
+		shared_ptr<Game> clonedGame(game->clone());
+		clonedGame->advanceSetting(i);
+		games.push_back(clonedGame);
+	}
 }
 
 void AverageAdaptor::setLogger(std::shared_ptr<LoggerType>& logger) {
 	Game::setLogger(logger);
-	game->setLogger(logger);
+	for (shared_ptr<Game>& game : games) {
+		game->setLogger(logger);
+	}
 }
 
 void AverageAdaptor::setLoggerEnabled(bool enabled) {
 	Game::setLoggerEnabled(enabled);
-	game->setLoggerEnabled(enabled);
+	for (shared_ptr<Game>& game : games) {
+		game->setLoggerEnabled(enabled);
+	}
 }
 
 std::vector<double> AverageAdaptor::evaluate(std::vector<Program*>& programs) {
 	vector<double> fitness(programs.size(), 0);
 	for (int i = 0; i < sampleSize; ++i) {
-		const vector<double>& sample = game->evaluate(programs);
+		const vector<double>& sample = games[i]->evaluate(programs);
 		transform(sample.begin(), sample.end(), fitness.begin(), fitness.begin(), [](const double& s, double& f) {
 			return s + f;
 		});
@@ -37,10 +47,12 @@ std::vector<double> AverageAdaptor::evaluate(std::vector<Program*>& programs) {
 	return fitness;
 }
 
-void AverageAdaptor::nextSetting() {
-	game->nextSetting();
+void AverageAdaptor::advanceSetting(int amount) {
+	for (shared_ptr<Game>& game : games) {
+		game->advanceSetting(amount * games.size());
+	}
 }
 
 std::string AverageAdaptor::toString() const {
-	return game->toString();
+	return games.front()->toString();
 }

@@ -9,9 +9,7 @@
 #include "ConstantNode.h"
 using namespace std;
 
-ConstantNode::ConstantNode(pair<double, double> minmax) {
-	this->minmax = minmax;
-	this->constant = minmax.first;
+ConstantNode::ConstantNode(pair<double, double> minmax) : minmax(minmax), constant(minmax.first) {
 }
 
 void ConstantNode::randomize(const ProgramType& programType, mt19937_64& randomEngine) {

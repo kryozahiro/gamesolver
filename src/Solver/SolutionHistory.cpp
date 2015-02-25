@@ -52,7 +52,7 @@ void SolutionHistory::addPopulation(Population& population) {
 }
 
 int SolutionHistory::getLastGeneration() const {
-	if (records.size() == 0) {
+	if (records.empty()) {
 		return -1;
 	}
 	return records.rbegin()->second.front()->getGeneration();

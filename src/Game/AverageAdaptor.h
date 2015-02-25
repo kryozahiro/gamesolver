@@ -22,11 +22,11 @@ public:
 	//Gameの実装
 	CPPUTIL_CLONEABLE;
 	virtual std::vector<double> evaluate(std::vector<Program*>& programs) override;
-	virtual void nextSetting() override;
+	virtual void advanceSetting(int amount) override;
 	virtual std::string toString() const override;
 
 private:
-	std::shared_ptr<Game> game;
+	std::vector<std::shared_ptr<Game>> games;
 	int sampleSize;
 };
 

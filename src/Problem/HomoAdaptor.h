@@ -22,7 +22,7 @@ public:
 
 	//Gameの実装
 	CPPUTIL_CLONEABLE;
-	virtual void nextSetting() override;
+	virtual void advanceSetting(int amount) override;
 	virtual std::string toString() const override;
 
 	//Problemの実装

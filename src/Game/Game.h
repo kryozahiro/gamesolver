@@ -23,7 +23,7 @@ public:
 	virtual std::vector<double> evaluate(std::vector<Program*>& programs) = 0;
 
 	//次の問題設定に移る
-	virtual void nextSetting() {};
+	virtual void advanceSetting(int amount) {};
 
 	//文字列化
 	virtual std::string toString() const = 0;
