@@ -20,15 +20,23 @@ public:
 	bool meets(int evaluation, SolutionHistory& solutionHistory);
 
 private:
-	int minimumEvaluation = 0;
+	double minimumTime = 0;		//最小経過時間
 	double elapsedTime = 0;		//経過時間
+	int minimumEvaluation = 0;	//最小評価回数
 	int evaluationCount = 0;	//評価回数
-	double improvement = 0;		//解の改善量
+
+	//解の改善量
+	double bestImprovement = 0;
+	double meanImprovement = 0;
 
 	//改善のなかった期間の割合
-	double noImprovementScale = 0;
+	double noBestImprovementScale = 0;
 	double best = DBL_MAX;
-	int count = 0;
+	int noBestImprovementCount = 0;
+
+	double noMeanImprovementScale = 0;
+	double mean = DBL_MAX;
+	int noMeanImprovementCount = 0;
 };
 
 #endif /* SRC_SOLVER_TERMINATIONCRITERIA_H_ */

@@ -35,6 +35,7 @@ public:
 	std::string showRelation() const;
 	std::string showSummary() const;
 
+	static double getMeanFitness(const Population& population);
 private:
 	//解の記録
 	cpputil::Timer timer;

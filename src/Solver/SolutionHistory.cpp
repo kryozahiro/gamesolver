@@ -6,7 +6,6 @@
  */
 
 #include <algorithm>
-#include <boost/lexical_cast.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 #include "SolutionHistory.h"
 using namespace std;
@@ -59,8 +58,9 @@ int SolutionHistory::getLastGeneration() const {
 }
 
 const SolutionHistory::Population& SolutionHistory::getPopulation(int generation) const {
-	assert(getLastGeneration() >= 0 and generation >= -(getLastGeneration() + 1));
-	return records.at((generation + getLastGeneration() + 1) % (getLastGeneration() + 1));
+	int generationSize = getLastGeneration() + 1;
+	assert(getLastGeneration() >= 0 and generation >= -generationSize);
+	return records.at((generation + generationSize) % generationSize);
 }
 
 string SolutionHistory::toString() const {
@@ -95,9 +95,7 @@ string SolutionHistory::showSummary() const {
 		double best = population.front()->getFitness();
 
 		//平均
-		double average = accumulate(population.begin(), population.end(), 0.0, [](double sum, shared_ptr<Solution> solution) {
-			return sum + solution->getFitness();
-		}) / (double)population.size();
+		double average = getMeanFitness(population);
 
 		//標準偏差
 		double sd = accumulate(population.begin(), population.end(), 0.0, [&](double sum, shared_ptr<Solution> solution) {
@@ -105,10 +103,17 @@ string SolutionHistory::showSummary() const {
 		}) / (double)population.size();
 		sd = sqrt(sd);
 
-		ret += boost::lexical_cast<string>(generation) + "\t" +
-				boost::lexical_cast<string>(best) + "\t" +
-				boost::lexical_cast<string>(average) + "\t" +
-				boost::lexical_cast<string>(sd) + "\n";
+		ret += to_string(generation) + "\t" +
+				to_string(best) + "\t" +
+				to_string(average) + "\t" +
+				to_string(sd) + "\n";
 	}
 	return ret;
+}
+
+double SolutionHistory::getMeanFitness(const Population& population) {
+	double sum = accumulate(population.begin(), population.end(), 0.0, [](double s, const shared_ptr<Solution>& solution) {
+		return s + solution->getFitness();
+	});
+	return sum / static_cast<double>(population.size());
 }

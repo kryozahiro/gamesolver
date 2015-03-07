@@ -15,9 +15,10 @@ AverageAdaptor::AverageAdaptor(std::shared_ptr<Game> game, int sampleSize) :
 	auto log = game->getLogger();
 	Game::setLogger(log);
 
-	for (int i = 0; i < sampleSize; ++i) {
-		shared_ptr<Game> clonedGame(game->clone());
-		clonedGame->advanceSetting(i);
+	games.push_back(game);
+	for (int i = 1; i < sampleSize; ++i) {
+		shared_ptr<Game> clonedGame(games[i-1]->clone());
+		clonedGame->advanceSetting(1);
 		games.push_back(clonedGame);
 	}
 }
