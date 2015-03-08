@@ -30,17 +30,17 @@ private:
 	//実験設定
 	boost::property_tree::ptree config;
 	int size = 10;
-	std::shared_ptr<TerminationCriteria> termination;
 	std::shared_ptr<Game> game;
 	std::vector<std::shared_ptr<Program>> programs;
 	std::shared_ptr<Solver<Game>> solver;
+	std::shared_ptr<TerminationCriteria> termination;
+	int historySize = 10;
 
 	//その他の実験用オブジェクト
 	std::mt19937_64 randomEngine;
-	std::shared_ptr<SolutionHistory> history;
 	std::string relationFile;
-	int validationTimes = 10;
 	std::pair<int, int> evaluationLoggerRange;
+	int validationTimes = 10;
 
 	//実験設定の読み込み
 	void initExperiment(boost::program_options::variables_map& args);

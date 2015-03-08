@@ -231,12 +231,12 @@ protected:
 
 		//初回の評価
 		evaluation(evaluator, genes, *getHistory(), randomEngine);
-		getHistory()->addPopulation(genes);
+		getHistory()->addGeneration(genes);
 
 		//世代を進める
 		while (!termination.meets(evaluator.getEvaluationCount(), *getHistory())) {
 			advanceGeneration(evaluator, genes);
-			getHistory()->addPopulation(genes);
+			getHistory()->addGeneration(genes);
 		}
 
 		//解を良い順に並べて返す

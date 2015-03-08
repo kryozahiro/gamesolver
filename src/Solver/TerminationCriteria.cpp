@@ -13,19 +13,21 @@ TerminationCriteria::TerminationCriteria(boost::property_tree::ptree& tree) {
 		minimumTime = tree.get<double>("MinimumTime");
 	} catch (std::exception& e) {}
 	try {
-		elapsedTime = tree.get<double>("ElapsedTime");
+		maximumTime = tree.get<double>("MaximumTime");
 	} catch (std::exception& e) {}
 	try {
 		minimumEvaluation = tree.get<int>("MinimumEvaluation");
 	} catch (std::exception& e) {}
 	try {
-		evaluationCount = tree.get<int>("EvaluationCount");
+		maximumEvaluation = tree.get<int>("MaximumEvaluation");
 	} catch (std::exception& e) {}
 	try {
 		bestImprovement = tree.get<double>("BestImprovement");
+		assert(bestImprovement <= 0);
 	} catch (std::exception& e) {}
 	try {
 		meanImprovement = tree.get<double>("MeanImprovement");
+		assert(meanImprovement <= 0);
 	} catch (std::exception& e) {}
 	try {
 		noBestImprovementScale = tree.get<double>("NoBestImprovementScale");
@@ -39,52 +41,54 @@ bool TerminationCriteria::meets(int evaluation, SolutionHistory& solutionHistory
 	if (minimumTime > 0 and solutionHistory.getElapsedTime() < minimumTime) {
 		return false;
 	}
-	if (elapsedTime > 0 and solutionHistory.getElapsedTime() >= elapsedTime) {
+	if (maximumTime > 0 and solutionHistory.getElapsedTime() >= maximumTime) {
 		return true;
 	}
 	if (minimumEvaluation > 0 and evaluation < minimumEvaluation) {
 		return false;
 	}
-	if (evaluationCount > 0 and evaluation >= evaluationCount) {
+	if (maximumEvaluation > 0 and evaluation >= maximumEvaluation) {
 		return true;
 	}
-	if (bestImprovement > 0 and solutionHistory.getLastGeneration() >= 5) {
-		double now = solutionHistory.getPopulation(-1).front()->getFitness();
-		double prev = solutionHistory.getPopulation(-6).front()->getFitness();
-		if (abs(now - prev) < bestImprovement) {
-			return true;
+
+	bool result = true;
+	if (bestImprovement > 0 and solutionHistory.getLastGenerationNum() >= 5) {
+		double now = solutionHistory.getGeneration(-1).front()->getFitness();
+		double prev = solutionHistory.getGeneration(-6).front()->getFitness();
+		if (now - prev < bestImprovement) {
+			result = false;
 		}
 	}
-	if (meanImprovement > 0 and solutionHistory.getLastGeneration() >= 5) {
-		double now = SolutionHistory::getMeanFitness(solutionHistory.getPopulation(-1));
-		double prev = SolutionHistory::getMeanFitness(solutionHistory.getPopulation(-6));
-		if (abs(now - prev) < meanImprovement) {
-			return true;
+	if (meanImprovement > 0 and solutionHistory.getLastGenerationNum() >= 5) {
+		double now = SolutionHistory::getMeanFitness(solutionHistory.getGeneration(-1));
+		double prev = SolutionHistory::getMeanFitness(solutionHistory.getGeneration(-6));
+		if (now - prev < meanImprovement) {
+			result = false;
 		}
 	}
 	if (noBestImprovementScale > 0) {
-		double now = solutionHistory.getPopulation(-1).front()->getFitness();
+		double now = solutionHistory.getGeneration(-1).front()->getFitness();
 		if (best > now) {
 			best = now;
 			noBestImprovementCount = 0;
 		} else {
 			++noBestImprovementCount;
 		}
-		if ((double)noBestImprovementCount / (double)solutionHistory.getLastGeneration() > noBestImprovementScale) {
-			return true;
+		if ((double)noBestImprovementCount / (double)solutionHistory.getLastGenerationNum() < noBestImprovementScale) {
+			result = false;
 		}
 	}
 	if (noMeanImprovementScale > 0) {
-		double now = SolutionHistory::getMeanFitness(solutionHistory.getPopulation(-1));
+		double now = SolutionHistory::getMeanFitness(solutionHistory.getGeneration(-1));
 		if (mean > now) {
 			mean = now;
 			noMeanImprovementCount = 0;
 		} else {
 			++noMeanImprovementCount;
 		}
-		if ((double)noMeanImprovementCount / (double)solutionHistory.getLastGeneration() > noMeanImprovementScale) {
-			return true;
+		if ((double)noMeanImprovementCount / (double)solutionHistory.getLastGenerationNum() < noMeanImprovementScale) {
+			result = false;
 		}
 	}
-	return false;
+	return result;
 }

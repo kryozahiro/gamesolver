@@ -13,6 +13,7 @@
 class AverageAdaptor : public Game {
 public:
 	AverageAdaptor(std::shared_ptr<Game> game, int sampleSize);
+	AverageAdaptor(const AverageAdaptor& averageAdaptor);
 	virtual ~AverageAdaptor() = default;
 
 	//Loggingの実装

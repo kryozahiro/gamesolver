@@ -94,19 +94,34 @@ string InstructionSequence::toString() const {
 }
 
 void InstructionSequence::crossover(const std::string& method, InstructionSequence& other, std::mt19937_64& randomEngine) {
-	int maxLength = min(instructions.size(), other.instructions.size());
-	if (maxLength == 0) {
-		return;
-	}
-	uniform_int_distribution<int> lengthDist(1, maxLength);
-	int length = lengthDist(randomEngine);
+	int size1 = instructions.size();
+	int size2 = other.instructions.size();
 
-	uniform_int_distribution<int> begin1Dist(0, instructions.size() - length);
+	uniform_int_distribution<int> diffDist(max(-size2, size1 - maxSize), min(size1, maxSize - size2));
+	int diff = diffDist(randomEngine);
+
+	uniform_int_distribution<int> lengthDist1(max(0, diff), min(size1, size2 + diff));
+	int frag1 = lengthDist1(randomEngine);
+	int frag2 = frag1 - diff;
+	assert(0 <= size1 - frag1 + frag2);
+	assert(size1 - frag1 + frag2 <= maxSize);
+	assert(0 <= size2 + frag1 - frag2);
+	assert(size2 + frag1 - frag2 <= maxSize);
+
+	uniform_int_distribution<int> begin1Dist(0, size1 - frag1);
 	int begin1 = begin1Dist(randomEngine);
-	uniform_int_distribution<int> begin2Dist(0, other.instructions.size() - length);
+	uniform_int_distribution<int> begin2Dist(0, size2 - frag2);
 	int begin2 = begin2Dist(randomEngine);
 
-	swap_ranges(instructions.begin() + begin1, instructions.begin() + begin1 + length, other.instructions.begin() + begin2);
+	if (diff >= 0) {
+		swap_ranges(instructions.begin() + begin1, instructions.begin() + begin1 + frag2, other.instructions.begin() + begin2);
+		other.instructions.insert(other.instructions.begin() + begin2 + frag2, instructions.begin() + begin1 + frag2, instructions.begin() + begin1 + frag1);
+		instructions.erase(instructions.begin() + begin1 + frag2, instructions.begin() + begin1 + frag1);
+	} else {
+		swap_ranges(instructions.begin() + begin1, instructions.begin() + begin1 + frag1, other.instructions.begin() + begin2);
+		instructions.insert(instructions.begin() + begin1 + frag1, other.instructions.begin() + begin2 + frag1, other.instructions.begin() + begin2 + frag2);
+		other.instructions.erase(other.instructions.begin() + begin2 + frag1, other.instructions.begin() + begin2 + frag2);
+	}
 }
 
 void InstructionSequence::mutation(const std::string& method, std::mt19937_64& randomEngine) {

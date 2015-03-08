@@ -13,6 +13,7 @@
 #include <boost/log/sinks/text_ostream_backend.hpp>
 #include <boost/log/expressions/predicates.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/utility/setup/console.hpp>
 #include <boost/log/utility/setup/file.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/accumulators/accumulators.hpp>
@@ -28,6 +29,7 @@
 #include "Game/Evasion.h"
 #include "Game/SingleFood.h"
 #include "Game/TimeSeries.h"
+#include "Game/Memory.h"
 #include "Problem/HomoAdaptor.h"
 #include "Problem/Regression.h"
 #include "Problem/TravellingSalesman.h"
@@ -55,10 +57,11 @@ void AiBench::initOptions(boost::program_options::options_description& options,
 		("config,c", po::value<string>()->default_value("config.xml"), "specify config file")
 		("experiment,e", po::value<string>()->default_value(""), "specify experiment")
 		("agents,a", po::value<int>()->default_value(0), "specify the size of agents")
-		("termination,t", po::value<string>()->default_value(""), "specify termination criteria")
 		("game,g", po::value<string>()->default_value(""), "specify game")
 		("program,p", po::value<string>()->default_value(""), "specify program representation")
 		("solver,s", po::value<string>()->default_value(""), "specify solver")
+		("termination,t", po::value<string>()->default_value(""), "specify termination criteria")
+		("history,y", po::value<int>()->default_value(0), "specify history size")
 		("validation,v", po::value<int>()->default_value(0), "specify validate evaluation times")
 		("output,o", po::value<string>()->default_value(""), "specify output methods")
 		("input,i", po::value<string>()->default_value(""), "specify input file");
@@ -70,19 +73,17 @@ int AiBench::mainImpl(boost::program_options::variables_map& args) {
 	cerr << endl;
 
 	//探索の実行
-	cerr << "Solve: ";
+	cerr << "Solve:" << endl;
+	cerr << "gen\tbest\tworst\tmean\tsd" << endl;
 	vector<shared_ptr<Solution>> solutions;
-	solutions = solver->solve(*game, *termination, evaluationLoggerRange);
-	cerr << history->getElapsedTime() << " sec elapsed" << endl;
+	solutions = solver->solve(*game, *termination, historySize, evaluationLoggerRange);
+	cerr << solver->getHistory()->getElapsedTime() << " sec elapsed" << endl;
 	cerr << endl;
 
 	//結果の出力
-	cerr << "Summary:" << endl;
-	cerr << history->showSummary() << endl;
-
 	if (relationFile != "") {
 		ofstream ofs(relationFile);
-		ofs << history->showRelation() << endl;
+		ofs << solver->getHistory()->showRelation() << endl;
 	}
 
 	cerr << "Solution:" << endl;
@@ -127,16 +128,6 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 	}
 	cerr << "\tsize = " << size << endl;
 
-	//終了条件
-	pt::ptree terminationTree;
-	if (args["termination"].as<string>() != "") {
-		terminationTree == cpputil::search(config, "<xmlattr>.name", args["termination"].as<string>());
-	} else {
-		terminationTree = experiment.get_child("Termination");
-	}
-	termination = make_shared<TerminationCriteria>(terminationTree);
-	cerr << "\ttermination = " << "(impl)" << endl;
-
 	//ゲーム
 	pt::ptree gameTree;
 	if (args["game"].as<string>() != "") {
@@ -163,6 +154,24 @@ void AiBench::initExperiment(boost::program_options::variables_map& args) {
 		solverTree = experiment.get_child("Solver");
 	}
 	solver = initSolver(solverTree, programTree);
+
+	//終了条件
+	pt::ptree terminationTree;
+	if (args["termination"].as<string>() != "") {
+		terminationTree == cpputil::search(config, "<xmlattr>.name", args["termination"].as<string>());
+	} else {
+		terminationTree = experiment.get_child("Termination");
+	}
+	termination = make_shared<TerminationCriteria>(terminationTree);
+	cerr << "\ttermination = " << "(impl)" << endl;
+
+	//解の履歴
+	if (args["history"].as<int>() != 0) {
+		historySize = args["history"].as<int>();
+	} else {
+		historySize = experiment.get<int>("History");
+	}
+	cerr << "\thistory = " << historySize << endl;
 
 	//検証
 	if (args["validation"].as<int>() != 0) {
@@ -193,7 +202,7 @@ shared_ptr<Game> AiBench::initGame(pt::ptree& gameTree) {
 		//平均化
 		pt::ptree implGameTree = concreteGameTree.get_child("Game");
 		shared_ptr<Game> implGame = initGame(implGameTree);
-		shared_ptr<AverageAdaptor> ave = make_shared<AverageAdaptor>(implGame, 2);
+		shared_ptr<AverageAdaptor> ave = make_shared<AverageAdaptor>(implGame, concreteGameTree.get<int>("SampleSize"));
 		game = ave;
 
 	} else if (gameName == "HomoAdaptor") {
@@ -256,6 +265,10 @@ shared_ptr<Game> AiBench::initGame(pt::ptree& gameTree) {
 	} else if (gameName == "TimeSeries") {
 		shared_ptr<TimeSeries> ts = make_shared<TimeSeries>(concreteGameTree, time(NULL));
 		game = ts;
+
+	} else if (gameName == "Memory") {
+		shared_ptr<Memory> mem = make_shared<Memory>(concreteGameTree, time(NULL));
+		game = mem;
 
 	} else {
 		assert(false);
@@ -399,7 +412,6 @@ shared_ptr<Solver<Game>> AiBench::initSolver(pt::ptree& solverTree, pt::ptree& p
 	} else {
 		assert(false);
 	}
-	history = solver->getHistory();
 
 	cerr << "initSolver: " << solverName << endl;
 	return solver;
@@ -421,6 +433,12 @@ void AiBench::initOutput(boost::property_tree::ptree& outputTree) {
 
 		if (target == "Relation") {
 			relationFile = filename;
+
+		} else if (target == "Summary") {
+			//シンクの作成
+			fs::path path(filename);
+			lg::add_file_log(lg::keywords::file_name = filename, lg::keywords::filter = lg::expressions::is_in_range<int>(target, 0, INT_MAX));
+			lg::add_console_log(std::cerr, lg::keywords::filter = lg::expressions::is_in_range<int>(target, 0, INT_MAX));
 
 		} else if (target == "Evaluation" or target == "Validation" or target == "Solution" or target == "Program") {
 			pair<int, int> range = boost::lexical_cast<pair<int, int>>(series);

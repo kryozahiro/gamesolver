@@ -14,11 +14,11 @@
 template <class GameCategory>
 class Solver {
 public:
-	Solver() : history(std::make_shared<SolutionHistory>()) {}
 	virtual ~Solver() = default;
 
 	//与えられた評価回数に到達するまで最適化する
-	std::vector<std::shared_ptr<Solution>> solve(GameCategory& game, TerminationCriteria& termination, std::pair<int, int> loggerRange) {
+	std::vector<std::shared_ptr<Solution>> solve(GameCategory& game, TerminationCriteria& termination, int historySize, std::pair<int, int> loggerRange) {
+		history = std::make_shared<SolutionHistory>(historySize);
 		std::shared_ptr<Game> sharedGame(&game, [](Game*){});
 		evaluator = std::make_shared<Evaluator>(sharedGame, "Evaluation", loggerRange);
 		history->start();

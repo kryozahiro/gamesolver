@@ -10,8 +10,12 @@
 #include "SolutionHistory.h"
 using namespace std;
 
+SolutionHistory::SolutionHistory(int historySize) : historySize(historySize) {
+}
+
 void SolutionHistory::start() {
 	timer.start();
+	summaryLogger.add_attribute("Summary", generationAttr);
 	solutionLogger.add_attribute("Solution", generationAttr);
 	programLogger.add_attribute("Program", generationAttr);
 }
@@ -32,34 +36,41 @@ void SolutionHistory::addSolution(shared_ptr<Solution>& solution) {
 	sort(records[generation].begin(), records[generation].end(), [](shared_ptr<Solution>& lhs, shared_ptr<Solution>& rhs) {
 		return lhs->getFitness() < rhs->getFitness();
 	});
+	while (records.size() > (unsigned int)historySize) {
+		records.erase(records.begin());
+	}
 }
 
-void SolutionHistory::addPopulation(Population& population) {
-	int generation = population.front()->getGeneration();
-	generationAttr.set(generation);
+void SolutionHistory::addGeneration(Generation& generation) {
+	int generationNum = generation.front()->getGeneration();
+	generationAttr.set(generationNum);
 
-	for (shared_ptr<Solution>& solution : population) {
+	for (shared_ptr<Solution>& solution : generation) {
 		solution->setTime(timer.elapsed());
 		BOOST_LOG(solutionLogger) << solution->toString();
 		BOOST_LOG(programLogger) << *solution->getProgram();
 	}
-	records[generation].insert(records[generation].end(), population.begin(), population.end());
+	records[generationNum].insert(records[generationNum].end(), generation.begin(), generation.end());
 
-	sort(records[generation].begin(), records[generation].end(), [](shared_ptr<Solution>& lhs, shared_ptr<Solution>& rhs) {
+	sort(records[generationNum].begin(), records[generationNum].end(), [](shared_ptr<Solution>& lhs, shared_ptr<Solution>& rhs) {
 		return lhs->getFitness() < rhs->getFitness();
 	});
+	while (records.size() > (unsigned int)historySize) {
+		records.erase(records.begin());
+	}
+	BOOST_LOG(summaryLogger) << showSummary(records[generationNum]);
 }
 
-int SolutionHistory::getLastGeneration() const {
+int SolutionHistory::getLastGenerationNum() const {
 	if (records.empty()) {
 		return -1;
 	}
 	return records.rbegin()->second.front()->getGeneration();
 }
 
-const SolutionHistory::Population& SolutionHistory::getPopulation(int generation) const {
-	int generationSize = getLastGeneration() + 1;
-	assert(getLastGeneration() >= 0 and generation >= -generationSize);
+const SolutionHistory::Generation& SolutionHistory::getGeneration(int generation) const {
+	int generationSize = getLastGenerationNum() + 1;
+	assert(getLastGenerationNum() >= 0 and generation >= -generationSize);
 	return records.at((generation + generationSize) % generationSize);
 }
 
@@ -83,37 +94,37 @@ string SolutionHistory::showRelation() const {
 	return ret;
 }
 
-string SolutionHistory::showSummary() const {
-	string ret = "gen\tbest\taverage\tsd\n";
-
-	for (const pair<int, Population>& recordPair : records) {
-		int generation = recordPair.first;
-		const Population& population = recordPair.second;
-		assert(population.size() > 0);
-
-		//最小
-		double best = population.front()->getFitness();
-
-		//平均
-		double average = getMeanFitness(population);
-
-		//標準偏差
-		double sd = accumulate(population.begin(), population.end(), 0.0, [&](double sum, shared_ptr<Solution> solution) {
-			return sum + pow(solution->getFitness() - average, 2.0);
-		}) / (double)population.size();
-		sd = sqrt(sd);
-
-		ret += to_string(generation) + "\t" +
-				to_string(best) + "\t" +
-				to_string(average) + "\t" +
-				to_string(sd) + "\n";
-	}
-	return ret;
-}
-
-double SolutionHistory::getMeanFitness(const Population& population) {
-	double sum = accumulate(population.begin(), population.end(), 0.0, [](double s, const shared_ptr<Solution>& solution) {
+double SolutionHistory::getMeanFitness(const Generation& generation) {
+	double sum = accumulate(generation.begin(), generation.end(), 0.0, [](double s, const shared_ptr<Solution>& solution) {
 		return s + solution->getFitness();
 	});
-	return sum / static_cast<double>(population.size());
+	return sum / static_cast<double>(generation.size());
+}
+
+std::string SolutionHistory::showSummary(const Generation& generation) {
+	//世代数
+	int generationNum = generation.front()->getGeneration();
+
+	//最小
+	double best = generation.front()->getFitness();
+
+	//最大
+	double worst = generation.back()->getFitness();
+
+	//平均
+	double average = getMeanFitness(generation);
+
+	//不偏分散
+	double var = accumulate(generation.begin(), generation.end(), 0.0, [&](double sum, shared_ptr<Solution> solution) {
+		return sum + pow(solution->getFitness() - average, 2.0);
+	}) / static_cast<double>(generation.size() - 1);
+
+	//標準偏差
+	double sd = sqrt(var);
+
+	return to_string(generationNum) + "\t" +
+			to_string(best) + "\t" +
+			to_string(worst) + "\t" +
+			to_string(average) + "\t" +
+			to_string(sd);
 }

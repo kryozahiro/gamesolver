@@ -16,7 +16,9 @@
 
 class SolutionHistory {
 public:
-	typedef std::vector<std::shared_ptr<Solution>> Population;
+	typedef std::vector<std::shared_ptr<Solution>> Generation;
+
+	SolutionHistory(int historySize);
 
 	//タイマー
 	void start();
@@ -24,24 +26,27 @@ public:
 
 	//解を記録する
 	void addSolution(std::shared_ptr<Solution>& solution);
-	void addPopulation(Population& population);
+	void addGeneration(Generation& generation);
 
 	//記録の取得
-	int getLastGeneration() const;
-	const Population& getPopulation(int generation) const;
+	int getLastGenerationNum() const;
+	const Generation& getGeneration(int generation) const;
 
 	//文字列表現
 	std::string toString() const;
 	std::string showRelation() const;
-	std::string showSummary() const;
 
-	static double getMeanFitness(const Population& population);
+	static double getMeanFitness(const Generation& generation);
+	static std::string showSummary(const Generation& generation);
+
 private:
 	//解の記録
 	cpputil::Timer timer;
-	std::map<int, Population> records;
+	std::map<int, Generation> records;
+	const int historySize;
 
 	//ロギング
+	boost::log::sources::logger summaryLogger;
 	boost::log::sources::logger solutionLogger;
 	boost::log::sources::logger programLogger;
 	boost::log::attributes::mutable_constant<int> generationAttr = boost::log::attributes::mutable_constant<int>(0);

@@ -67,7 +67,7 @@ void Evaluator::allVsBestEvaluation(Evaluator& evaluator, std::vector<std::share
 		return;
 	}
 	const int evaluationSize = evaluator.getProgramSize().first;
-	const std::vector<std::shared_ptr<Solution>>& latest = solutionHistory.getPopulation(solutions[0]->getGeneration() - 1);
+	const std::vector<std::shared_ptr<Solution>>& latest = solutionHistory.getGeneration(solutions[0]->getGeneration() - 1);
 
 	//前世代の最良解を含むグループを作って評価
 	double sum = 0;

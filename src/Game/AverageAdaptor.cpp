@@ -23,6 +23,13 @@ AverageAdaptor::AverageAdaptor(std::shared_ptr<Game> game, int sampleSize) :
 	}
 }
 
+AverageAdaptor::AverageAdaptor(const AverageAdaptor& averageAdaptor) :
+		Game(averageAdaptor.getProgramSize(), averageAdaptor.getProgramType()), sampleSize(averageAdaptor.sampleSize) {
+	for (const shared_ptr<Game>& game : averageAdaptor.games) {
+		games.emplace_back(game->clone());
+	}
+}
+
 void AverageAdaptor::setLogger(std::shared_ptr<LoggerType>& logger) {
 	Game::setLogger(logger);
 	for (shared_ptr<Game>& game : games) {
@@ -44,6 +51,9 @@ std::vector<double> AverageAdaptor::evaluate(std::vector<Program*>& programs) {
 		transform(sample.begin(), sample.end(), fitness.begin(), fitness.begin(), [](const double& s, double& f) {
 			return s + f;
 		});
+	}
+	for (double& fit : fitness) {
+		fit /= static_cast<double>(sampleSize);
 	}
 	return fitness;
 }

@@ -37,10 +37,8 @@ public:
 	//次の世代を作る
 	std::shared_ptr<Solution> createChild(bool resetFitness = true);
 	void addChild(std::shared_ptr<Solution>& child);
-	//SolutionLoggerへの間隔ロギングの実装
-	//addParent
-	//sakujo&renketu
 
+	//経過時間の設定
 	void setTime(int time);
 
 private:

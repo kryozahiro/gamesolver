@@ -21,9 +21,9 @@ public:
 
 private:
 	double minimumTime = 0;		//最小経過時間
-	double elapsedTime = 0;		//経過時間
+	double maximumTime = 0;		//最大経過時間
 	int minimumEvaluation = 0;	//最小評価回数
-	int evaluationCount = 0;	//評価回数
+	int maximumEvaluation = 0;	//最大評価回数
 
 	//解の改善量
 	double bestImprovement = 0;
