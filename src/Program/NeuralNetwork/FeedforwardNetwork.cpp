@@ -31,14 +31,14 @@ void FeedforwardNetwork::crossover(FeedforwardNetwork& parent1, FeedforwardNetwo
 	}
 }
 
-void FeedforwardNetwork::normalMutation(FeedforwardNetwork& net, mt19937_64& randomEngine) {
+void FeedforwardNetwork::normalMutation(FeedforwardNetwork& parent, mt19937_64& randomEngine) {
 	uniform_real_distribution<double> mutateDist(0, 1);
 	uniform_real_distribution<double> weightDist(0.9, 1.1);
-	for (unsigned int y = 0; y < net.weights.size(); ++y) {
-		for (unsigned int x = y + 1; x < net.weights[y].size(); ++x) {
-			if (net.changeable[y][x] and mutateDist(randomEngine) < 0.1) {
-				net.weights[y][x] = net.weights[y][x] * weightDist(randomEngine);
-				net.weights[y][x] = max(-10.0, min(net.weights[y][x], 10.0));
+	for (unsigned int y = 0; y < parent.weights.size(); ++y) {
+		for (unsigned int x = y + 1; x < parent.weights[y].size(); ++x) {
+			if (parent.changeable[y][x] and mutateDist(randomEngine) < 0.1) {
+				parent.weights[y][x] = parent.weights[y][x] * weightDist(randomEngine);
+				parent.weights[y][x] = max(-10.0, min(parent.weights[y][x], 10.0));
 			}
 		}
 	}

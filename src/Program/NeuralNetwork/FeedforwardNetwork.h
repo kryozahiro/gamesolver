@@ -17,9 +17,9 @@
 
 class FeedforwardNetwork : public Program, public GeneticOperable<FeedforwardNetwork> {
 public:
-	//遺伝的操作の例
+	//遺伝的操作の具体例
 	static void crossover(FeedforwardNetwork& parent1, FeedforwardNetwork& parent2, std::mt19937_64& randomEngine);
-	static void normalMutation(FeedforwardNetwork& net, std::mt19937_64& randomEngine);
+	static void normalMutation(FeedforwardNetwork& parent, std::mt19937_64& randomEngine);
 
 	//活性化関数の例
 	static double unitStep(double x);

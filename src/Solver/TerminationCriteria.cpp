@@ -51,19 +51,23 @@ bool TerminationCriteria::meets(int evaluation, SolutionHistory& solutionHistory
 		return true;
 	}
 
-	bool result = true;
-	if (bestImprovement > 0 and solutionHistory.getLastGenerationNum() >= 5) {
+	//打ち切り
+	if (bestImprovement == 0 and meanImprovement == 0 and noBestImprovementScale == 0 and noMeanImprovementScale == 0) {
+		//打ち切り条件なし
+		return false;
+	}
+	if (bestImprovement < 0 and solutionHistory.getLastGenerationNum() >= 5) {
 		double now = solutionHistory.getGeneration(-1).front()->getFitness();
 		double prev = solutionHistory.getGeneration(-6).front()->getFitness();
 		if (now - prev < bestImprovement) {
-			result = false;
+			return false;
 		}
 	}
-	if (meanImprovement > 0 and solutionHistory.getLastGenerationNum() >= 5) {
+	if (meanImprovement < 0 and solutionHistory.getLastGenerationNum() >= 5) {
 		double now = SolutionHistory::getMeanFitness(solutionHistory.getGeneration(-1));
 		double prev = SolutionHistory::getMeanFitness(solutionHistory.getGeneration(-6));
 		if (now - prev < meanImprovement) {
-			result = false;
+			return false;
 		}
 	}
 	if (noBestImprovementScale > 0) {
@@ -75,7 +79,7 @@ bool TerminationCriteria::meets(int evaluation, SolutionHistory& solutionHistory
 			++noBestImprovementCount;
 		}
 		if ((double)noBestImprovementCount / (double)solutionHistory.getLastGenerationNum() < noBestImprovementScale) {
-			result = false;
+			return false;
 		}
 	}
 	if (noMeanImprovementScale > 0) {
@@ -87,8 +91,8 @@ bool TerminationCriteria::meets(int evaluation, SolutionHistory& solutionHistory
 			++noMeanImprovementCount;
 		}
 		if ((double)noMeanImprovementCount / (double)solutionHistory.getLastGenerationNum() < noMeanImprovementScale) {
-			result = false;
+			return false;
 		}
 	}
-	return result;
+	return true;
 }

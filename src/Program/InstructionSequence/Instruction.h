@@ -10,38 +10,34 @@
 
 #include <vector>
 #include <string>
+#include "CppUtil/EnumUtil.h"
 
 class Instruction {
 public:
-	enum class Opcode {
+	CPPUTIL_ENUM(Opcode,
+		AND,
+		OR,
+		NOT,
 		ADD,
-		ADD_IMM,
 		SUB,
-		SUB_IMM,
 		MUL,
-		MUL_IMM,
 		DIV,
-		DIV_IMM,
+		IF,
 		IF_GT,
-		IF_GT_IMM,
 		IF_LE,
-		IF_LE_IMM,
+		JMP,
+		JG,
+		JLE,
 		SIN,
 		COS,
 		SQRT,
 		EXP,
 		LOG,
 		OP_END
-	};
-	static std::string toString(Opcode opcode);
+	);
 
-	struct Register {
-		unsigned int pc = 0;
-		bool condition = false;
-	};
-
-	void set(Opcode op, int ret, int mem1, int mem2, double constant);
-	void operator()(Register& reg, std::vector<double>& memory);
+	void set(Opcode op, int ret, int mem1, int mem2);
+	void operator()(unsigned int& pc, unsigned int end, bool& condition, std::vector<double>& memory) const;
 	std::string toString() const;
 
 private:
@@ -49,7 +45,6 @@ private:
 	int ret;
 	int mem1;
 	int mem2;
-	double constant;
 };
 
 static_assert(std::is_pod<Instruction>(), "class Instruction should be POD");

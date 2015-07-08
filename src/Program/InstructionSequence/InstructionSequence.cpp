@@ -8,11 +8,99 @@
 #include <cassert>
 #include <algorithm>
 #include <boost/property_tree/ptree.hpp>
+#include <boost/lexical_cast.hpp>
 #include "CppUtil/GenericIo.h"
+#include "ProgramState.h"
 #include "InstructionSequence.h"
 using namespace std;
 using namespace cpputil;
 namespace pt = boost::property_tree;
+
+void InstructionSequence::homologousCrossover(InstructionSequence& parent1, InstructionSequence& parent2, std::mt19937_64& randomEngine) {
+	int size = min(parent1.instructions.size(), parent2.instructions.size());
+
+	uniform_int_distribution<int> cutDist(0, size);
+	int cut1 = cutDist(randomEngine);
+	int cut2 = cutDist(randomEngine);
+	pair<int, int> cross = minmax(cut1, cut2);
+	swap_ranges(parent1.instructions.begin() + cross.first, parent1.instructions.begin() + cross.second, parent2.instructions.begin() + cross.first);
+}
+
+void InstructionSequence::fixedLengthCrossover(InstructionSequence& parent1, InstructionSequence& parent2, std::mt19937_64& randomEngine) {
+	int size1 = parent1.instructions.size();
+	int size2 = parent2.instructions.size();
+
+	uniform_int_distribution<int> lengthDist(0, min(size1, size2));
+	int length = lengthDist(randomEngine);
+
+	uniform_int_distribution<int> begin1Dist(0, size1 - length);
+	auto begin1 = parent1.instructions.begin() + begin1Dist(randomEngine);
+	uniform_int_distribution<int> begin2Dist(0, size2 - length);
+	auto begin2 = parent2.instructions.begin() + begin2Dist(randomEngine);
+	swap_ranges(begin1, begin1 + length, begin2);
+}
+
+void InstructionSequence::variableLengthCrossover(InstructionSequence& parent1, InstructionSequence& parent2, std::mt19937_64& randomEngine) {
+	int maxSize = parent1.maxSize;
+	int size1 = parent1.instructions.size();
+	int size2 = parent2.instructions.size();
+
+	//0 <= f1 <= s1
+	//0 <= f2 <= s2
+	//0 <= s1 - f1 + f2 <= m  ->  f1 - s1 <= f2 <= m + f1 - s1
+	//0 <= s2 + f1 - f2 <= m  ->  s2 + f1 - m <= f2 <= s2 + f1
+	uniform_int_distribution<int> frag1Dist(0, size1);
+	int frag1 = frag1Dist(randomEngine);
+	uniform_int_distribution<int> frag2Dist(max(0, size2 + frag1 - maxSize), min(maxSize + frag1 - size1, size2));
+	int frag2 = frag2Dist(randomEngine);
+
+	assert(0 <= frag1 and frag1 <= size1);
+	assert(0 <= frag2 and frag2 <= size2);
+	assert(0 <= size1 - frag1 + frag2 and size1 - frag1 + frag2 <= maxSize);
+	assert(0 <= size2 + frag1 - frag2 and size2 + frag1 - frag2 <= maxSize);
+
+	uniform_int_distribution<int> begin1Dist(0, size1 - frag1);
+	auto begin1 = parent1.instructions.begin() + begin1Dist(randomEngine);
+	uniform_int_distribution<int> begin2Dist(0, size2 - frag2);
+	auto begin2 = parent2.instructions.begin() + begin2Dist(randomEngine);
+
+	if (frag2 - frag1 >= 0) {
+		swap_ranges(begin1, begin1 + frag1, begin2);
+		parent1.instructions.insert(begin1 + frag1, begin2 + frag1, begin2 + frag2);
+		parent2.instructions.erase(begin2 + frag1, begin2 + frag2);
+	} else {
+		swap_ranges(begin2, begin2 + frag2, begin1);
+		parent2.instructions.insert(begin2 + frag2, begin1 + frag2, begin1 + frag1);
+		parent1.instructions.erase(begin1 + frag2, begin1 + frag1);
+	}
+
+	assert((int)parent1.instructions.size() == size1 - frag1 + frag2);
+	assert((int)parent2.instructions.size() == size2 + frag1 - frag2);
+}
+
+void InstructionSequence::fixedLengthMutation(InstructionSequence& parent, std::mt19937_64& randomEngine) {
+	uniform_real_distribution<double> mutateDist(0, 1);
+	for (Instruction& inst : parent.instructions) {
+		if (mutateDist(randomEngine) < 0.1) {
+			inst = parent.makeRandomInstruction(randomEngine);
+		}
+	}
+}
+
+void InstructionSequence::variableLengthMutation(InstructionSequence& parent, std::mt19937_64& randomEngine) {
+	fixedLengthMutation(parent, randomEngine);
+
+	uniform_real_distribution<double> mutateDist(0, 1);
+	if (parent.instructions.size() < (unsigned int)parent.maxSize and mutateDist(randomEngine) < 0.1) {
+		uniform_int_distribution<int> insertDist(0, parent.instructions.size());
+		Instruction newInst = parent.makeRandomInstruction(randomEngine);
+		parent.instructions.insert(parent.instructions.begin() + insertDist(randomEngine), newInst);
+	}
+	if (parent.instructions.size() > 0 and mutateDist(randomEngine) < 0.1) {
+		uniform_int_distribution<int> eraseDist(0, parent.instructions.size() - 1);
+		parent.instructions.erase(parent.instructions.begin() + eraseDist(randomEngine));
+	}
+}
 
 InstructionSequence::InstructionSequence(const ProgramType& programType, int maxSize, int memorySize) :
 		Program(programType), maxSize(maxSize), memorySize(memorySize) {
@@ -32,36 +120,7 @@ InstructionSequence::InstructionSequence(const ProgramType& programType, const b
 
 	const pt::ptree& operators = node.get_child("Operators");
 	for (const pt::ptree::value_type& kvp : operators) {
-		if (kvp.first == "Add") {
-			addOperator(Instruction::Opcode::ADD);
-			addOperator(Instruction::Opcode::ADD_IMM);
-		} else if (kvp.first == "Sub") {
-			addOperator(Instruction::Opcode::SUB);
-			addOperator(Instruction::Opcode::SUB_IMM);
-		} else if (kvp.first == "Mul") {
-			addOperator(Instruction::Opcode::MUL);
-			addOperator(Instruction::Opcode::MUL_IMM);
-		} else if (kvp.first == "Div") {
-			addOperator(Instruction::Opcode::DIV);
-			addOperator(Instruction::Opcode::DIV_IMM);
-		} else if (kvp.first == "If") {
-			addOperator(Instruction::Opcode::IF_GT);
-			addOperator(Instruction::Opcode::IF_GT_IMM);
-			addOperator(Instruction::Opcode::IF_LE);
-			addOperator(Instruction::Opcode::IF_LE_IMM);
-		} else if (kvp.first == "Sin") {
-			addOperator(Instruction::Opcode::SIN);
-		} else if (kvp.first == "Cos") {
-			addOperator(Instruction::Opcode::COS);
-		} else if (kvp.first == "Sqrt") {
-			addOperator(Instruction::Opcode::SQRT);
-		} else if (kvp.first == "Exp") {
-			addOperator(Instruction::Opcode::EXP);
-		} else if (kvp.first == "Log") {
-			addOperator(Instruction::Opcode::LOG);
-		} else {
-			assert(false);
-		}
+		addOperator(boost::lexical_cast<Instruction::Opcode>(kvp.first));
 	}
 	randomize(randomEngine);
 }
@@ -70,17 +129,13 @@ vector<double> InstructionSequence::operator()(const vector<double>& input) {
 	assert(getProgramType().getInputType().accepts(input));
 
 	//実行環境の初期化
-	Instruction::Register reg;
-	vector<double> memory(memorySize, 0);
-	copy(input.begin(), input.end(), memory.begin());
+	ProgramState ps(vector<double>(memorySize, 1));
 
 	//命令列の実行
-	while (reg.pc < instructions.size()) {
-		instructions[reg.pc](reg, memory);
-	}
+	ps.execute(instructions, input);
 
 	//出力のクリッピング
-	vector<double> output(memory.begin(), memory.begin() + getProgramType().getOutputType().getSize());
+	vector<double> output(ps.getMemory().begin(), ps.getMemory().begin() + getProgramType().getOutputType().getSize());
 	getProgramType().getOutputType().clip(output);
 	return output;
 }
@@ -94,52 +149,20 @@ string InstructionSequence::toString() const {
 }
 
 void InstructionSequence::crossover(const std::string& method, InstructionSequence& other, std::mt19937_64& randomEngine) {
-	int size1 = instructions.size();
-	int size2 = other.instructions.size();
-
-	uniform_int_distribution<int> diffDist(max(-size2, size1 - maxSize), min(size1, maxSize - size2));
-	int diff = diffDist(randomEngine);
-
-	uniform_int_distribution<int> lengthDist1(max(0, diff), min(size1, size2 + diff));
-	int frag1 = lengthDist1(randomEngine);
-	int frag2 = frag1 - diff;
-	assert(0 <= size1 - frag1 + frag2);
-	assert(size1 - frag1 + frag2 <= maxSize);
-	assert(0 <= size2 + frag1 - frag2);
-	assert(size2 + frag1 - frag2 <= maxSize);
-
-	uniform_int_distribution<int> begin1Dist(0, size1 - frag1);
-	int begin1 = begin1Dist(randomEngine);
-	uniform_int_distribution<int> begin2Dist(0, size2 - frag2);
-	int begin2 = begin2Dist(randomEngine);
-
-	if (diff >= 0) {
-		swap_ranges(instructions.begin() + begin1, instructions.begin() + begin1 + frag2, other.instructions.begin() + begin2);
-		other.instructions.insert(other.instructions.begin() + begin2 + frag2, instructions.begin() + begin1 + frag2, instructions.begin() + begin1 + frag1);
-		instructions.erase(instructions.begin() + begin1 + frag2, instructions.begin() + begin1 + frag1);
+	if (method.find("Homo") != string::npos) {
+		homologousCrossover(*this, other, randomEngine);
+	} else if (method.find("Fixed") != string::npos) {
+		fixedLengthCrossover(*this, other, randomEngine);
 	} else {
-		swap_ranges(instructions.begin() + begin1, instructions.begin() + begin1 + frag1, other.instructions.begin() + begin2);
-		instructions.insert(instructions.begin() + begin1 + frag1, other.instructions.begin() + begin2 + frag1, other.instructions.begin() + begin2 + frag2);
-		other.instructions.erase(other.instructions.begin() + begin2 + frag1, other.instructions.begin() + begin2 + frag2);
+		variableLengthCrossover(*this, other, randomEngine);
 	}
 }
 
 void InstructionSequence::mutation(const std::string& method, std::mt19937_64& randomEngine) {
-	uniform_real_distribution<double> mutateDist(0, 1);
-	for (Instruction& inst : instructions) {
-		if (mutateDist(randomEngine) < 0.05) {
-			inst = makeRandomInstruction(randomEngine);
-		}
-	}
-
-	if (instructions.size() < (unsigned int)maxSize and mutateDist(randomEngine) < 0.1) {
-		uniform_int_distribution<int> insertDist(0, instructions.size());
-		Instruction newInst = makeRandomInstruction(randomEngine);
-		instructions.insert(instructions.begin() + insertDist(randomEngine), newInst);
-	}
-	if (instructions.size() > 0 and mutateDist(randomEngine) < 0.1) {
-		uniform_int_distribution<int> eraseDist(0, instructions.size() - 1);
-		instructions.erase(instructions.begin() + eraseDist(randomEngine));
+	if (method.find("Fixed") != string::npos) {
+		fixedLengthMutation(*this, randomEngine);
+	} else {
+		variableLengthMutation(*this, randomEngine);
 	}
 }
 
@@ -162,8 +185,7 @@ Instruction InstructionSequence::makeRandomInstruction(std::mt19937_64& randomEn
 		instructionSet[opDist(randomEngine)],
 		memDist(randomEngine),
 		memDist(randomEngine),
-		memDist(randomEngine),
-		constantDist(randomEngine)
+		memDist(randomEngine)
 	);
 	return inst;
 }

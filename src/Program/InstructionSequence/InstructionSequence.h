@@ -15,6 +15,13 @@
 
 class InstructionSequence : public Program, public GeneticOperable<InstructionSequence> {
 public:
+	//遺伝的操作の具体例
+	static void homologousCrossover(InstructionSequence& parent1, InstructionSequence& parent2, std::mt19937_64& randomEngine);
+	static void fixedLengthCrossover(InstructionSequence& parent1, InstructionSequence& parent2, std::mt19937_64& randomEngine);
+	static void variableLengthCrossover(InstructionSequence& parent1, InstructionSequence& parent2, std::mt19937_64& randomEngine);
+	static void fixedLengthMutation(InstructionSequence& parent, std::mt19937_64& randomEngine);
+	static void variableLengthMutation(InstructionSequence& parent, std::mt19937_64& randomEngine);
+
 	//コンストラクタ
 	InstructionSequence(const ProgramType& programType, int maxSize, int memorySize);
 	InstructionSequence(const ProgramType& programType, const boost::property_tree::ptree& node, std::mt19937_64& randomEngine);
