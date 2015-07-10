@@ -12,7 +12,7 @@
 template <class ConcreteGeneticOperable>
 class GeneticOperable {
 public:
-	virtual ~GeneticOperable() {};
+	virtual ~GeneticOperable() = default;
 
 	//交叉
 	virtual void crossover(const std::string& method, ConcreteGeneticOperable& other, std::mt19937_64& randomEngine) = 0;
