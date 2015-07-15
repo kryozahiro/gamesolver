@@ -33,18 +33,25 @@ public:
 		SQRT,
 		EXP,
 		LOG,
-		OP_END
+		INT,
+		IMM
 	);
 
 	void set(Opcode op, int ret, int mem1, int mem2);
 	void operator()(unsigned int& pc, unsigned int end, bool& condition, std::vector<double>& memory) const;
 	std::string toString() const;
 
+	//アクセサ
+	Opcode getOpcode() const;
+	int getRet() const;
+	int getArg1() const;
+	int getArg2() const;
+
 private:
 	Opcode op;
 	int ret;
-	int mem1;
-	int mem2;
+	int arg1;
+	int arg2;
 };
 
 static_assert(std::is_pod<Instruction>(), "class Instruction should be POD");

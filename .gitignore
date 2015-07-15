@@ -1,6 +1,7 @@
 *.d
 *.o
 *.exe
+*.bak
 *.log
 *.png
 *.gif

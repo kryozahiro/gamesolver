@@ -80,10 +80,15 @@ void InstructionSequence::variableLengthCrossover(InstructionSequence& parent1, 
 
 void InstructionSequence::fixedLengthMutation(InstructionSequence& parent, std::mt19937_64& randomEngine) {
 	uniform_real_distribution<double> mutateDist(0, 1);
+	uniform_int_distribution<int> opDist(0, parent.instructionSet.size() - 1);
+	uniform_int_distribution<int> retDist(parent.getProgramType().getInputType().getSize(), parent.getMemorySize() - 1);
+	uniform_int_distribution<int> argDist(0, parent.getMemorySize() - 1);
 	for (Instruction& inst : parent.instructions) {
-		if (mutateDist(randomEngine) < 0.1) {
-			inst = parent.makeRandomInstruction(randomEngine);
-		}
+		Instruction::Opcode op = (mutateDist(randomEngine) < 0.1) ? parent.instructionSet[opDist(randomEngine)] : inst.getOpcode();
+		int ret = (mutateDist(randomEngine) < 0.1) ? retDist(randomEngine) : inst.getRet();
+		int arg1 = (mutateDist(randomEngine) < 0.1) ? argDist(randomEngine) : inst.getArg1();
+		int arg2 = (mutateDist(randomEngine) < 0.1) ? argDist(randomEngine) : inst.getArg2();
+		inst.set(op, ret, arg1, arg2);
 	}
 }
 
@@ -102,22 +107,17 @@ void InstructionSequence::variableLengthMutation(InstructionSequence& parent, st
 	}
 }
 
-InstructionSequence::InstructionSequence(const ProgramType& programType, int maxSize, int memorySize) :
-		Program(programType), maxSize(maxSize), memorySize(memorySize) {
-	assert(programType.getInputType().getSize() < memorySize);
-	assert(programType.getOutputType().getSize() < memorySize);
+InstructionSequence::InstructionSequence(const ProgramType& programType, int variableSize, int maxSize) :
+		Program(programType),
+		variableSize(variableSize),
+		maxSize(maxSize) {
 }
 
 InstructionSequence::InstructionSequence(const ProgramType& programType, const boost::property_tree::ptree& node, std::mt19937_64& randomEngine) :
-		Program(programType) {
+		Program(programType),
+		variableSize(node.get<int>("VariableSize")),
+		maxSize(node.get<int>("MaxSize")) {
 	instructions.resize(node.get<int>("InitialSize"));
-	maxSize = node.get<int>("MaxSize");
-	memorySize = node.get<int>("MemorySize");
-	assert(programType.getInputType().getSize() < memorySize);
-	assert(programType.getOutputType().getSize() < memorySize);
-
-	constantRange = node.get<pair<double, double>>("Constant");
-
 	const pt::ptree& operators = node.get_child("Operators");
 	for (const pt::ptree::value_type& kvp : operators) {
 		addOperator(boost::lexical_cast<Instruction::Opcode>(kvp.first));
@@ -129,13 +129,14 @@ vector<double> InstructionSequence::operator()(const vector<double>& input) {
 	assert(getProgramType().getInputType().accepts(input));
 
 	//実行環境の初期化
-	ProgramState ps(vector<double>(memorySize, 1));
+	ProgramState ps(vector<double>(getMemorySize(), 1));
 
 	//命令列の実行
 	ps.execute(instructions, input);
 
 	//出力のクリッピング
-	vector<double> output(ps.getMemory().begin(), ps.getMemory().begin() + getProgramType().getOutputType().getSize());
+	auto outputBegin = ps.getMemory().begin() + getProgramType().getInputType().getSize();
+	vector<double> output(outputBegin, outputBegin + getProgramType().getOutputType().getSize());
 	getProgramType().getOutputType().clip(output);
 	return output;
 }
@@ -176,16 +177,20 @@ void InstructionSequence::randomize(std::mt19937_64& randomEngine) {
 	}
 }
 
+int InstructionSequence::getMemorySize() const {
+	return getProgramType().getInputType().getSize() + getProgramType().getOutputType().getSize() + variableSize;
+}
+
 Instruction InstructionSequence::makeRandomInstruction(std::mt19937_64& randomEngine) {
 	uniform_int_distribution<int> opDist(0, instructionSet.size() - 1);
-	uniform_int_distribution<int> memDist(0, memorySize - 1);
-	uniform_real_distribution<double> constantDist(constantRange.first, constantRange.second);
+	uniform_int_distribution<int> retDist(getProgramType().getInputType().getSize(), getMemorySize() - 1);
+	uniform_int_distribution<int> argDist(0, getMemorySize() - 1);
 	Instruction inst;
 	inst.set(
 		instructionSet[opDist(randomEngine)],
-		memDist(randomEngine),
-		memDist(randomEngine),
-		memDist(randomEngine)
+		retDist(randomEngine),
+		argDist(randomEngine),
+		argDist(randomEngine)
 	);
 	return inst;
 }

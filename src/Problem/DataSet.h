@@ -17,9 +17,11 @@
 
 class DataSet {
 public:
-	static std::vector<double> sphere(const std::vector<double>& input);
-	static std::vector<double> schwefel(const std::vector<double>& input);
 	static std::vector<double> nguyen(int dimension, const std::vector<double>& input);
+	static std::vector<double> rosenbrock(const std::vector<double>& input);
+	static std::vector<double> schwefel(const std::vector<double>& input);
+	static std::vector<double> sphere(const std::vector<double>& input);
+	static std::vector<double> threeHumpCamel(const std::vector<double>& input);
 
 	DataSet();
 	DataSet(const ProgramType& programType);

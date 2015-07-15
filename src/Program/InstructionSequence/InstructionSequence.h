@@ -23,7 +23,7 @@ public:
 	static void variableLengthMutation(InstructionSequence& parent, std::mt19937_64& randomEngine);
 
 	//コンストラクタ
-	InstructionSequence(const ProgramType& programType, int maxSize, int memorySize);
+	InstructionSequence(const ProgramType& programType, int variableSize, int maxSize);
 	InstructionSequence(const ProgramType& programType, const boost::property_tree::ptree& node, std::mt19937_64& randomEngine);
 	virtual ~InstructionSequence() = default;
 
@@ -43,17 +43,17 @@ public:
 	void randomize(std::mt19937_64& randomEngine);
 
 private:
-	//問題の仕様
-	int maxSize = 100;
-	int memorySize;
-	std::pair<double, double> constantRange;
+	//メモリは入力(read)・出力(read/write)・変数(read/write)が順に並んでいる
+	const int variableSize;
 
 	//命令列
+	const int maxSize;
 	std::vector<Instruction> instructions;
 
 	//使用する命令セット
 	std::vector<Instruction::Opcode> instructionSet;
 
+	int getMemorySize() const;
 	Instruction makeRandomInstruction(std::mt19937_64& randomEngine);
 };
 
