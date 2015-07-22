@@ -11,6 +11,7 @@
 #include <random>
 #include "Solver.h"
 
+#include "../Problem/Problem.h"
 //TODO: class ProblemSolver ?
 
 template <class ConcreteProgram>
