@@ -21,10 +21,13 @@ public:
 	virtual void operator()(std::vector<std::shared_ptr<Solution>>& solutions, std::mt19937_64& randomEngine);
 
 private:
-	//最適化の結果の検証
+	//最適化の結果を検証する
 	void validate(std::vector<std::shared_ptr<Solution>>& solutions);
 
+	//使用するGame
 	std::shared_ptr<Game> game;
+
+	//検証の回数
 	int times;
 };
 

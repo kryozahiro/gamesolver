@@ -5,6 +5,8 @@
  *      Author: kryozahiro
  */
 
+#include <cfloat>
+#include <boost/lexical_cast.hpp>
 #include "CppUtil/GenericIo.h"
 #include "DataSet.h"
 using namespace std;

@@ -10,6 +10,9 @@ using namespace std;
 
 TerminationCriteria::TerminationCriteria(boost::property_tree::ptree& tree) {
 	try {
+		optimum = tree.get<double>("Optimum");
+	} catch (std::exception& e) {}
+	try {
 		minimumTime = tree.get<double>("MinimumTime");
 	} catch (std::exception& e) {}
 	try {
@@ -38,6 +41,9 @@ TerminationCriteria::TerminationCriteria(boost::property_tree::ptree& tree) {
 }
 
 bool TerminationCriteria::meets(int evaluation, SolutionHistory& solutionHistory) {
+	if (optimum > -DBL_MAX and solutionHistory.getGeneration(-1).front()->getFitness() <= optimum) {
+		return true;
+	}
 	if (minimumTime > 0 and solutionHistory.getElapsedTime() < minimumTime) {
 		return false;
 	}

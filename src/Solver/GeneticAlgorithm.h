@@ -25,8 +25,8 @@ public:
 	using Selection = std::function<int(std::vector<double>& weights, std::mt19937_64& randomEngine)>;
 	using Reinsertion = std::function<void(std::vector<std::shared_ptr<Solution>>& population, std::vector<std::shared_ptr<Solution>>& offspring)>;
 
-	GeneticAlgorithm(const std::vector<std::shared_ptr<Program>>& inits, int seed);
-	GeneticAlgorithm(boost::property_tree::ptree& node, const std::vector<std::shared_ptr<Program>>& inits);
+	GeneticAlgorithm(const std::vector<std::shared_ptr<Solution>>& inits, int seed);
+	GeneticAlgorithm(boost::property_tree::ptree& node, const std::vector<std::shared_ptr<Solution>>& inits);
 	virtual ~GeneticAlgorithm() = default;
 
 	//操作の設定
@@ -78,29 +78,19 @@ private:
 };
 
 template <class ConcreteGeneticOperableProgram>
-GeneticAlgorithm<ConcreteGeneticOperableProgram>::GeneticAlgorithm(const std::vector<std::shared_ptr<Program>>& inits, int seed)
-: inits(inits.size()), randomEngine(seed) {
-	for (unsigned int i = 0; i < inits.size(); ++i) {
-		this->inits[i] = std::make_shared<Solution>(inits[i]);
-		this->inits[i]->setGeneration(0);
-	}
+GeneticAlgorithm<ConcreteGeneticOperableProgram>::GeneticAlgorithm(const std::vector<std::shared_ptr<Solution>>& inits, int seed)
+: inits(inits), randomEngine(seed) {
 }
 
 template <class ConcreteGeneticOperableProgram>
-GeneticAlgorithm<ConcreteGeneticOperableProgram>::GeneticAlgorithm(boost::property_tree::ptree& node, const std::vector<std::shared_ptr<Program>>& inits)
-: inits(inits.size()) {
+GeneticAlgorithm<ConcreteGeneticOperableProgram>::GeneticAlgorithm(boost::property_tree::ptree& node, const std::vector<std::shared_ptr<Solution>>& inits)
+: inits(inits) {
 	//乱数の初期化
 	std::string seed = node.get<std::string>("Seed");
 	if (seed == "Random") {
 		randomEngine = std::mt19937_64(time(NULL));
 	} else {
 		randomEngine = std::mt19937_64(atoi(seed.c_str()));
-	}
-
-	//初期解の設定
-	for (unsigned int i = 0; i < inits.size(); ++i) {
-		this->inits[i] = std::make_shared<Solution>(inits[i]);
-		this->inits[i]->setGeneration(0);
 	}
 
 	//Scalingの設定
@@ -324,7 +314,7 @@ void GeneticAlgorithm<ConcreteGeneticOperableProgram>::advanceGeneration(Evaluat
 	//適合度の正規化
 	//最小1・大きいほど良い
 	std::vector<double> weights;
-	double maxFitness = genes.back()->getFitness();
+	const double maxFitness = genes.back()->getFitness();
 	for (std::shared_ptr<Solution> gene : genes) {
 		weights.push_back(maxFitness - gene->getFitness() + 1.0);
 	}
@@ -344,15 +334,9 @@ void GeneticAlgorithm<ConcreteGeneticOperableProgram>::advanceGeneration(Evaluat
 
 	//子の作成
 	std::vector<std::shared_ptr<Solution>> offspring;
-	int reproductionSize = round((double)genes.size() * reproductionRate);
-	int elitismSize = std::min((int)round((double)genes.size() * elitismRate), reproductionSize);
-	for (int i = 0; i < elitismSize; ++i) {
-		std::shared_ptr<Solution> parent = genes[i];
-		std::shared_ptr<Solution> child = parent->createChild();
-		parent->addChild(child);
-		offspring.push_back(child);
-	}
-	while (offspring.size() < (unsigned int)reproductionSize) {
+	const int reproductionSize = round((double)genes.size() * reproductionRate);
+	const int elitismSize = std::min((int)round((double)genes.size() * elitismRate), reproductionSize);
+	while (offspring.size() < (unsigned int)(reproductionSize - elitismSize)) {
 		//選択
 		int parentIndex1 = selection(weights, randomEngine);
 		weights.erase(weights.begin() + parentIndex1);
@@ -386,12 +370,19 @@ void GeneticAlgorithm<ConcreteGeneticOperableProgram>::advanceGeneration(Evaluat
 		offspring.push_back(child1);
 		offspring.push_back(child2);
 	}
+	for (int i = 0; i < elitismSize; ++i) {
+		std::shared_ptr<Solution> parent = genes[i];
+		std::shared_ptr<Solution> child = parent->createChild();
+		parent->addChild(child);
+		offspring.push_back(child);
+	}
+	assert(offspring.size() == static_cast<unsigned int>(reproductionSize));
 
 	//評価
 	evaluation(evaluator, offspring, *getHistory(), randomEngine);
 
 	//再挿入
-	int prevGeneration = genes[0]->getGeneration();
+	const int prevGeneration = genes[0]->getGeneration();
 	reinsertion(genes, offspring);
 
 	//旧世代の更新

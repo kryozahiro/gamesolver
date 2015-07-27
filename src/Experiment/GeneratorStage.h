@@ -19,15 +19,24 @@ public:
 	//Stageの実装
 	virtual void operator()(std::vector<std::shared_ptr<Solution>>& solutions, std::mt19937_64& randomEngine);
 
+	//プログラムの種類名を取得する
 	std::string getProgramName() const;
 
 private:
 	//プログラムの読み込み
-	std::vector<std::shared_ptr<Program>> initPrograms(std::mt19937_64& randomEngine);
+	std::vector<std::shared_ptr<Program>> createPrograms(boost::property_tree::ptree& programTree, std::mt19937_64& randomEngine);
 	//std::vector<std::shared_ptr<Program>> readPrograms(const Game& game, GameType gameType, ProgramType programType, std::istream& is);
 
+	//<Config>ノード
+	const boost::property_tree::ptree config;
+
+	//<GeneratorStage>ノード
+	const boost::property_tree::ptree generatorStageTree;
+
+	//使用するGame
 	std::shared_ptr<Game> game;
-	boost::property_tree::ptree programTree;
+
+	//プログラム
 	std::string programName;
 	int size;
 };

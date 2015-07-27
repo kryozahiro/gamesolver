@@ -30,7 +30,7 @@ void ValidatorStage::validate(std::vector<std::shared_ptr<Solution>>& solutions)
 	Evaluator evaluator(game, "Validator", pair<int, int>(0, times));
 
 	//各評価位置における評価値の統計情報
-	vector<ac::accumulator_set<double, ac::stats<ac::tag::min, ac::tag::mean, ac::tag::variance>>> stats(game->getProgramSize().first);
+	vector<ac::accumulator_set<double, ac::stats<ac::tag::min, ac::tag::max, ac::tag::mean, ac::tag::variance>>> stats(game->getProgramSize().first);
 	vector<int> minIndex(evaluator.getProgramSize().first);
 
 	for (int i = 0; i < times; ++i) {
@@ -55,9 +55,9 @@ void ValidatorStage::validate(std::vector<std::shared_ptr<Solution>>& solutions)
 	}
 
 	//統計情報の表示
-	cerr << "(bestIndex best mean sd) of each position:" << endl;
+	cerr << "(bestIndex best worst mean sd) of each position:" << endl;
 	for (unsigned int i = 0; i < stats.size(); ++i) {
-		cout << minIndex[i] << "\t" << ac::min(stats[i]) << "\t" << ac::mean(stats[i]) << "\t" << sqrt((double)ac::variance(stats[i])) << "\t";
+		cout << minIndex[i] << "\t" << ac::min(stats[i]) << "\t" << ac::max(stats[i]) << "\t" << ac::mean(stats[i]) << "\t" << sqrt((double)ac::variance(stats[i])) << "\t";
 	}
 	cout << endl;
 }

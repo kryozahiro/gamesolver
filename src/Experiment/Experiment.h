@@ -32,10 +32,6 @@ private:
 	std::shared_ptr<ValidatorStage> validatorStage;
 	std::shared_ptr<Output> output;
 
-	//その他の実験用オブジェクト
-	int stage = 0;
-	boost::log::attributes::mutable_constant<int> stageAttr;
-
 	//実験設定の読み込み
 	void initExperiment(const boost::program_options::variables_map& args);
 

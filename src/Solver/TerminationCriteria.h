@@ -20,6 +20,7 @@ public:
 	bool meets(int evaluation, SolutionHistory& solutionHistory);
 
 private:
+	double optimum = -DBL_MAX;	//最適解の評価値
 	double minimumTime = 0;		//最小経過時間
 	double maximumTime = 0;		//最大経過時間
 	int minimumEvaluation = 0;	//最小評価回数

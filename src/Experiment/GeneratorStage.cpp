@@ -16,21 +16,15 @@ using namespace std;
 using namespace cpputil;
 namespace pt = boost::property_tree;
 
-GeneratorStage::GeneratorStage(const boost::property_tree::ptree& config, const boost::property_tree::ptree& generatorStageTree, std::shared_ptr<Game>& game) : game(game) {
-	programTree = generatorStageTree.get_child("Program");
-	programTree = cpputil::solveReference(config, programTree);
-	programTree.sort();
-	programName = programTree.rbegin()->first;
-
-	//プログラムのサイズ
-	/*if (args["agents"].as<int>() != 0) {
-		size = args["agents"].as<int>();
-	}*/
+GeneratorStage::GeneratorStage(const boost::property_tree::ptree& config, const boost::property_tree::ptree& generatorStageTree, std::shared_ptr<Game>& game) :
+		config(config), generatorStageTree(generatorStageTree), game(game) {
 	size = generatorStageTree.get<int>("Size");
 }
 
 void GeneratorStage::operator()(std::vector<std::shared_ptr<Solution>>& solutions, std::mt19937_64& randomEngine) {
-	vector<shared_ptr<Program>> inits = initPrograms(randomEngine);
+	pt::ptree programTree = generatorStageTree.get_child("Program");
+	vector<shared_ptr<Program>> inits = createPrograms(programTree, randomEngine);
+	assert(inits.size() == (unsigned int)size);
 
 	cerr << "size = " << size << endl;
 	cerr << endl;
@@ -43,12 +37,15 @@ void GeneratorStage::operator()(std::vector<std::shared_ptr<Solution>>& solution
 	}
 }
 
-vector<shared_ptr<Program>> GeneratorStage::initPrograms(std::mt19937_64& randomEngine) {
+vector<shared_ptr<Program>> GeneratorStage::createPrograms(boost::property_tree::ptree& programTree, std::mt19937_64& randomEngine) {
 	/*if (inputName != "") {
 		ifstream ifs(inputName);
 		return readPrograms(*game, gameType, programType, ifs);
 	}*/
 
+	programTree = cpputil::solveReference(config, programTree);
+	programTree.sort();
+	string programName = programTree.rbegin()->first;
 	pt::ptree concreteProgramTree = programTree.rbegin()->second;
 
 	vector<shared_ptr<Program>> programs;
@@ -89,9 +86,9 @@ vector<shared_ptr<Program>> GeneratorStage::initPrograms(std::mt19937_64& random
 	} else {
 		assert(false);
 	}
-	assert(programs.size() == (unsigned int)size);
 
 	cerr << "Program: " << programName << endl;
+	this->programName = programName;
 	return programs;
 }
 

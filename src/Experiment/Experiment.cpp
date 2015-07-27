@@ -32,20 +32,18 @@ namespace po = boost::program_options;
 namespace pt = boost::property_tree;
 namespace lg = boost::log;
 
-Experiment::Experiment(const boost::program_options::variables_map& args) : randomEngine(time(NULL)), stageAttr(stage) {
+Experiment::Experiment(const boost::program_options::variables_map& args) : randomEngine(time(NULL)) {
 	//実験の読み込み
 	initExperiment(args);
 }
 
 void Experiment::operator()() {
-	auto core = lg::core::get();
-	core->add_global_attribute("Stage", stageAttr);
-
+	int stage = 0;
 	std::vector<std::shared_ptr<Solution>> solutions;
 	for (const pt::ptree::value_type& kvp : experiment) {
-		stageAttr.set(stage);
+		//出力ファイルの生成
 		output->setSink(stage, kvp.first);
-		++stage;
+
 		if (kvp.first == "Game") {
 			pt::ptree gameTree = kvp.second;
 			game = initGame(gameTree);
@@ -57,8 +55,7 @@ void Experiment::operator()() {
 
 		} else if (kvp.first == "SolverStage") {
 			pt::ptree solverStageTree = kvp.second;
-			std::shared_ptr<SolverStage> solverStage = make_shared<SolverStage>(config, solverStageTree, game);
-			solverStage->set(generatorStage, output->getEvaluationLoggerRange());
+			std::shared_ptr<SolverStage> solverStage = make_shared<SolverStage>(config, solverStageTree, game, generatorStage->getProgramName(), output->getEvaluationLoggerRange());
 			solverStage->operator()(solutions, randomEngine);
 			if (output->getRelationFile() != "") {
 				ofstream ofs(output->getRelationFile());
@@ -70,6 +67,7 @@ void Experiment::operator()() {
 			validatorStage = make_shared<ValidatorStage>(config, validatorStageTree, game);
 			validatorStage->operator()(solutions, randomEngine);
 		}
+		++stage;
 	}
 }
 

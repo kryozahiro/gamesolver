@@ -20,13 +20,9 @@ AiBench::AiBench() {
 void AiBench::initOptions(boost::program_options::options_description& options,
 		boost::program_options::positional_options_description& positional) {
 	options.add_options()
-		("help,h", "produce help message")
-		("multithread,m", po::value<int>()->default_value(0), "specify thread number")
+		("multithread,m", po::value<int>()->default_value(0), "specify the number of threads")
 		("config,c", po::value<string>()->default_value("config.xml"), "specify config file")
 		("experiment,e", po::value<string>()->default_value(""), "specify experiment")
-		("agents,a", po::value<int>()->default_value(0), "specify the size of agents")
-		("program,p", po::value<string>()->default_value(""), "specify program representation")
-		("history,y", po::value<int>()->default_value(0), "specify history size")
 		("output,o", po::value<string>()->default_value(""), "specify output methods")
 		("input,i", po::value<string>()->default_value(""), "specify input file");
 }

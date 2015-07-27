@@ -7,6 +7,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <boost/lexical_cast.hpp>
 #include "Instruction.h"
 using namespace std;
 
