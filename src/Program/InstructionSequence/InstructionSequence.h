@@ -43,7 +43,7 @@ public:
 	void randomize(std::mt19937_64& randomEngine);
 
 private:
-	//メモリは入力(read)・出力(read/write)・変数(read/write)が順に並んでいる
+	//メモリは入力(read)・変数(read/write)・出力(write)が順に並んでいる
 	const int variableSize;
 
 	//命令列

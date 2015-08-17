@@ -81,8 +81,8 @@ void InstructionSequence::variableLengthCrossover(InstructionSequence& parent1, 
 void InstructionSequence::fixedLengthMutation(InstructionSequence& parent, std::mt19937_64& randomEngine) {
 	uniform_real_distribution<double> mutateDist(0, 1);
 	uniform_int_distribution<int> opDist(0, parent.instructionSet.size() - 1);
+	uniform_int_distribution<int> argDist(0, parent.getMemorySize() - parent.getProgramType().getOutputType().getSize() - 1);
 	uniform_int_distribution<int> retDist(parent.getProgramType().getInputType().getSize(), parent.getMemorySize() - 1);
-	uniform_int_distribution<int> argDist(0, parent.getMemorySize() - 1);
 	for (Instruction& inst : parent.instructions) {
 		Instruction::Opcode op = (mutateDist(randomEngine) < 0.1) ? parent.instructionSet[opDist(randomEngine)] : inst.getOpcode();
 		int ret = (mutateDist(randomEngine) < 0.1) ? retDist(randomEngine) : inst.getRet();
@@ -135,7 +135,7 @@ vector<double> InstructionSequence::operator()(const vector<double>& input) {
 	ps.execute(instructions, input);
 
 	//出力のクリッピング
-	auto outputBegin = ps.getMemory().begin() + getProgramType().getInputType().getSize();
+	auto outputBegin = ps.getMemory().begin() + getProgramType().getInputType().getSize() + variableSize;
 	vector<double> output(outputBegin, outputBegin + getProgramType().getOutputType().getSize());
 	getProgramType().getOutputType().clip(output);
 	return output;
@@ -178,13 +178,13 @@ void InstructionSequence::randomize(std::mt19937_64& randomEngine) {
 }
 
 int InstructionSequence::getMemorySize() const {
-	return getProgramType().getInputType().getSize() + getProgramType().getOutputType().getSize() + variableSize;
+	return getProgramType().getInputType().getSize() + variableSize + getProgramType().getOutputType().getSize();
 }
 
 Instruction InstructionSequence::makeRandomInstruction(std::mt19937_64& randomEngine) {
 	uniform_int_distribution<int> opDist(0, instructionSet.size() - 1);
+	uniform_int_distribution<int> argDist(0, getMemorySize() - getProgramType().getOutputType().getSize() - 1);
 	uniform_int_distribution<int> retDist(getProgramType().getInputType().getSize(), getMemorySize() - 1);
-	uniform_int_distribution<int> argDist(0, getMemorySize() - 1);
 	Instruction inst;
 	inst.set(
 		instructionSet[opDist(randomEngine)],
