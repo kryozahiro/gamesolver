@@ -8,7 +8,7 @@
 #include <cassert>
 #include <cmath>
 #include <boost/algorithm/string.hpp>
-#include "CppUtil/GenericIo.h"
+#include "cpputil/GenericIo.h"
 #include "../../Util/fastonebigheader.h"
 #include "FeedforwardNetwork.h"
 using namespace std;

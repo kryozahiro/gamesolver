@@ -11,8 +11,8 @@
 #include <vector>
 #include <string>
 #include "ProgramType.h"
-#include "CppUtil/Cloneable.h"
-#include "CppUtil/ReadWritable.h"
+#include "cpputil/Cloneable.h"
+#include "cpputil/ReadWritable.h"
 
 class Program : public cpputil::Cloneable<Program>, public cpputil::ReadWritable {
 public:

@@ -10,7 +10,7 @@
 
 #include <vector>
 #include <string>
-#include "CppUtil/EnumUtil.h"
+#include "cpputil/EnumUtil.h"
 
 class Instruction {
 public:

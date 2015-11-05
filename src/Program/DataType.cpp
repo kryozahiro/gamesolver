@@ -6,8 +6,8 @@
  */
 
 #include <tuple>
-#include "CppUtil/MathUtil.h"
-#include "CppUtil/GenericIo.h"
+#include "cpputil/MathUtil.h"
+#include "cpputil/GenericIo.h"
 #include "DataType.h"
 using namespace std;
 using namespace cpputil;

@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include "CppUtil/GenericIo.h"
+#include "cpputil/GenericIo.h"
 #include "ExpressionTree.h"
 #include "../../Problem/SantaFeTrail.h"
 using namespace std;

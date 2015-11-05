@@ -9,9 +9,9 @@
 #include <fstream>
 #include <omp.h>
 #include <boost/property_tree/xml_parser.hpp>
-#include "CppUtil/GenericIo.h"
-#include "CppUtil/OpenMp.h"
-#include "CppUtil/PropertyTreeUtil.h"
+#include "cpputil/GenericIo.h"
+#include "cpputil/OpenMp.h"
+#include "cpputil/PropertyTreeUtil.h"
 #include "../Game/AverageAdaptor.h"
 #include "../Game/Mushroom.h"
 #include "../Game/MultiAgentMushroom.h"

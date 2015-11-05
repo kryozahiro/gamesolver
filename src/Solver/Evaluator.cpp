@@ -7,7 +7,7 @@
 
 #include <omp.h>
 #include "Evaluator.h"
-#include "CppUtil/AlgorithmUtil.h"
+#include "cpputil/AlgorithmUtil.h"
 using namespace std;
 using namespace cpputil;
 

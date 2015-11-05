@@ -12,7 +12,7 @@
 #include <boost/log/expressions/predicates.hpp>
 #include <boost/log/utility/setup/console.hpp>
 #include <boost/log/utility/setup/file.hpp>
-#include "CppUtil/GenericIo.h"
+#include "cpputil/GenericIo.h"
 #include "Output.h"
 using namespace std;
 using namespace cpputil;

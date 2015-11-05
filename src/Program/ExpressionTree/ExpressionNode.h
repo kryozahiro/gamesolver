@@ -12,7 +12,7 @@
 #include <random>
 #include <vector>
 #include <string>
-#include "CppUtil/Cloneable.h"
+#include "cpputil/Cloneable.h"
 #include "../ProgramType.h"
 
 class ExpressionNode : public cpputil::Cloneable<ExpressionNode> {

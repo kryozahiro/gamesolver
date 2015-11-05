@@ -7,7 +7,7 @@
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics.hpp>
-#include "CppUtil/GenericIo.h"
+#include "cpputil/GenericIo.h"
 #include "../Solver/Evaluator.h"
 #include "ValidatorStage.h"
 using namespace std;

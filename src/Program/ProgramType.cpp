@@ -6,7 +6,7 @@
  */
 
 #include <tuple>
-#include "CppUtil/GenericIo.h"
+#include "cpputil/GenericIo.h"
 #include "ProgramType.h"
 using namespace std;
 

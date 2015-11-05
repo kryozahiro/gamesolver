@@ -9,7 +9,7 @@
 #define SRC_PROGRAM_DATATYPE_H_
 
 #include <vector>
-#include "CppUtil/ReadWritable.h"
+#include "cpputil/ReadWritable.h"
 
 //プログラムの入出力の型
 class DataType : public cpputil::ReadWritable {

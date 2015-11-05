@@ -7,7 +7,7 @@
 
 #include <cfloat>
 #include <boost/lexical_cast.hpp>
-#include "CppUtil/GenericIo.h"
+#include "cpputil/GenericIo.h"
 #include "DataSet.h"
 using namespace std;
 using namespace cpputil;

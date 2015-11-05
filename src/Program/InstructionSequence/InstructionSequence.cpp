@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/lexical_cast.hpp>
-#include "CppUtil/GenericIo.h"
+#include "cpputil/GenericIo.h"
 #include "ProgramState.h"
 #include "InstructionSequence.h"
 using namespace std;

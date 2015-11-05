@@ -9,8 +9,8 @@
 #define GAME_H_
 
 #include <memory>
-#include "CppUtil/VirtualConstructable.h"
-#include "CppUtil/Logging.h"
+#include "cpputil/Cloneable.h"
+#include "cpputil/Logging.h"
 #include "../Program/Program.h"
 #include "../Program/ProgramType.h"
 

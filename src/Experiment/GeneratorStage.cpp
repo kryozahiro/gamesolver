@@ -6,7 +6,7 @@
  */
 
 #include <cassert>
-#include "CppUtil/PropertyTreeUtil.h"
+#include "cpputil/PropertyTreeUtil.h"
 #include "../Program/IoMapping/GrayCodeMapping.h"
 #include "../Program/ExpressionTree/ExpressionTree.h"
 #include "../Program/InstructionSequence/InstructionSequence.h"

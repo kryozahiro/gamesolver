@@ -8,7 +8,7 @@
 #ifndef AIBENCH_H_
 #define AIBENCH_H_
 
-#include "CppUtil/Application.h"
+#include "cpputil/Application.h"
 
 class AiBench : public cpputil::Application<AiBench> {
 protected:

@@ -12,7 +12,7 @@
 #include <boost/log/sources/logger.hpp>
 #include <boost/log/attributes/mutable_constant.hpp>
 #include "Solution.h"
-#include "CppUtil/Timer.h"
+#include "cpputil/Timer.h"
 
 class SolutionHistory {
 public:

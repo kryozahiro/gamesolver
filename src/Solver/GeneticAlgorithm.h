@@ -11,8 +11,8 @@
 #include <algorithm>
 #include <random>
 #include <boost/property_tree/ptree.hpp>
-#include "CppUtil/AlgorithmUtil.h"
-#include "CppUtil/MathUtil.h"
+#include "cpputil/AlgorithmUtil.h"
+#include "cpputil/MathUtil.h"
 #include "Solver.h"
 #include "GeneticOperable.h"
 

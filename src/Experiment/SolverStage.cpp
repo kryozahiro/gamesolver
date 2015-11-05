@@ -6,7 +6,7 @@
  */
 
 #include <cassert>
-#include "CppUtil/PropertyTreeUtil.h"
+#include "cpputil/PropertyTreeUtil.h"
 #include "../Solver/GeneticAlgorithm.h"
 #include "../Solver/SimulatedAnnealing.h"
 #include "SolverStage.h"
