@@ -1,9 +1,13 @@
-*.d
-*.o
+**/.gitignore
+/Debug/
 *.exe
-*.bak
+*.a
+*.o
+*.gcda
+*.gcno
+*.d
 *.log
+*.bak
 *.png
 *.gif
 *.tar.gz
-/Debug/

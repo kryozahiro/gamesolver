@@ -12,15 +12,8 @@
 #include "cpputil/GenericIo.h"
 #include "cpputil/OpenMp.h"
 #include "cpputil/PropertyTreeUtil.h"
+#include "cpputil/reflection/Reflection.h"
 #include "../Game/AverageAdaptor.h"
-#include "../Game/Mushroom.h"
-#include "../Game/MultiAgentMushroom.h"
-#include "../Game/SyntacticMushroom.h"
-#include "../Game/Exchange.h"
-#include "../Game/Evasion.h"
-#include "../Game/SingleFood.h"
-#include "../Game/TimeSeries.h"
-#include "../Game/Memory.h"
 #include "../Problem/HomoAdaptor.h"
 #include "../Problem/Regression.h"
 #include "../Problem/TravellingSalesman.h"
@@ -155,40 +148,11 @@ shared_ptr<Game> Experiment::initGame(pt::ptree& gameTree) {
 		shared_ptr<TravellingSalesman> tsp = make_shared<TravellingSalesman>(10, time(NULL));
 		game = tsp;
 
-	} else if (gameName == "Mushroom") {
-		shared_ptr<Mushroom> mush = make_shared<Mushroom>(concreteGameTree, time(NULL));
-		game = mush;
-
-	} else if (gameName == "MultiAgentMushroom") {
-		shared_ptr<MultiAgentMushroom> mm = make_shared<MultiAgentMushroom>(concreteGameTree, time(NULL));
-		game = mm;
-
-	} else if (gameName == "SyntacticMushroom") {
-		shared_ptr<SyntacticMushroom> sm = make_shared<SyntacticMushroom>(concreteGameTree, time(NULL));
-		game = sm;
-
-	} else if (gameName == "Exchange") {
-		shared_ptr<Exchange> ex = make_shared<Exchange>(concreteGameTree, time(NULL));
-		game = ex;
-
-	} else if (gameName == "Evasion") {
-		shared_ptr<Evasion> eva = make_shared<Evasion>(concreteGameTree, time(NULL));
-		game = eva;
-
-	} else if (gameName == "SingleFood") {
-		shared_ptr<SingleFood> sf = make_shared<SingleFood>(concreteGameTree, time(NULL));
-		game = sf;
-
-	} else if (gameName == "TimeSeries") {
-		shared_ptr<TimeSeries> ts = make_shared<TimeSeries>(concreteGameTree, time(NULL));
-		game = ts;
-
-	} else if (gameName == "Memory") {
-		shared_ptr<Memory> mem = make_shared<Memory>(concreteGameTree, time(NULL));
-		game = mem;
-
 	} else {
-		assert(false);
+		auto global = Reflection::get_mutable_instance().getGlobal();
+		auto theClass = global->getScope(gameName);
+		auto newOp = theClass->getFunction<Game*(const pt::ptree&, int)>("new");
+		game = shared_ptr<Game>(newOp(concreteGameTree, time(NULL)));
 	}
 
 	cerr << "Game: " << gameName << endl;
