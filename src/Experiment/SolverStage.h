@@ -8,10 +8,6 @@
 #ifndef SRC_EXPERIMENT_SOLVERSTAGE_H_
 #define SRC_EXPERIMENT_SOLVERSTAGE_H_
 
-#include "../Program/IoMapping/GrayCodeMapping.h"
-#include "../Program/ExpressionTree/ExpressionTree.h"
-#include "../Program/InstructionSequence/InstructionSequence.h"
-#include "../Program/NeuralNetwork/FeedforwardNetwork.h"
 #include "../Solver/Solver.h"
 #include "GeneratorStage.h"
 #include "Stage.h"
@@ -29,9 +25,9 @@ public:
 
 private:
 	//ソルバの読み込み
-	std::shared_ptr<Solver<Game>> createSolver(boost::property_tree::ptree& solverTree, std::vector<std::shared_ptr<Solution>>& solutions);
+	std::shared_ptr<SolverBase> createSolver(boost::property_tree::ptree& solverTree, std::vector<std::shared_ptr<Solution>>& solutions);
 
-	template <template <class ConcreteProgram> class ConcreteSolver>
+	/*template <template <class ConcreteProgram> class ConcreteSolver>
 	std::shared_ptr<Solver<Game>> createSolverImpl(boost::property_tree::ptree& solverTree, std::vector<std::shared_ptr<Solution>>& solutions) {
 		std::shared_ptr<Solver<Game>> solver;
 		if (programName == "GrayCodeMapping") {
@@ -46,7 +42,7 @@ private:
 			assert(false);
 		}
 		return solver;
-	}
+	}*/
 
 	//<Config>ノード
 	const boost::property_tree::ptree config;
@@ -69,7 +65,7 @@ private:
 
 	//ソルバ
 	std::string solverName;
-	std::shared_ptr<Solver<Game>> solver;
+	std::shared_ptr<SolverBase> solver;
 };
 
 #endif /* SRC_EXPERIMENT_SOLVERSTAGE_H_ */

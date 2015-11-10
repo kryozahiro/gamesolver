@@ -15,7 +15,7 @@
 using namespace std;
 namespace pt = boost::property_tree;
 
-vector<shared_ptr<ExpressionTree>> ExpressionTree::generate(const ProgramType& programType, const pt::ptree& node, int size, mt19937_64& randomEngine) {
+vector<shared_ptr<Program>> ExpressionTree::generate(const ProgramType& programType, const pt::ptree& node, int size, mt19937_64& randomEngine) {
 	int maxDepth = node.get<int>("MaxDepth");
 	ExpressionTree prototype(programType, maxDepth);
 
@@ -55,11 +55,11 @@ vector<shared_ptr<ExpressionTree>> ExpressionTree::generate(const ProgramType& p
 	} else {
 		assert(false);
 	}
-	return vector<shared_ptr<ExpressionTree>>();
+	return vector<shared_ptr<Program>>();
 }
 
-vector<shared_ptr<ExpressionTree>> ExpressionTree::rampedHalfAndHalf(const ExpressionTree& prototype, int size, int maxDepth, mt19937_64& randomEngine) {
-	vector<shared_ptr<ExpressionTree>> trees;
+vector<shared_ptr<Program>> ExpressionTree::rampedHalfAndHalf(const ExpressionTree& prototype, int size, int maxDepth, mt19937_64& randomEngine) {
+	vector<shared_ptr<Program>> trees;
 
 	int eachSize = size / (maxDepth - 1);
 	for (int depth = 2; depth <= maxDepth; ++depth) {
@@ -187,14 +187,14 @@ string ExpressionTree::toString() const {
 	return ret;
 }
 
-void ExpressionTree::crossover(const std::string& method, ExpressionTree& other, std::mt19937_64& randomEngine) {
+void ExpressionTree::crossoverImpl(const std::string& method, ExpressionTree& other, std::mt19937_64& randomEngine) {
 	assert(this->roots.size() == other.roots.size());
 	for (unsigned int i = 0; i < roots.size(); ++i) {
 		ExpressionTree::normalCrossover(*this, other, i, randomEngine);
 	}
 }
 
-void ExpressionTree::mutation(const std::string& method, std::mt19937_64& randomEngine) {
+void ExpressionTree::mutationImpl(const std::string& method, std::mt19937_64& randomEngine) {
 	for (unsigned int i = 0; i < roots.size(); ++i) {
 		ExpressionTree::normalMutation(*this, i, randomEngine);
 	}

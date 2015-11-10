@@ -13,6 +13,16 @@
 #include "ProgramType.h"
 #include "cpputil/Cloneable.h"
 #include "cpputil/ReadWritable.h"
+#include "cpputil/reflection/Reflection.h"
+
+#define GAMESOLVER_PROGRAM_MODULE(Class)\
+	CPPUTIL_AT_START(Class) {\
+		auto global = cpputil::Reflection::get_mutable_instance().getGlobal();\
+		auto theClass = global->addScope(cpputil::Scope::CLASS, #Class);\
+		theClass->addFunction("generate", std::function<std::vector<std::shared_ptr<Program>>(const ProgramType&, const boost::property_tree::ptree&, int size, std::mt19937_64&)>([](const ProgramType& programType, const boost::property_tree::ptree& node, int size, std::mt19937_64& randomEngine) {\
+			return Class::generate(programType, node, size, randomEngine);\
+		}));\
+	}
 
 class Program : public cpputil::Cloneable<Program>, public cpputil::ReadWritable {
 public:

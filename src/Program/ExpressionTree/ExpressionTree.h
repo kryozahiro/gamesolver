@@ -10,8 +10,8 @@
 
 #include <random>
 #include "../Program.h"
-#include "ExpressionNode.h"
 #include "../../Solver/GeneticOperable.h"
+#include "ExpressionNode.h"
 
 //関連
 #include "OperatorNode.h"
@@ -20,10 +20,10 @@
 
 class ExpressionTree : public Program, public GeneticOperable<ExpressionTree> {
 public:
-	static std::vector<std::shared_ptr<ExpressionTree>> generate(const ProgramType& programType, const boost::property_tree::ptree& node, int size, std::mt19937_64& randomEngine);
+	static std::vector<std::shared_ptr<Program>> generate(const ProgramType& programType, const boost::property_tree::ptree& node, int size, std::mt19937_64& randomEngine);
 
 	//ramped half and halfによる式木の集合の生成
-	static std::vector<std::shared_ptr<ExpressionTree>> rampedHalfAndHalf(const ExpressionTree& prototype, int size, int maxDepth, std::mt19937_64& randomEngine);
+	static std::vector<std::shared_ptr<Program>> rampedHalfAndHalf(const ExpressionTree& prototype, int size, int maxDepth, std::mt19937_64& randomEngine);
 
 	//GeneticOperableの実装
 	static void normalCrossover(ExpressionTree& parent1, ExpressionTree& parent2, int rootIndex, std::mt19937_64& randomEngine);
@@ -41,8 +41,8 @@ public:
 	virtual std::string toString() const override;
 
 	//GeneticOperableの実装
-	virtual void crossover(const std::string& method, ExpressionTree& other, std::mt19937_64& randomEngine) override;
-	virtual void mutation(const std::string& method, std::mt19937_64& randomEngine) override;
+	virtual void crossoverImpl(const std::string& method, ExpressionTree& other, std::mt19937_64& randomEngine) override;
+	virtual void mutationImpl(const std::string& method, std::mt19937_64& randomEngine) override;
 
 	//使用するオペレータの設定
 	void addOperator(std::shared_ptr<ExpressionNode> op);
@@ -67,5 +67,7 @@ private:
 	std::vector<std::shared_ptr<ExpressionNode>> nonterminals;
 	std::vector<std::shared_ptr<ExpressionNode>> terminals;
 };
+
+GAMESOLVER_PROGRAM_MODULE(ExpressionTree);
 
 #endif /* EXPRESSIONTREE_H_ */

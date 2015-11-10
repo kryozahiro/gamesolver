@@ -14,6 +14,14 @@
 using namespace std;
 namespace pt = boost::property_tree;
 
+std::vector<std::shared_ptr<Program>> FeedforwardNetwork::generate(const ProgramType& programType, const boost::property_tree::ptree& node, int size, std::mt19937_64& randomEngine) {
+	std::vector<std::shared_ptr<Program>> programs;
+	for (int i = 0; i < size; ++i) {
+		programs.push_back(make_shared<FeedforwardNetwork>(programType, node, randomEngine));
+	}
+	return programs;
+}
+
 void FeedforwardNetwork::crossover(FeedforwardNetwork& parent1, FeedforwardNetwork& parent2, mt19937_64& randomEngine) {
 	double alpha = 0.1;
 	for (unsigned int y = 0; y < parent1.weights.size(); ++y) {
@@ -153,11 +161,11 @@ void FeedforwardNetwork::write(ostream& os) const {
 	os << t;
 }
 
-void FeedforwardNetwork::crossover(const std::string& method, FeedforwardNetwork& other, std::mt19937_64& randomEngine) {
+void FeedforwardNetwork::crossoverImpl(const std::string& method, FeedforwardNetwork& other, std::mt19937_64& randomEngine) {
 	FeedforwardNetwork::crossover(*this, other, randomEngine);
 }
 
-void FeedforwardNetwork::mutation(const std::string& method, std::mt19937_64& randomEngine) {
+void FeedforwardNetwork::mutationImpl(const std::string& method, std::mt19937_64& randomEngine) {
 	FeedforwardNetwork::normalMutation(*this, randomEngine);
 }
 

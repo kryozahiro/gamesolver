@@ -7,8 +7,7 @@
 
 #include <cassert>
 #include "cpputil/PropertyTreeUtil.h"
-#include "../Solver/GeneticAlgorithm.h"
-#include "../Solver/SimulatedAnnealing.h"
+#include "cpputil/reflection/Reflection.h"
 #include "SolverStage.h"
 using namespace std;
 using namespace cpputil;
@@ -45,22 +44,18 @@ const std::shared_ptr<SolutionHistory> SolverStage::getHistory() const {
 	return solver->getHistory();
 }
 
-shared_ptr<Solver<Game>> SolverStage::createSolver(boost::property_tree::ptree& solverTree, std::vector<std::shared_ptr<Solution>>& solutions) {
+shared_ptr<SolverBase> SolverStage::createSolver(boost::property_tree::ptree& solverTree, std::vector<std::shared_ptr<Solution>>& solutions) {
 	solverTree = cpputil::solveReference(config, solverTree);
 	solverTree.sort();
 	string solverName = solverTree.rbegin()->first;
 	pt::ptree concreteSolverTree = solverTree.rbegin()->second;
 
-	shared_ptr<Solver<Game>> solver;
-	if (solverName == "GeneticAlgorithm") {
-		solver = createSolverImpl<GeneticAlgorithm>(concreteSolverTree, solutions);
+	shared_ptr<SolverBase> solver;
+	auto global = Reflection::get_mutable_instance().getGlobal();
+	auto theClass = global->getScope(solverName);
+	auto newOp = theClass->getFunction<SolverBase*(boost::property_tree::ptree&, const std::vector<std::shared_ptr<Solution>>&)>("new");
+	solver = std::shared_ptr<SolverBase>(newOp(concreteSolverTree, solutions));
 
-	} else if (solverName == "SimulatedAnnealing") {
-		//TODO: broken
-
-	} else {
-		assert(false);
-	}
 	cerr << "Solver: " << solverName << endl;
 	this->solverName = solverName;
 	return solver;

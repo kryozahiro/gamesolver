@@ -16,6 +16,14 @@ using namespace std;
 using namespace cpputil;
 namespace pt = boost::property_tree;
 
+std::vector<std::shared_ptr<Program>> InstructionSequence::generate(const ProgramType& programType, const boost::property_tree::ptree& node, int size, std::mt19937_64& randomEngine) {
+	std::vector<std::shared_ptr<Program>> programs;
+	for (int i = 0; i < size; ++i) {
+		programs.push_back(make_shared<InstructionSequence>(programType, node, randomEngine));
+	}
+	return programs;
+}
+
 void InstructionSequence::homologousCrossover(InstructionSequence& parent1, InstructionSequence& parent2, std::mt19937_64& randomEngine) {
 	int size = min(parent1.instructions.size(), parent2.instructions.size());
 
@@ -149,7 +157,7 @@ string InstructionSequence::toString() const {
 	return ret;
 }
 
-void InstructionSequence::crossover(const std::string& method, InstructionSequence& other, std::mt19937_64& randomEngine) {
+void InstructionSequence::crossoverImpl(const std::string& method, InstructionSequence& other, std::mt19937_64& randomEngine) {
 	if (method.find("Homo") != string::npos) {
 		homologousCrossover(*this, other, randomEngine);
 	} else if (method.find("Fixed") != string::npos) {
@@ -159,7 +167,7 @@ void InstructionSequence::crossover(const std::string& method, InstructionSequen
 	}
 }
 
-void InstructionSequence::mutation(const std::string& method, std::mt19937_64& randomEngine) {
+void InstructionSequence::mutationImpl(const std::string& method, std::mt19937_64& randomEngine) {
 	if (method.find("Fixed") != string::npos) {
 		fixedLengthMutation(*this, randomEngine);
 	} else {

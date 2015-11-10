@@ -15,6 +15,8 @@
 
 class InstructionSequence : public Program, public GeneticOperable<InstructionSequence> {
 public:
+	static std::vector<std::shared_ptr<Program>> generate(const ProgramType& programType, const boost::property_tree::ptree& node, int size, std::mt19937_64& randomEngine);
+
 	//遺伝的操作の具体例
 	static void homologousCrossover(InstructionSequence& parent1, InstructionSequence& parent2, std::mt19937_64& randomEngine);
 	static void fixedLengthCrossover(InstructionSequence& parent1, InstructionSequence& parent2, std::mt19937_64& randomEngine);
@@ -33,8 +35,8 @@ public:
 	virtual std::string toString() const override;
 
 	//GeneticOperableの実装
-	virtual void crossover(const std::string& method, InstructionSequence& other, std::mt19937_64& randomEngine) override;
-	virtual void mutation(const std::string& method, std::mt19937_64& randomEngine) override;
+	virtual void crossoverImpl(const std::string& method, InstructionSequence& other, std::mt19937_64& randomEngine) override;
+	virtual void mutationImpl(const std::string& method, std::mt19937_64& randomEngine) override;
 
 	//使用するオペレータの設定
 	void addOperator(Instruction::Opcode op);
@@ -56,5 +58,7 @@ private:
 	int getMemorySize() const;
 	Instruction makeRandomInstruction(std::mt19937_64& randomEngine);
 };
+
+GAMESOLVER_PROGRAM_MODULE(InstructionSequence);
 
 #endif /* SRC_PROGRAM_INSTRUCTIONSEQUENCE_INSTRUCTIONSEQUENCE_H_ */

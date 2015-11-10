@@ -6,6 +6,7 @@
  */
 
 #include <cassert>
+#include "cpputil/reflection/Reflection.h"
 #include "cpputil/PropertyTreeUtil.h"
 #include "../Program/IoMapping/GrayCodeMapping.h"
 #include "../Program/ExpressionTree/ExpressionTree.h"
@@ -48,15 +49,16 @@ vector<shared_ptr<Program>> GeneratorStage::createPrograms(boost::property_tree:
 	string programName = programTree.rbegin()->first;
 	pt::ptree concreteProgramTree = programTree.rbegin()->second;
 
-	vector<shared_ptr<Program>> programs;
-	if (programName == "GraycodeMapping") {
-		/*for (int i = 0; i < programNum; ++i) {
+
+	/*if (programName == "GraycodeMapping") {
+		for (int i = 0; i < programNum; ++i) {
 			shared_ptr<GrayCodeMapping> gray = make_shared<GrayCodeMapping>(game.getProgramType());
 			gray->randomize(randomEngine);
 			programs.push_back(gray);
-		}*/
+		}
+	}*/
 
-	} else if (programName == "ExpressionTree") {
+	/*} else if (programName == "ExpressionTree") {
 		vector<shared_ptr<ExpressionTree>> ps = ExpressionTree::generate(game->getProgramType(), concreteProgramTree, size, randomEngine);
 		for (shared_ptr<ExpressionTree> p : ps) {
 			programs.push_back(p);
@@ -64,28 +66,17 @@ vector<shared_ptr<Program>> GeneratorStage::createPrograms(boost::property_tree:
 
 	} else if (programName == "InstructionSequence") {
 		for (int i = 0; i < size; ++i) {
-			programs.push_back(make_shared<InstructionSequence>(game->getProgramType(), concreteProgramTree, randomEngine));
+			programs.push_back(make_shared<InstructionSequence>(game->getProgramType(), concreteProgramTree, size, randomEngine));
 		}
 
-	} else if (programName == "FeedforwardNetwork") {
-		for (int i = 0; i < size; ++i) {
-			programs.push_back(make_shared<FeedforwardNetwork>(game->getProgramType(), concreteProgramTree, randomEngine));
-		}
+	} else if (programName == "FeedforwardNetwork") {*/
 
-	} else if (programName == "LayeredNetwork") {
-		/*vector<int> nodes = {game.getProgramType().getInputLength(), 7, game.getProgramType().getOutputLength()};
-		LayeredNetwork net(game.getProgramType(), nodes, [](double x){
-			return NeuralLayer::sigmoid(1.0, x);
-		});
-		for (int i = 0; i < programNum; ++i) {
-			shared_ptr<LayeredNetwork> clone = make_shared<LayeredNetwork>(net);
-			clone->randomize(randomEngine);
-			programs.push_back(clone);
-		}*/
 
-	} else {
-		assert(false);
-	}
+	vector<shared_ptr<Program>> programs;
+	auto global = Reflection::get_mutable_instance().getGlobal();
+	auto theClass = global->getScope(programName);
+	auto genOp = theClass->getFunction<std::vector<std::shared_ptr<Program>>(const ProgramType&, const boost::property_tree::ptree&, int size, std::mt19937_64&)>("generate");
+	programs = vector<shared_ptr<Program>>(genOp(game->getProgramType(), concreteProgramTree, size, randomEngine));
 
 	cerr << "Program: " << programName << endl;
 	this->programName = programName;

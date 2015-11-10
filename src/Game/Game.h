@@ -11,8 +11,18 @@
 #include <memory>
 #include "cpputil/Cloneable.h"
 #include "cpputil/Logging.h"
+#include "cpputil/reflection/Reflection.h"
 #include "../Program/Program.h"
 #include "../Program/ProgramType.h"
+
+#define GAMESOLVER_GAME_MODULE(Class)\
+	CPPUTIL_AT_START(Class) {\
+		auto global = cpputil::Reflection::get_mutable_instance().getGlobal();\
+		auto theClass = global->addScope(cpputil::Scope::CLASS, #Class);\
+		theClass->addFunction("new", std::function<Game*(const boost::property_tree::ptree&, int)>([](const boost::property_tree::ptree& gameTree, int seed) {\
+			return new Class(gameTree, seed);\
+		}));\
+	}
 
 class Game : public cpputil::Cloneable<Game>, public cpputil::Logging {
 public:

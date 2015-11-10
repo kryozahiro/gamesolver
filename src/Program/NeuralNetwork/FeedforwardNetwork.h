@@ -17,6 +17,8 @@
 
 class FeedforwardNetwork : public Program, public GeneticOperable<FeedforwardNetwork> {
 public:
+	static std::vector<std::shared_ptr<Program>> generate(const ProgramType& programType, const boost::property_tree::ptree& node, int size, std::mt19937_64& randomEngine);
+
 	//遺伝的操作の具体例
 	static void crossover(FeedforwardNetwork& parent1, FeedforwardNetwork& parent2, std::mt19937_64& randomEngine);
 	static void normalMutation(FeedforwardNetwork& parent, std::mt19937_64& randomEngine);
@@ -37,8 +39,8 @@ public:
 	virtual void write(std::ostream& os) const;
 
 	//GeneticOperableの実装
-	virtual void crossover(const std::string& method, FeedforwardNetwork& other, std::mt19937_64& randomEngine);
-	virtual void mutation(const std::string& method, std::mt19937_64& randomEngine);
+	virtual void crossoverImpl(const std::string& method, FeedforwardNetwork& other, std::mt19937_64& randomEngine) override;
+	virtual void mutationImpl(const std::string& method, std::mt19937_64& randomEngine) override;
 
 	//ノード間の接続を設定する
 	//ノード番号は0から始まり定数1・入力層・中間層・出力層の順に振られる
@@ -82,5 +84,7 @@ private:
 
 	int readConnectionNotation(const std::string& position);
 };
+
+GAMESOLVER_PROGRAM_MODULE(FeedforwardNetwork);
 
 #endif /* FEEDFORWARDNETWORK_H_ */
