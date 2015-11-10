@@ -5,6 +5,8 @@
  *      Author: kryozahiro
  */
 
+#include <iostream>
+#include "NeighborhoodOperable.h"
 #include "SimulatedAnnealing.h"
 using namespace std;
 using namespace cpputil;
@@ -24,10 +26,12 @@ SimulatedAnnealing::SimulatedAnnealing(boost::property_tree::ptree& node, const 
 		randomEngine = std::mt19937_64(atoi(seed.c_str()));
 	}
 	this->initTemp = node.get<double>("InitialTemperature");
+	setNeighborhood(node.get<std::string>("Neighborhood"), node.get<int>("NeighborhoodSize"));
 }
 
-void SimulatedAnnealing::setNeighbor(const std::string& neighbor) {
-	this->neighbor = neighbor;
+void SimulatedAnnealing::setNeighborhood(const std::string& neighborhood, int size) {
+	this->neighborhood = neighborhood;
+	this->neighborhoodSize = size;
 }
 
 std::vector<std::shared_ptr<Solution>> SimulatedAnnealing::solveImpl(Evaluator& evaluator, TerminationCriteria& termination) {
@@ -36,24 +40,26 @@ std::vector<std::shared_ptr<Solution>> SimulatedAnnealing::solveImpl(Evaluator& 
 	std::shared_ptr<Solution> now = init;
 	std::vector<std::shared_ptr<Solution>> nows(1, now);
 	Evaluator::problemEvaluation(evaluator, nows, *getHistory(), randomEngine);
-	getHistory()->addSolution(now);
+	getHistory()->addGeneration(nows);
 
 	while (!termination.meets(evaluator.getEvaluationCount(), *getHistory())) {
 		//近傍を生成して評価
-		std::shared_ptr<Program> program;// = std::dynamic_pointer_cast<NeighborProgram>(now->getProgram());
-		std::vector<std::shared_ptr<Program>> neighbors;// = program->neighbor(neighbor, randomEngine);
+		std::shared_ptr<NeighborhoodOperableBase> program = std::dynamic_pointer_cast<NeighborhoodOperableBase>(now->getProgram());
+		std::vector<std::shared_ptr<NeighborhoodOperableBase>> neighbors = program->neighborhood(neighborhood, neighborhoodSize, randomEngine);
 		std::vector<std::shared_ptr<Solution>> children;
-		for (std::shared_ptr<Program> program : neighbors) {
-			children.push_back(std::make_shared<Solution>(program));
+		for (std::shared_ptr<NeighborhoodOperableBase> neighbor : neighbors) {
+			children.push_back(make_shared<Solution>(std::dynamic_pointer_cast<Program>(neighbor)));
+			children.back()->setGeneration(now->getGeneration() + 1);
+			now->addChild(children.back());
 		}
 		Evaluator::problemEvaluation(evaluator, children, *getHistory(), randomEngine);
+		getHistory()->addGeneration(children);
 
 		//最も良い近傍を選択
 		std::sort(children.begin(), children.end(), [](std::shared_ptr<Solution> lhs, std::shared_ptr<Solution> rhs){
 			return lhs->getFitness() < rhs->getFitness();
 		});
 		std::shared_ptr<Solution> child = children[0];
-		getHistory()->addSolution(child);
 
 		//取り入れるか決定
 		std::uniform_real_distribution<double> dist(0, 1);

@@ -29,9 +29,11 @@
 								<option id="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level.979916347" name="デバッグ・レベル" superClass="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.870404121" name="定義済みのシンボル (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false"/>
 								<option id="gnu.cpp.compiler.option.other.other.896433821" name="その他のフラグ" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-pipe -c -fmessage-length=0" valueType="string"/>
-								<option id="gnu.cpp.compiler.option.debugging.gprof.938430734" name="gprof 情報の生成 (-pg)" superClass="gnu.cpp.compiler.option.debugging.gprof" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="gnu.cpp.compiler.option.debugging.gprof.938430734" name="gprof 情報の生成 (-pg)" superClass="gnu.cpp.compiler.option.debugging.gprof" useByScannerDiscovery="false" value="false" valueType="boolean"/>
 								<option id="gnu.cpp.compiler.option.optimization.flags.521580810" name="その他の最適化フラグ" superClass="gnu.cpp.compiler.option.optimization.flags" useByScannerDiscovery="false" value="-march=native -fopenmp -ffast-math" valueType="string"/>
-								<option id="gnu.cpp.compiler.option.include.paths.1717738341" name="インクルード・パス (-I)" superClass="gnu.cpp.compiler.option.include.paths"/>
+								<option id="gnu.cpp.compiler.option.include.paths.1717738341" name="インクルード・パス (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil}&quot;"/>
+								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.1050968242" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.dialect.flags.1397286375" name="Other dialect flags" superClass="gnu.cpp.compiler.option.dialect.flags" value="-std=c++14" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.773443" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -45,17 +47,20 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug.2037650841" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug.656105323" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug">
 								<option id="gnu.cpp.link.option.libs.1479582638" name="ライブラリー (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="boost_program_options-mgw49-mt-1_57"/>
-									<listOptionValue builtIn="false" value="boost_log_setup-mgw49-mt-1_57"/>
-									<listOptionValue builtIn="false" value="boost_log-mgw49-mt-1_57"/>
-									<listOptionValue builtIn="false" value="boost_thread-mgw49-mt-1_57"/>
-									<listOptionValue builtIn="false" value="boost_filesystem-mgw49-mt-1_57"/>
-									<listOptionValue builtIn="false" value="boost_system-mgw49-mt-1_57"/>
+									<listOptionValue builtIn="false" value="CppUtil"/>
+									<listOptionValue builtIn="false" value="boost_program_options"/>
+									<listOptionValue builtIn="false" value="boost_log_setup"/>
+									<listOptionValue builtIn="false" value="boost_log"/>
+									<listOptionValue builtIn="false" value="boost_thread"/>
+									<listOptionValue builtIn="false" value="boost_filesystem"/>
+									<listOptionValue builtIn="false" value="boost_system"/>
 								</option>
 								<option id="gnu.cpp.link.option.debugging.gprof.949207245" name="gprof 情報の生成 (-pg)" superClass="gnu.cpp.link.option.debugging.gprof" value="true" valueType="boolean"/>
-								<option id="gnu.cpp.link.option.paths.263986869" name="ライブラリー検索パス (-L)" superClass="gnu.cpp.link.option.paths"/>
+								<option id="gnu.cpp.link.option.paths.263986869" name="ライブラリー検索パス (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil/Release}&quot;"/>
+								</option>
 								<option id="gnu.cpp.link.option.flags.1842161619" name="リンカー・フラグ" superClass="gnu.cpp.link.option.flags" value="-static -fopenmp" valueType="string"/>
-								<option id="gnu.cpp.link.option.strip.12037658" name="シンボル情報の除去 (-s)" superClass="gnu.cpp.link.option.strip" value="true" valueType="boolean"/>
+								<option id="gnu.cpp.link.option.strip.12037658" name="シンボル情報の除去 (-s)" superClass="gnu.cpp.link.option.strip" value="false" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1980108359" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -101,7 +106,7 @@
 								<option id="gnu.cpp.compiler.option.dialect.std.958945946" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.optimization.flags.1224154884" name="その他の最適化フラグ" superClass="gnu.cpp.compiler.option.optimization.flags" useByScannerDiscovery="false" value="-march=native -fopenmp -ffast-math" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.include.paths.485480553" name="インクルード・パス (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;../../../cpputil&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.flags.1813105654" name="Other dialect flags" superClass="gnu.cpp.compiler.option.dialect.flags" useByScannerDiscovery="true" value="-std=c++14" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1250028427" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -124,7 +129,7 @@
 									<listOptionValue builtIn="false" value="boost_system"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.31925022" name="ライブラリー検索パス (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;../../../cpputil/Release&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CppUtil/Release}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.258296428" name="リンカー・フラグ" superClass="gnu.cpp.link.option.flags" value="-static -fopenmp" valueType="string"/>
 								<option id="gnu.cpp.link.option.strip.1980372664" name="シンボル情報の除去 (-s)" superClass="gnu.cpp.link.option.strip" value="true" valueType="boolean"/>

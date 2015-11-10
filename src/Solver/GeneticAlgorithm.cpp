@@ -5,13 +5,11 @@
  *      Author: kryozahiro
  */
 
+#include <iostream>
 #include "cpputil/AlgorithmUtil.h"
 #include "cpputil/MathUtil.h"
 #include "GeneticOperable.h"
 #include "GeneticAlgorithm.h"
-
-#include <iostream>
-
 using namespace std;
 using namespace cpputil;
 
@@ -290,7 +288,7 @@ void GeneticAlgorithm::advanceGeneration(Evaluator& evaluator, std::vector<std::
 		offspring.push_back(child1);
 		offspring.push_back(child2);
 	}
-	for (int i = 0; i < elitismSize; ++i) {
+	for (int i = 0; offspring.size() < (unsigned int)reproductionSize; ++i) {
 		std::shared_ptr<Solution> parent = genes[i];
 		std::shared_ptr<Solution> child = parent->createChild();
 		parent->addChild(child);

@@ -18,7 +18,7 @@ public:
 	SimulatedAnnealing(boost::property_tree::ptree& node, const std::vector<std::shared_ptr<Solution>>& inits);
 	virtual ~SimulatedAnnealing() = default;
 
-	void setNeighbor(const std::string& neighbor);
+	void setNeighborhood(const std::string& neighborhood, int size);
 
 protected:
 	virtual std::vector<std::shared_ptr<Solution>> solveImpl(Evaluator& evaluator, TerminationCriteria& termination) override;
@@ -28,7 +28,8 @@ private:
 	std::mt19937_64 randomEngine;
 
 	double initTemp;
-	std::string neighbor;
+	std::string neighborhood;
+	int neighborhoodSize = 1;
 };
 
 GAMESOLVER_SOLVER_MODULE(SimulatedAnnealing);

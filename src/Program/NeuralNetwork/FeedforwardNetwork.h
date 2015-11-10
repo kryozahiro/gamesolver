@@ -13,9 +13,10 @@
 #include <boost/container/vector.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include "../Program.h"
+#include "../../Solver/NeighborhoodOperable.h"
 #include "../../Solver/GeneticOperable.h"
 
-class FeedforwardNetwork : public Program, public GeneticOperable<FeedforwardNetwork> {
+class FeedforwardNetwork : public Program, public NeighborhoodOperable<FeedforwardNetwork>, public GeneticOperable<FeedforwardNetwork> {
 public:
 	static std::vector<std::shared_ptr<Program>> generate(const ProgramType& programType, const boost::property_tree::ptree& node, int size, std::mt19937_64& randomEngine);
 
@@ -37,6 +38,9 @@ public:
 	virtual std::string toString() const;
 	virtual void read(std::istream& is);
 	virtual void write(std::ostream& os) const;
+
+	//NeighborhoodOperableの実装
+	virtual std::vector<std::shared_ptr<FeedforwardNetwork>> neighborhoodImpl(const std::string& method, int size, std::mt19937_64& randomEngine) override;
 
 	//GeneticOperableの実装
 	virtual void crossoverImpl(const std::string& method, FeedforwardNetwork& other, std::mt19937_64& randomEngine) override;

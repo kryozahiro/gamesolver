@@ -161,6 +161,16 @@ void FeedforwardNetwork::write(ostream& os) const {
 	os << t;
 }
 
+std::vector<std::shared_ptr<FeedforwardNetwork>> FeedforwardNetwork::neighborhoodImpl(const std::string& method, int size, std::mt19937_64& randomEngine) {
+	std::vector<std::shared_ptr<FeedforwardNetwork>> ret;
+	for (int i = 0; i < size; ++i) {
+		shared_ptr<FeedforwardNetwork> neighbor = make_shared<FeedforwardNetwork>(*this);
+		FeedforwardNetwork::normalMutation(*neighbor, randomEngine);
+		ret.push_back(neighbor);
+	}
+	return ret;
+}
+
 void FeedforwardNetwork::crossoverImpl(const std::string& method, FeedforwardNetwork& other, std::mt19937_64& randomEngine) {
 	FeedforwardNetwork::crossover(*this, other, randomEngine);
 }
