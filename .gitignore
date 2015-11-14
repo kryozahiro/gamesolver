@@ -1,5 +1,6 @@
 **/.gitignore
 /Debug/
+/html/
 *.exe
 *.a
 *.o
@@ -11,3 +12,7 @@
 *.png
 *.gif
 *.tar.gz
+/Standalone/
+/Lib/
+/standalone/
+/lib/
