@@ -12,7 +12,3 @@
 *.png
 *.gif
 *.tar.gz
-/Standalone/
-/Lib/
-/standalone/
-/lib/

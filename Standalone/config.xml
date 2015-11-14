@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Config>
+	<!--　並列化 -->
+	<Multithread>0</Multithread>
+
+	<!-- 出力の定義 -->
+	<Output name="Output">
+		<Logger>
+			<Target>Summary</Target>
+			<Range>(0, 0)</Range>
+			<Interval>1</Interval>
+			<Filename>result/summary.log</Filename>
+		</Logger>
+		<Logger>
+			<Target>Relation</Target>
+			<Range>(0, 0)</Range>
+			<Interval>1</Interval>
+			<Filename>result/relation.log</Filename>
+		</Logger>
+		<Logger>
+			<Target>Evaluation</Target>
+			<Range>(0, 0)</Range>
+			<Interval>1</Interval>
+			<Filename>result/evaluation.log</Filename>
+		</Logger>
+		<Logger>
+			<Target>Program</Target>
+			<Range>(0, 0)</Range>
+			<Interval>1</Interval>
+			<Filename>result/program.log</Filename>
+		</Logger>
+		<Logger>
+			<Target>Solution</Target>
+			<Range>(0, 0)</Range>
+			<Interval>1</Interval>
+			<Filename>result/solution.log</Filename>
+		</Logger>
+		<Logger>
+			<Target>Validator</Target>
+			<Range>(0, 10)</Range>
+			<Interval>1</Interval>
+			<Filename>result/validator.log</Filename>
+		</Logger>
+	</Output>
+
+	<!-- 問題の定義 -->
+	<Game name="Nguyen2">
+		<Regression>
+			<DataSet>
+				<Name>Nguyen</Name>
+				<Dimension>2</Dimension>
+				<Size>20</Size>
+			</DataSet>
+		</Regression>
+	</Game>
+	<Game name="Nguyen5">
+		<Regression>
+			<DataSet>
+				<Name>Nguyen</Name>
+				<Dimension>5</Dimension>
+				<Size>20</Size>
+			</DataSet>
+		</Regression>
+	</Game>
+	<Game name="Rosenbrock2">
+		<Regression>
+			<DataSet>
+				<Name>Rosenbrock</Name>
+				<Dimension>2</Dimension>
+				<Size>20</Size>
+			</DataSet>
+		</Regression>
+	</Game>
+	<Game name="Sphere2">
+		<Regression>
+			<DataSet>
+				<Name>Sphere</Name>
+				<Dimension>2</Dimension>
+				<Size>20</Size>
+			</DataSet>
+		</Regression>
+	</Game>
+	<Game name="Schwefel2">
+		<Regression>
+			<DataSet>
+				<Name>Schwefel</Name>
+				<Dimension>2</Dimension>
+				<Size>20</Size>
+			</DataSet>
+		</Regression>
+	</Game>
+	<Game name="ThreeHumpCamel2">
+		<Regression>
+			<DataSet>
+				<Name>ThreeHumpCamel</Name>
+				<Dimension>2</Dimension>
+				<Size>20</Size>
+			</DataSet>
+		</Regression>
+	</Game>
+	<Game name="SantaFeTrail">
+		<SantaFeTrail/>
+	</Game>
+
+	<!-- 解の定義 -->
+	<Program name="NeuralNetwork10">
+		<FeedforwardNetwork>
+			<Activation>Sigmoid</Activation>
+			<Hidden>10</Hidden>
+			<Adjacency>
+				<Connection src0="b_0" src1="b_e" dest0="h_0" dest1="h_e"/>
+				<Connection src0="b_0" src1="b_e" dest0="o_0" dest1="o_e"/>
+				<Connection src0="i_0" src1="i_e" dest0="h_0" dest1="h_e"/>
+				<Connection src0="h_0" src1="h_e" dest0="o_0" dest1="o_e"/>
+			</Adjacency>
+		</FeedforwardNetwork>
+	</Program>
+	<Program name="NeuralNetwork20">
+		<FeedforwardNetwork>
+			<Activation>Sigmoid</Activation>
+			<Hidden>20</Hidden>
+			<Adjacency>
+				<Connection src0="b_0" src1="b_e" dest0="h_0" dest1="h_e"/>
+				<Connection src0="b_0" src1="b_e" dest0="o_0" dest1="o_e"/>
+				<Connection src0="i_0" src1="i_e" dest0="h_0" dest1="h_e"/>
+				<Connection src0="h_0" src1="h_e" dest0="o_0" dest1="o_e"/>
+			</Adjacency>
+		</FeedforwardNetwork>
+	</Program>
+	<Program name="ExpressionTree4">
+		<ExpressionTree>
+			<MaxDepth>6</MaxDepth>
+			<Method>RampedHalfAndHalf</Method>
+			<Operators>
+				<Constant>(0, 1)</Constant>
+				<Variable/>
+				<Add/><Sub/><Mul/><Div/>
+			</Operators>
+		</ExpressionTree>
+	</Program>
+	<Program name="ExpressionTree4d4">
+		<ExpressionTree>
+			<MaxDepth>4</MaxDepth>
+			<Method>RampedHalfAndHalf</Method>
+			<Operators>
+				<Constant>(0, 1)</Constant>
+				<Variable/>
+				<Add/><Sub/><Mul/><Div/>
+			</Operators>
+		</ExpressionTree>
+	</Program>
+	<Program name="ExpressionTree5">
+		<ExpressionTree>
+			<MaxDepth>6</MaxDepth>
+			<Method>RampedHalfAndHalf</Method>
+			<Operators>
+				<Constant>(0, 1)</Constant>
+				<Variable/>
+				<Add/><Sub/><Mul/><Div/>
+				<Pow/>
+			</Operators>
+		</ExpressionTree>
+	</Program>
+	<Program name="SantaFeTrailExpressionTree">
+		<ExpressionTree>
+			<MaxDepth>6</MaxDepth>
+			<Method>RampedHalfAndHalf</Method>
+			<Operators>
+				<SantaFeTrailOperators/>
+			</Operators>
+		</ExpressionTree>
+	</Program>
+	<Program name="InstructionSequence5">
+		<InstructionSequence>
+			<VariableSize>5</VariableSize>
+			<InitialSize>50</InitialSize>
+			<MaxSize>100</MaxSize>
+			<Operators>
+				<ADD/><SUB/><MUL/><DIV/>
+				<IF_GT/><IF_LE/>
+				<IMM/>
+			</Operators>
+		</InstructionSequence>
+	</Program>
+	<Program name="InstructionSequence10">
+		<InstructionSequence>
+			<VariableSize>10</VariableSize>
+			<InitialSize>50</InitialSize>
+			<MaxSize>100</MaxSize>
+			<Operators>
+				<ADD/><SUB/><MUL/><DIV/>
+				<IF_GT/><IF_LE/>
+				<IMM/>
+			</Operators>
+		</InstructionSequence>
+	</Program>
+	<Program name="InstructionSequenceBool3">
+		<InstructionSequence>
+			<VariableSize>3</VariableSize>
+			<InitialSize>50</InitialSize>
+			<MaxSize>100</MaxSize>
+			<Operators>
+				<AND/><OR/><NOT/><IF/>
+			</Operators>
+		</InstructionSequence>
+	</Program>
+	<Program name="InstructionSequenceBool5">
+		<InstructionSequence>
+			<VariableSize>5</VariableSize>
+			<InitialSize>50</InitialSize>
+			<MaxSize>100</MaxSize>
+			<Operators>
+				<AND/><OR/><NOT/><IF/>
+			</Operators>
+		</InstructionSequence>
+	</Program>
+	<Program name="InstructionSequenceBool10">
+		<InstructionSequence>
+			<VariableSize>10</VariableSize>
+			<InitialSize>50</InitialSize>
+			<MaxSize>100</MaxSize>
+			<Operators>
+				<AND/><OR/><NOT/><IF/>
+			</Operators>
+		</InstructionSequence>
+	</Program>
+
+	<!-- ソルバーの定義 -->
+	<Solver name="SimulatedAnnealing">
+		<SimulatedAnnealing>
+			<Seed>Random</Seed>
+			<InitialTemperature>100</InitialTemperature>
+			<Neighborhood>Mutation</Neighborhood>
+			<NeighborhoodSize>4</NeighborhoodSize>
+		</SimulatedAnnealing>
+	</Solver>
+	<Solver name="GeneticAlgorithm">
+		<GeneticAlgorithm>
+			<Seed>Random</Seed>
+			<Scaling>LinearScaling</Scaling>
+			<ReproductionRate>1.0</ReproductionRate>
+			<ElitismRate>0.1</ElitismRate>
+			<Selection>TournamentSelection</Selection>
+			<TournamentRate>0.1</TournamentRate>
+			<Crossover>HomoCrossover</Crossover>
+			<Mutation>Mutation</Mutation>
+			<Evaluation>ProblemEvaluation</Evaluation>
+			<Reinsertion>PureReinsertion</Reinsertion>
+		</GeneticAlgorithm>
+	</Solver>
+	<Solver name="CoevolutionaryAlgorithm">
+		<GeneticAlgorithm>
+			<Seed>Random</Seed>
+			<Scaling>LinearScaling</Scaling>
+			<ReproductionRate>1.0</ReproductionRate>
+			<ElitismRate>0.1</ElitismRate>
+			<Selection>RouletteSelection</Selection>
+			<Crossover>Crossover</Crossover>
+			<Mutation>Mutation</Mutation>
+			<Evaluation>PartitioningEvaluation</Evaluation>
+			<Reinsertion>PureReinsertion</Reinsertion>
+		</GeneticAlgorithm>
+	</Solver>
+
+	<!-- 実験の定義 -->
+	<Experiment name="regexp">
+		<Game ref="Nguyen5"/>
+		<GeneratorStage>
+			<Program ref="ExpressionTree4"/>
+			<Size>100</Size>
+		</GeneratorStage>
+		<SolverStage>
+			<Solver ref="GeneticAlgorithm"/>
+			<Termination><MaximumEvaluation>100000</MaximumEvaluation></Termination>
+			<History>100000</History>
+		</SolverStage>
+		<ValidatorStage><Times>10</Times></ValidatorStage>
+		<Output ref="Output"/>
+	</Experiment>
+	<Experiment name="regis">
+		<Game ref="ThreeHumpCamel2"/>
+		<GeneratorStage>
+			<Program ref="InstructionSequence5"/>
+			<Size>100</Size>
+		</GeneratorStage>
+		<SolverStage>
+			<Solver ref="GeneticAlgorithm"/>
+			<Termination><MaximumEvaluation>100000</MaximumEvaluation></Termination>
+			<History>100000</History>
+		</SolverStage>
+		<ValidatorStage><Times>10</Times></ValidatorStage>
+		<Game ref="ThreeHumpCamel2"/>
+		<ValidatorStage><Times>10</Times></ValidatorStage>
+		<Output ref="Output"/>
+	</Experiment>
+	<Experiment name="regnn">
+		<Game ref="Nguyen5"/>
+		<GeneratorStage>
+			<Program ref="NeuralNetwork10"/>
+			<Size>10</Size>
+		</GeneratorStage>
+		<SolverStage>
+			<Solver ref="GeneticAlgorithm"/>
+			<Termination><MaximumEvaluation>100000</MaximumEvaluation></Termination>
+			<History>100000</History>
+		</SolverStage>
+		<ValidatorStage><Times>10</Times></ValidatorStage>
+		<Output ref="Output"/>
+	</Experiment>
+	<Experiment name="regnnsa">
+		<Game ref="Nguyen5"/>
+		<GeneratorStage>
+			<Program ref="NeuralNetwork10"/>
+			<Size>1</Size>
+		</GeneratorStage>
+		<SolverStage>
+			<Solver ref="SimulatedAnnealing"/>
+			<Termination><MaximumEvaluation>100000</MaximumEvaluation></Termination>
+			<History>100000</History>
+		</SolverStage>
+		<ValidatorStage><Times>10</Times></ValidatorStage>
+		<Output ref="Output"/>
+	</Experiment>
+	<Experiment name="sft">
+		<Game ref="SantaFeTrail"/>
+		<GeneratorStage>
+			<Program ref="SantaFeTrailExpressionTree"/>
+			<Size>10000</Size>
+		</GeneratorStage>
+		<SolverStage>
+			<Solver ref="GeneticAlgorithm"/>
+			<Termination><MaximumEvaluation>100000</MaximumEvaluation></Termination>
+			<History>100000</History>
+		</SolverStage>
+		<ValidatorStage><Times>10</Times></ValidatorStage>
+		<Output ref="Output"/>
+	</Experiment>
+</Config>
