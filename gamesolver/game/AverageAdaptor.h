@@ -16,11 +16,11 @@ public:
 	AverageAdaptor(const AverageAdaptor& averageAdaptor);
 	virtual ~AverageAdaptor() = default;
 
-	//Loggingの実装
+	/// Loggingの実装
 	virtual void setLogger(std::shared_ptr<LoggerType>& logger) override;
 	virtual void setLoggerEnabled(bool enabled) override;
 
-	//Gameの実装
+	/// Gameの実装
 	CPPUTIL_CLONEABLE;
 	virtual std::vector<double> evaluate(std::vector<Program*>& programs) override;
 	virtual void advanceSetting(int amount) override;

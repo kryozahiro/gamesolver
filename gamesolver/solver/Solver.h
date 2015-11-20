@@ -26,10 +26,10 @@ class SolverBase {
 public:
 	virtual ~SolverBase() = default;
 
-	//与えられた評価回数に到達するまで最適化する
+	/// 与えられた評価回数に到達するまで最適化する
 	virtual std::vector<std::shared_ptr<Solution>> solve(Game& game, TerminationCriteria& termination, int historySize, std::pair<int, int> loggerRange) = 0;
 
-	//解の履歴を取得する
+	/// 解の履歴を取得する
 	virtual std::shared_ptr<SolutionHistory> getHistory() = 0;
 
 };
@@ -39,20 +39,20 @@ class Solver : public SolverBase {
 public:
 	virtual ~Solver() = default;
 
-	//与えられた評価回数に到達するまで最適化する
+	/// 与えられた評価回数に到達するまで最適化する
 	virtual std::vector<std::shared_ptr<Solution>> solve(Game& game, TerminationCriteria& termination, int historySize, std::pair<int, int> loggerRange) override final;
 
-	//解の履歴を取得する
+	/// 解の履歴を取得する
 	virtual std::shared_ptr<SolutionHistory> getHistory() override final;
 
 protected:
 	virtual std::vector<std::shared_ptr<Solution>> solveImpl(Evaluator& evaluator, TerminationCriteria& termination) = 0;
 
 private:
-	//評価器
+	/// 評価器
 	std::shared_ptr<Evaluator> evaluator;
 
-	//解の履歴
+	/// 解の履歴
 	std::shared_ptr<SolutionHistory> history;
 };
 

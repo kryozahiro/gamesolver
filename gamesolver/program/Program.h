@@ -30,13 +30,13 @@ public:
 	Program(const ProgramType& programType);
 	virtual ~Program() = default;
 
-	//実行
+	/// 実行
 	virtual std::vector<double> operator()(const std::vector<double>& input) = 0;
 
-	//整形文字列出力
+	/// 整形文字列出力
 	virtual std::string toString() const = 0;
 
-	//ReadWritableの実装
+	/// ReadWritableの実装
 	virtual void read(std::istream& is) override;
 	virtual void write(std::ostream& os) const override;
 

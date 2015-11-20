@@ -21,19 +21,19 @@ public:
 
 	SolutionHistory(int historySize);
 
-	//タイマー
+	/// タイマー
 	void start();
 	double getElapsedTime() const;
 
-	//解を記録する
+	/// 解を記録する
 	void addSolution(std::shared_ptr<Solution>& solution);
 	void addGeneration(Generation& generation);
 
-	//記録の取得
+	/// 記録の取得
 	int getLastGenerationNum() const;
 	const Generation& getGeneration(int generation) const;
 
-	//文字列表現
+	/// 文字列表現
 	std::string toString() const;
 	std::string showRelation() const;
 
@@ -41,12 +41,12 @@ public:
 	static std::string showSummary(const Generation& generation);
 
 private:
-	//解の記録
+	/// 解の記録
 	cpputil::Timer timer;
 	std::map<int, Generation> records;
 	const int historySize;
 
-	//ロギング
+	/// ロギング
 	boost::log::sources::logger summaryLogger;
 	boost::log::sources::logger solutionLogger;
 	boost::log::sources::logger programLogger;

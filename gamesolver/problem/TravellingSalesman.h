@@ -16,12 +16,12 @@ public:
 	virtual ~TravellingSalesman() = default;
 	CPPUTIL_CLONEABLE;
 
-	//解は順序表現で表す
+	/// 解は順序表現で表す
 	virtual double evaluate(Program& program) override;
 	virtual std::string toString() const override;
 
 private:
-	//平面巡回セールスマン問題
+	/// 平面巡回セールスマン問題
 	std::vector<std::pair<double, double>> cities;
 };
 

@@ -18,23 +18,23 @@ public:
 	virtual void mutation(const std::string& method, std::mt19937_64& randomEngine) = 0;
 };
 
-//遺伝的オペレータを適用可能なクラスのインターフェース
+/// 遺伝的オペレータを適用可能なクラスのインターフェース
 template <class ConcreteGeneticOperable>
 class GeneticOperable : public GeneticOperableBase {
 public:
 	virtual ~GeneticOperable() = default;
 
-	//交叉
+	/// 交叉
 	virtual void crossover(const std::string& method, GeneticOperableBase& other, std::mt19937_64& randomEngine) override final;
 
-	//変異
+	/// 変異
 	virtual void mutation(const std::string& method, std::mt19937_64& randomEngine) override final;
 
 private:
-	//交叉の実装
+	/// 交叉の実装
 	virtual void crossoverImpl(const std::string& method, ConcreteGeneticOperable& other, std::mt19937_64& randomEngine) = 0;
 
-	//変異の実装
+	/// 変異の実装
 	virtual void mutationImpl(const std::string& method, std::mt19937_64& randomEngine) = 0;
 };
 

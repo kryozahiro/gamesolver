@@ -19,17 +19,17 @@ public:
 	virtual std::vector<std::shared_ptr<NeighborhoodOperableBase>> neighborhood(const std::string& method, int size, std::mt19937_64& randomEngine);
 };
 
-//近傍操作を適用可能なクラスのインターフェース
+/// 近傍操作を適用可能なクラスのインターフェース
 template <class ConcreteNeighborhoodOperable>
 class NeighborhoodOperable : public NeighborhoodOperableBase {
 public:
 	virtual ~NeighborhoodOperable() = default;
 
-	//近傍
+	/// 近傍
 	virtual std::vector<std::shared_ptr<NeighborhoodOperableBase>> neighborhood(const std::string& method, int size, std::mt19937_64& randomEngine) override final;
 
 private:
-	//近傍の実装
+	/// 近傍の実装
 	virtual std::vector<std::shared_ptr<ConcreteNeighborhoodOperable>> neighborhoodImpl(const std::string& method, int size, std::mt19937_64& randomEngine) = 0;
 };
 

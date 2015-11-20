@@ -18,7 +18,7 @@ public:
 	static std::shared_ptr<SantaFeTrail> getRegular();
 	static std::vector<double>& getAction();
 
-	//アクションの表現に使用する字句
+	/// アクションの表現に使用する字句
 	enum class Token {
 		TOKEN_IF_FOOD_AHEAD,
 		TOKEN_PROGN2,
@@ -30,13 +30,16 @@ public:
 
 	SantaFeTrail(int width, int height, int maxStep);
 	virtual ~SantaFeTrail() = default;
-	CPPUTIL_CLONEABLE;
 
-	virtual double evaluate(Program& program) override;
+	/// Gameの実装
+	CPPUTIL_CLONEABLE;
 	virtual std::string toString() const override;
 
+	/// Problemの実装
+	virtual double evaluate(Program& program) override;
+
 private:
-	//方向
+	/// 方向
 	enum class Direction {
 		NORTH = 0,
 		EAST = 1,
@@ -49,7 +52,7 @@ private:
 	int height = 0;
 	std::vector<int> field;
 
-	//エージェント
+	/// エージェント
 	std::pair<int, int> pos;
 	Direction dir = Direction::EAST;
 	int step = 0;

@@ -41,7 +41,7 @@ public:
 	void operator()(unsigned int& pc, unsigned int end, bool& condition, std::vector<double>& memory) const;
 	std::string toString() const;
 
-	//アクセサ
+	/// アクセサ
 	Opcode getOpcode() const;
 	int getRet() const;
 	int getArg1() const;

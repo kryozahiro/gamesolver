@@ -21,7 +21,7 @@ public:
 	virtual std::vector<double> operator()(const std::vector<double>& input);
 	virtual std::string toString() const;
 
-	//ランダム値で初期化する
+	/// ランダム値で初期化する
 	template <class URNG>
 	void randomize(URNG& randomEngine) {
 		const DataType outputType = programType.getOutputType();
@@ -38,7 +38,7 @@ protected:
 	int inputVariety;
 	int outputVariety;
 
-	//入力それぞれに対する出力
+	/// 入力それぞれに対する出力
 	std::vector<std::vector<double>> mapping;
 };
 

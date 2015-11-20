@@ -17,6 +17,7 @@
 #include "SolverStage.h"
 #include "ValidatorStage.h"
 
+/// 実験設定
 class Experiment {
 public:
 	Experiment(const boost::program_options::variables_map& args);
@@ -33,10 +34,10 @@ private:
 	std::shared_ptr<ValidatorStage> validatorStage;
 	std::shared_ptr<Output> output;
 
-	//実験設定の読み込み
+	/// 実験設定の読み込み
 	void initExperiment(const boost::program_options::variables_map& args);
 
-	//ゲームの読み込み
+	/// ゲームの読み込み
 	std::shared_ptr<Game> initGame(boost::property_tree::ptree& gameTree);
 };
 

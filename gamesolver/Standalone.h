@@ -15,7 +15,7 @@ protected:
 	Standalone();
 	virtual ~Standalone() = default;
 
-	//Applicationの実装
+	/// Applicationの実装
 	virtual void initOptions(boost::program_options::options_description& options,
 			boost::program_options::positional_options_description& positional) override;
 	virtual int mainImpl(boost::program_options::variables_map& args) override;

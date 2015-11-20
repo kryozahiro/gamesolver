@@ -30,16 +30,16 @@ public:
 	Game(std::pair<int, int> programSize, ProgramType programType);
 	virtual ~Game() = default;
 
-	//解関数を評価する
+	/// 解関数を評価する
 	virtual std::vector<double> evaluate(std::vector<Program*>& programs) = 0;
 
-	//次の問題設定に移る
+	/// 次の問題設定に移る
 	virtual void advanceSetting(int amount) {};
 
-	//文字列化
+	/// 文字列化
 	virtual std::string toString() const = 0;
 
-	//解関数の性質
+	/// 解関数の性質
 	std::pair<int, int> getProgramSize() const;
 	const ProgramType& getProgramType() const;
 

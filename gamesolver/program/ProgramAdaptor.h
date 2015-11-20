@@ -13,7 +13,7 @@
 
 #include "Program.h"
 
-//TODO: untested, suspend
+/// TODO: untested, suspend
 class ProgramAdaptor : public Program {
 public:
 	using Adaptor = std::function<std::vector<double>(const std::vector<double>& base)>;

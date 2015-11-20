@@ -17,7 +17,7 @@ public:
 	TerminationCriteria(boost::property_tree::ptree& tree);
 	virtual ~TerminationCriteria() = default;
 
-	//終了条件を満たしたか判定する
+	/// 終了条件を満たしたか判定する
 	bool meets(int evaluation, SolutionHistory& solutionHistory);
 
 private:
@@ -27,11 +27,11 @@ private:
 	int minimumEvaluation = 0;	//最小評価回数
 	int maximumEvaluation = 0;	//最大評価回数
 
-	//解の改善量
+	/// 解の改善量
 	double bestImprovement = 0;
 	double meanImprovement = 0;
 
-	//改善のなかった期間の割合
+	/// 改善のなかった期間の割合
 	double noBestImprovementScale = 0;
 	double best = DBL_MAX;
 	int noBestImprovementCount = 0;

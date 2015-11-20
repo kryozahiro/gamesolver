@@ -31,13 +31,13 @@ public:
 	const ProgramType& getProgramType() const;
 	int getSize() const;
 
-	//データの取得
+	/// データの取得
 	std::pair<std::vector<double>, std::vector<double>>& operator[](int i);
 	const std::pair<std::vector<double>, std::vector<double>>& operator[](int i) const;
 	std::vector<double>& getInput(int i);
 	std::vector<double>& getOutput(int i);
 
-	//データの追加
+	/// データの追加
 	void addData(const std::vector<double>& input, const std::vector<double>& output);
 	template <class URNG>
 	void addData(URNG randomEngine, int sample, std::function<std::vector<double>(const std::vector<double>)> func) {

@@ -12,7 +12,7 @@
 
 class Output {
 public:
-	//出力方式の読み込み
+	/// 出力方式の読み込み
 	Output(const boost::property_tree::ptree& outputTree);
 	void setSink(int stage, const std::string& stageName);
 

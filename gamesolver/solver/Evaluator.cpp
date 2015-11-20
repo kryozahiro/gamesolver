@@ -5,10 +5,10 @@
  *      Author: kryozahiro
  */
 
-#include "Evaluator.h"
-
+#include <iostream>
 #include <omp.h>
 #include "cpputil/AlgorithmUtil.h"
+#include "Evaluator.h"
 using namespace std;
 using namespace cpputil;
 
@@ -17,24 +17,24 @@ void Evaluator::problemEvaluation(Evaluator& evaluator, std::vector<std::shared_
 
 	#pragma omp parallel
 	{
+		#pragma omp critical
+		{
+			evaluator.parallelGames[omp_get_thread_num()] = shared_ptr<Game>(evaluator.game->clone());
+		}
 
-	#pragma omp critical
-	evaluator.parallelGames[omp_get_thread_num()] = shared_ptr<Game>(evaluator.game->clone());
+		shared_ptr<boost::log::sources::logger> parallelLog(new boost::log::sources::logger);
+		parallelLog->add_attribute(evaluator.loggerName, evaluator.parallelAttrs[omp_get_thread_num()]);
+		evaluator.parallelGames[omp_get_thread_num()]->setLogger(parallelLog);
 
-	shared_ptr<boost::log::sources::logger> parallelLog(new boost::log::sources::logger);
-	parallelLog->add_attribute(evaluator.loggerName, evaluator.parallelAttrs[omp_get_thread_num()]);
-	evaluator.parallelGames[omp_get_thread_num()]->setLogger(parallelLog);
-
-	#pragma omp for schedule(dynamic)
-	for (unsigned int i = 0; i < solutions.size(); ++i) {
-		/*if (gene->getFitness() != DBL_MAX) {
-			continue;
-		}*/
-		std::vector<Program*> programs(1, &*solutions[i]->getProgram());
-		std::vector<double> fitness = evaluator(programs);
-		solutions[i]->setFitness(fitness[0]);
-	}
-
+		#pragma omp for schedule(dynamic)
+		for (unsigned int i = 0; i < solutions.size(); ++i) {
+			/*if (gene->getFitness() != DBL_MAX) {
+				continue;
+			}*/
+			std::vector<Program*> programs(1, &*solutions[i]->getProgram());
+			std::vector<double> fitness = evaluator(programs);
+			solutions[i]->setFitness(fitness[0]);
+		}
 	}
 }
 
@@ -143,13 +143,13 @@ std::vector<double> Evaluator::operator()(std::vector<Program*>& programs) {
 
 	#pragma omp critical
 	{
-	if (loggerRange.first <= evaluationCount and evaluationCount < loggerRange.second) {
-		myGame.setLoggerEnabled(true);
-	} else {
-		myGame.setLoggerEnabled(false);
-	}
-	myAttr.set(evaluationCount);
-	++evaluationCount;
+		if (loggerRange.first <= evaluationCount and evaluationCount < loggerRange.second) {
+			myGame.setLoggerEnabled(true);
+		} else {
+			myGame.setLoggerEnabled(false);
+		}
+		myAttr.set(evaluationCount);
+		++evaluationCount;
 	}
 
 	std::vector<double> fitness = myGame.evaluate(programs);

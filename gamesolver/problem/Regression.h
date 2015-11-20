@@ -20,11 +20,11 @@ public:
 	Regression(const boost::property_tree::ptree& gameTree, std::mt19937_64& randomEngine);
 	virtual ~Regression() = default;
 
-	//Gameの実装
+	/// Gameの実装
 	CPPUTIL_CLONEABLE;
 	virtual std::string toString() const override;
 
-	//Problemの実装
+	/// Problemの実装
 	virtual double evaluate(Program& program) override;
 
 private:

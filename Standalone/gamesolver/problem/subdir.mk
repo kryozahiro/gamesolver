@@ -32,7 +32,7 @@ CPP_DEPS += \
 gamesolver/problem/%.o: ../gamesolver/problem/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -std=c++14 -O3 -march=native -fopenmp -ffast-math -Wall -pipe -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -MMD -MT "$@" -o "$@" "$<"
+	g++ -std=c++14 -DGAMESOLVER_STANDALONE -O3 -march=native -fopenmp -ffast-math -Wall -pipe -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -MMD -MT "$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

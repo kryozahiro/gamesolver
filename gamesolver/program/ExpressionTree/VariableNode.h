@@ -14,7 +14,7 @@ class VariableNode : public ExpressionNode {
 public:
 	virtual ~VariableNode() = default;
 
-	//ExpressionNodeの実装
+	/// ExpressionNodeの実装
 	CPPUTIL_CLONEABLE;
 	void randomize(const ProgramType& programType, std::mt19937_64& randomEngine) override;
 	double operator()(const std::vector<double>& input) override;

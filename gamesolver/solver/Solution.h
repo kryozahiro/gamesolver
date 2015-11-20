@@ -19,42 +19,42 @@ public:
 	Solution(const Solution& solution);
 	virtual ~Solution() = default;
 
-	//プログラムの取得
+	/// プログラムの取得
 	std::shared_ptr<Program> getProgram();
 	std::vector<double> operator()(const std::vector<double>& input);
 
-	//文字列化
+	/// 文字列化
 	std::string toString() const;
 	std::string showRelation() const;
 
-	//評価値の設定
+	/// 評価値の設定
 	void setFitness(double fitness);
 	double getFitness() const;
 
-	//世代の設定
+	/// 世代の設定
 	void setGeneration(int generation);
 	int getGeneration() const;
 
-	//次の世代を作る
+	/// 次の世代を作る
 	std::shared_ptr<Solution> createChild(bool resetFitness = true);
 	void addChild(std::shared_ptr<Solution>& child);
 
-	//経過時間の設定
+	/// 経過時間の設定
 	void setTime(int time);
 
 private:
 	std::shared_ptr<Program> program;
 
-	//評価値
+	/// 評価値
 	double fitness = DBL_MAX;
 
-	//世代
+	/// 世代
 	int generation = -1;
 
-	//次の世代
+	/// 次の世代
 	std::vector<std::shared_ptr<Solution>> children;
 
-	//経過時間(msec)
+	/// 経過時間(msec)
 	int time = -1;
 };
 

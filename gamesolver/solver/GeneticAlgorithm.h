@@ -24,7 +24,7 @@ public:
 	GeneticAlgorithm(boost::property_tree::ptree& node, const std::vector<std::shared_ptr<Solution>>& inits);
 	virtual ~GeneticAlgorithm() = default;
 
-	//操作の設定
+	/// 操作の設定
 	void setScaling(Scaling scaling);
 	void setReproductionRate(double reproductionRate);
 	void setElitismRate(double elitismRate);
@@ -34,16 +34,16 @@ public:
 	void setEvaluation(Evaluator::Evaluation evaluation);
 	void setReinsertion(Reinsertion reinsertion);
 
-	//スケーリング
+	/// スケーリング
 	static void linearScaling(std::vector<double>& weights);
 	static void sigmaScaling(std::vector<double>& weights);
 
-	//ルーレット選択
+	/// ルーレット選択
 	static int rouletteSelection(std::vector<double> weights, std::mt19937_64& randomEngine);
-	//トーナメント選択
+	/// トーナメント選択
 	static int tournamentSelection(std::vector<double> weights, double tournamentRate, std::mt19937_64& randomEngine);
 
-	//再挿入
+	/// 再挿入
 	static void pureReinsertion(std::vector<std::shared_ptr<Solution>>& population, std::vector<std::shared_ptr<Solution>>& offspring);
 	//TODO: uniform reinsertion
 	static void elitistReinsertion(std::vector<std::shared_ptr<Solution>>& population, std::vector<std::shared_ptr<Solution>>& offspring);
@@ -53,15 +53,16 @@ protected:
 	virtual std::vector<std::shared_ptr<Solution>> solveImpl(Evaluator& evaluator, TerminationCriteria& termination) override;
 
 private:
-	//世代を進める
-	//評価した回数を返す
+	/// 世代を進める
+	/** 評価した回数を返す
+	 */
 	void advanceGeneration(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& genes);
 
-	//初期解
+	/// 初期解
 	std::vector<std::shared_ptr<Solution>> inits;
 	std::mt19937_64 randomEngine;
 
-	//遺伝的操作
+	/// 遺伝的操作
 	Scaling scaling = [](std::vector<double>& weights){};
 	double reproductionRate = 1.0;
 	double elitismRate = 0.0;

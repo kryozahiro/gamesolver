@@ -13,7 +13,7 @@
 #include "../game/Game.h"
 #include "SolutionHistory.h"
 
-//評価用ファンクタ
+/// 評価用ファンクタ
 class Evaluator {
 public:
 	using Evaluation = std::function<void(Evaluator& evaluator, std::vector<std::shared_ptr<Solution>>& solutions, SolutionHistory& solutionHistory, std::mt19937_64& randomEngine)>;
@@ -25,16 +25,16 @@ public:
 
 	Evaluator(std::shared_ptr<Game> game, std::string loggerName, std::pair<int, int> loggerRange);
 
-	//評価の実行
+	/// 評価の実行
 	std::vector<double> operator()(std::vector<Program*>& programs);
 
-	//評価を実行した回数
+	/// 評価を実行した回数
 	int getEvaluationCount() const;
 
-	//次の問題設定に移る
+	/// 次の問題設定に移る
 	void nextSetting();
 
-	//解関数の性質
+	/// 解関数の性質
 	std::pair<int, int> getProgramSize() const;
 
 private:
@@ -42,11 +42,11 @@ private:
 	std::string loggerName;
 	std::pair<int, int> loggerRange;
 
-	//評価回数
+	/// 評価回数
 	int evaluationCount = 0;
 	boost::log::attributes::mutable_constant<int> evaluationAttr;
 
-	//並列化
+	/// 並列化
 	std::vector<std::shared_ptr<Game>> parallelGames;
 	std::vector<boost::log::attributes::mutable_constant<int>> parallelAttrs;
 };

@@ -17,14 +17,14 @@ public:
 	SolverStage(const boost::property_tree::ptree& config, const boost::property_tree::ptree& solverStageTree, std::shared_ptr<Game>& game, std::string programName, std::pair<int, int> evaluationLoggerRange);
 	virtual ~SolverStage() = default;
 
-	//Stageの実装
+	/// Stageの実装
 	virtual void operator()(std::vector<std::shared_ptr<Solution>>& solutions, std::mt19937_64& randomEngine);
 
-	//解の履歴を取得する
+	/// 解の履歴を取得する
 	const std::shared_ptr<SolutionHistory> getHistory() const;
 
 private:
-	//ソルバの読み込み
+	/// ソルバの読み込み
 	std::shared_ptr<SolverBase> createSolver(boost::property_tree::ptree& solverTree, std::vector<std::shared_ptr<Solution>>& solutions);
 
 	/*template <template <class ConcreteProgram> class ConcreteSolver>
@@ -44,26 +44,26 @@ private:
 		return solver;
 	}*/
 
-	//<Config>ノード
+	/// \<Config>ノード
 	const boost::property_tree::ptree config;
 
-	//<SolverStage>ノード
+	/// \<SolverStage>ノード
 	const boost::property_tree::ptree solverStageTree;
 
-	//使用するGame
+	/// 使用するGame
 	std::shared_ptr<Game> game;
 
-	//使用するProgram
+	/// 使用するProgram
 	std::string programName;
 
-	//ロギングの設定
+	/// ロギングの設定
 	std::pair<int, int> evaluationLoggerRange;
 
-	//終了条件
+	/// 終了条件
 	std::shared_ptr<TerminationCriteria> termination;
 	int historySize;
 
-	//ソルバ
+	/// ソルバ
 	std::string solverName;
 	std::shared_ptr<SolverBase> solver;
 };

@@ -12,13 +12,13 @@
 
 class ProgramState {
 public:
-	//コンストラクタ
+	/// コンストラクタ
 	ProgramState(const std::vector<double>& memory);
 
-	//命令列の実行
+	/// 命令列の実行
 	void execute(const std::vector<Instruction>& instructions, const std::vector<double>& input);
 
-	//結果の取得
+	/// 結果の取得
 	const std::vector<double>& getMemory() const;
 
 private:

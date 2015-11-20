@@ -21,11 +21,11 @@ class FeedforwardNetwork : public Program, public NeighborhoodOperable<Feedforwa
 public:
 	static std::vector<std::shared_ptr<Program>> generate(const ProgramType& programType, const boost::property_tree::ptree& node, int size, std::mt19937_64& randomEngine);
 
-	//遺伝的操作の具体例
+	/// 遺伝的操作の具体例
 	static void crossover(FeedforwardNetwork& parent1, FeedforwardNetwork& parent2, std::mt19937_64& randomEngine);
 	static void normalMutation(FeedforwardNetwork& parent, std::mt19937_64& randomEngine);
 
-	//活性化関数の例
+	/// 活性化関数の例
 	static double unitStep(double x);
 	static double sigmoid(double a, double x);
 
@@ -33,22 +33,22 @@ public:
 	FeedforwardNetwork(const ProgramType& programType, const boost::property_tree::ptree& node, std::mt19937_64& randomEngine);
 	virtual ~FeedforwardNetwork() = default;
 
-	//Programの実装
+	/// Programの実装
 	CPPUTIL_CLONEABLE;
 	virtual std::vector<double> operator()(const std::vector<double>& input);
 	virtual std::string toString() const;
 	virtual void read(std::istream& is);
 	virtual void write(std::ostream& os) const;
 
-	//NeighborhoodOperableの実装
+	/// NeighborhoodOperableの実装
 	virtual std::vector<std::shared_ptr<FeedforwardNetwork>> neighborhoodImpl(const std::string& method, int size, std::mt19937_64& randomEngine) override;
 
-	//GeneticOperableの実装
+	/// GeneticOperableの実装
 	virtual void crossoverImpl(const std::string& method, FeedforwardNetwork& other, std::mt19937_64& randomEngine) override;
 	virtual void mutationImpl(const std::string& method, std::mt19937_64& randomEngine) override;
 
-	//ノード間の接続を設定する
-	//ノード番号は0から始まり定数1・入力層・中間層・出力層の順に振られる
+	/// ノード間の接続を設定する
+	/// ノード番号は0から始まり定数1・入力層・中間層・出力層の順に振られる
 	int getBias();
 	int getInputBegin();
 	int getInputEnd();
@@ -61,7 +61,7 @@ public:
 	void setChangeable(int from, int to, bool isChangeable);
 	void setChangeable(int first1, int last1, int first2, int last2, bool isChangeable);
 
-	//重みをランダム値で初期化する
+	/// 重みをランダム値で初期化する
 	template <class URNG>
 	void randomizeWeights(URNG& randomEngine) {
 		std::uniform_real_distribution<double> dist(-0.1, 0.1);
@@ -75,13 +75,13 @@ public:
 	void insertNode(int pos, int size, bool addToBegin);
 
 private:
-	//隣接行列
+	/// 隣接行列
 	boost::container::vector<boost::container::vector<bool>> adjacency;
 
-	//重み行列
+	/// 重み行列
 	std::vector<std::vector<double>> weights;
 
-	//活性化関数
+	/// 活性化関数
 	std::function<double(double)> activation;
 
 	//
