@@ -20,7 +20,7 @@
 		theClass->addFunction("new", std::function<SolverBase*(boost::property_tree::ptree&, const std::vector<std::shared_ptr<Solution>>&)>([](boost::property_tree::ptree& solverTree, const std::vector<std::shared_ptr<Solution>>& inits) {\
 			return new Class(solverTree, inits);\
 		}));\
-	}
+	} struct gamesolver_solver_module
 
 class SolverBase {
 public:

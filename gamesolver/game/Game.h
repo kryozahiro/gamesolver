@@ -23,7 +23,7 @@
 		theClass->addFunction("new", std::function<Game*(const boost::property_tree::ptree&, int)>([](const boost::property_tree::ptree& gameTree, int seed) {\
 			return new Class(gameTree, seed);\
 		}));\
-	}
+	} struct gamesolver_game_module
 
 class Game : public cpputil::Cloneable<Game>, public cpputil::Logging {
 public:

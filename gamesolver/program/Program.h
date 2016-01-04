@@ -23,7 +23,7 @@
 		theClass->addFunction("generate", std::function<std::vector<std::shared_ptr<Program>>(const ProgramType&, const boost::property_tree::ptree&, int size, std::mt19937_64&)>([](const ProgramType& programType, const boost::property_tree::ptree& node, int size, std::mt19937_64& randomEngine) {\
 			return Class::generate(programType, node, size, randomEngine);\
 		}));\
-	}
+	} struct gamesolver_program_module
 
 class Program : public cpputil::Cloneable<Program>, public cpputil::ReadWritable {
 public:

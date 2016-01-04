@@ -46,7 +46,7 @@ protected:
 
 private:
 	/// 最大ステップ数
-	const int maxStep = 0;
+	const int maxStep;
 
 	/// 現在のステップ
 	int step = 0;
