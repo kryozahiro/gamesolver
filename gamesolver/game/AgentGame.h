@@ -35,20 +35,20 @@ protected:
 	/// 全てのエージェントの適応度を求める
 	virtual std::vector<double> getFitness() = 0;
 
-	/// 現在のステップ数の取得
-	int getStep() const;
-
 	/// 最大ステップ数の取得
 	int getMaxStep() const;
 
-	/// 最大ステップ数の設定
-	void setMaxStep(int maxStep);
+	/// 現在のステップ数の取得
+	int getStep() const;
+
+	/// 現在のステップ数を変更
+	void setStep(int step);
 
 private:
 	/// 最大ステップ数
-	int maxStep = 0;
+	const int maxStep = 0;
 
-	/// 現在の状態
+	/// 現在のステップ
 	int step = 0;
 };
 

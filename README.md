@@ -1,8 +1,11 @@
-Game Solver Library {#mainpage}
-====
+# Game Solver Library {#mainpage}
 [WIP]
 Extensible game solver/optimizer library for c++, mainly focused on genetic algorithm.
 
+## Dependencies
+<https://github.com/kryozahiro/cpputil>
+
+## Features
 Game
 - AgentGame
 - AverageAdaptor

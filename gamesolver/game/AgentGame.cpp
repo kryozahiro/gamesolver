@@ -42,18 +42,14 @@ vector<double> AgentGame::evaluate(vector<Program*>& programs) {
 	return fitness;
 }
 
-int AgentGame::getStep() const {
-	return step;
-}
-
 int AgentGame::getMaxStep() const {
 	return maxStep;
 }
 
-void AgentGame::setMaxStep(int maxStep) {
-	if (step < maxStep) {
-		this->maxStep = maxStep;
-	} else {
-		this->maxStep = step;
-	}
+int AgentGame::getStep() const {
+	return step;
+}
+
+void AgentGame::setStep(int step) {
+	this->step = step;
 }

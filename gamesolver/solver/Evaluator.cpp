@@ -141,6 +141,7 @@ std::vector<double> Evaluator::operator()(std::vector<Program*>& programs) {
 	Game& myGame = omp_in_parallel() ? *parallelGames[omp_get_thread_num()] : *this->game;
 	boost::log::attributes::mutable_constant<int>& myAttr = omp_in_parallel() ? parallelAttrs[omp_get_thread_num()] : this->evaluationAttr;
 
+	//evaluationCountをアトミックに操作するためのクリティカルセクション
 	#pragma omp critical
 	{
 		if (loggerRange.first <= evaluationCount and evaluationCount < loggerRange.second) {
