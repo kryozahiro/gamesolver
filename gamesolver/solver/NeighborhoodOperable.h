@@ -16,7 +16,7 @@
 class NeighborhoodOperableBase {
 public:
 	virtual ~NeighborhoodOperableBase() = default;
-	virtual std::vector<std::shared_ptr<NeighborhoodOperableBase>> neighborhood(const std::string& method, int size, std::mt19937_64& randomEngine);
+	virtual std::vector<std::shared_ptr<NeighborhoodOperableBase>> neighborhood(const std::string& method, int size, std::mt19937_64& randomEngine) = 0;
 };
 
 /// 近傍操作を適用可能なクラスのインターフェース

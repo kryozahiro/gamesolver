@@ -23,9 +23,7 @@ void Standalone::initOptions(boost::program_options::options_description& option
 	options.add_options()
 		("multithread,m", po::value<int>()->default_value(0), "specify the number of threads")
 		("config,c", po::value<string>()->default_value("config.xml"), "specify config file")
-		("experiment,e", po::value<string>()->default_value(""), "specify experiment")
-		("output,o", po::value<string>()->default_value(""), "specify output methods")
-		("input,i", po::value<string>()->default_value(""), "specify input file");
+		("experiment,e", po::value<string>()->default_value(""), "specify experiment");
 }
 
 int Standalone::mainImpl(boost::program_options::variables_map& args) {

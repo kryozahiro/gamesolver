@@ -88,6 +88,9 @@ void Instruction::operator()(unsigned int& pc, unsigned int end, bool& condition
 	case Opcode::IMM:
 		memory[ret] = arg1 * memory.size() + arg2;
 		break;
+	case Opcode::NOP:
+		//do nothing
+		break;
 	default:
 		assert(false);
 	}

@@ -9,6 +9,7 @@
 
 #include <cmath>
 #include <fstream>
+#include <chrono>
 #include <omp.h>
 #include <boost/property_tree/xml_parser.hpp>
 #include "cpputil/GenericIo.h"
@@ -67,13 +68,17 @@ void Experiment::operator()() {
 }
 
 void Experiment::initExperiment(const boost::program_options::variables_map& args) {
-	cerr << "Experiment:" << endl;
+	//日時の出力
+	time_t now = chrono::system_clock::to_time_t(chrono::system_clock::now());
+	cerr << "Program execution at " << put_time(gmtime(&now), "%Y-%m-%dT%H:%M:%SZ") << " UTC" << endl;
+	cerr << endl;
 
 	//ファイルからの<Config>ノードの取得
 	string configFile = args["config"].as<string>();
 	pt::ptree configRoot;
-	pt::read_xml(configFile, configRoot);
+	pt::read_xml(configFile, configRoot, pt::xml_parser::no_comments);
 	config = configRoot.get_child("Config");
+	cerr << "Config: " << configFile << endl;
 
 	//<Multithread>ノードの取得
 	if (args["multithread"].as<int>() != 0) {
@@ -82,6 +87,7 @@ void Experiment::initExperiment(const boost::program_options::variables_map& arg
 		initOpenMp(config.get<int>("Multithread"));
 	}
 	cerr << "threads = " << omp_get_max_threads() << endl;
+	cerr << endl;
 
 	//<Experiment>ノードの取得
 	if (args["experiment"].as<string>() != "") {
@@ -89,17 +95,13 @@ void Experiment::initExperiment(const boost::program_options::variables_map& arg
 	} else {
 		experiment = config.get_child("Experiment");
 	}
+	cerr << "Experiment: " << args["experiment"].as<string>() << endl;
 
 	//出力方法
 	pt::ptree outputTree;
-	if (args["output"].as<string>() != "") {
-		outputTree = cpputil::search(config, "<xmlattr>.name", args["output"].as<string>());
-	} else {
-		outputTree = experiment.get_child("Output");
-	}
+	outputTree = experiment.get_child("Output");
 	outputTree = cpputil::solveReference(config, outputTree);
 	output = make_shared<Output>(outputTree);
-
 	cerr << endl;
 }
 

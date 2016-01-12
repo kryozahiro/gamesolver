@@ -34,7 +34,8 @@ public:
 		EXP,
 		LOG,
 		INT,
-		IMM
+		IMM,
+		NOP
 	);
 
 	void set(Opcode op, int ret, int mem1, int mem2);
